@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Nimo",
+    "slug": "nimo-loans",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "assetBundlePatterns": [
+      "assets/**/*",
+      "!assets/*.mp4",
+      "!assets/*.mov"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nimo.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.nimo.app",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "enableProguardInRelease": true,
+      "proguardFiles": [
+        "proguard-rules.pro"
+      ]
+    },
+    "androidNavigationBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#0D0D0D"
+    },
+    "web": {
+      "favicon": "./assets/logo.png"
+    },
+    "sdkVersion": "54.0.0",
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "987626b0-28ce-433e-93c9-25468379a5de"
+      }
+    }
+  }
+}
