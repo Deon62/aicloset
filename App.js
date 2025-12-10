@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import LandingPage from './screens/LandingPage';
@@ -19,17 +20,7 @@ SplashScreen.preventAutoHideAsync();
 function AppContent() {
   const [showLanding, setShowLanding] = useState(true);
   const [currentTab, setCurrentTab] = useState('upload');
-
-  if (showLanding) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <LandingPage onContinue={() => setShowLanding(false)} />
-          <StatusBar style="dark" />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    );
-  }
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const renderTab = () => {
     switch (currentTab) {
@@ -46,10 +37,32 @@ function AppContent() {
     }
   };
 
+  useEffect(() => {
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [currentTab, fadeAnim]);
+
+  if (showLanding) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <LandingPage onContinue={() => setShowLanding(false)} />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        {renderTab()}
+        <Animated.View style={{ flex: 1, opacity: fadeAnim, backgroundColor: '#FFFFFF' }} key={currentTab}>
+          {renderTab()}
+        </Animated.View>
         <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         <StatusBar style="dark" />
       </SafeAreaProvider>

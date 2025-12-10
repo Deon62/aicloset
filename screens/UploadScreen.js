@@ -6,6 +6,7 @@ export default function UploadScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <Text style={styles.header}>Welcome to Nimo</Text>
         <Text style={styles.title}>Upload your wardrobe</Text>
         <Text style={styles.subtitle}>Add photos of tops, bottoms, shoes, and accessories.</Text>
         <TouchableOpacity style={styles.primaryButton} activeOpacity={0.85}>
@@ -24,8 +25,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: 16,
+  },
+  header: {
+    fontSize: 22,
+    color: '#0B0B0F',
+    fontFamily: 'Nunito_700Bold',
   },
   title: {
     fontSize: 28,
