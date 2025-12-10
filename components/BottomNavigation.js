@@ -2,78 +2,34 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useFonts, Nunito_400Regular, Nunito_600SemiBold } from '@expo-google-fonts/nunito';
 
-export default function BottomNavigation({ currentScreen, onNavigate }) {
+const tabs = [
+  { id: 'upload', label: 'Home', icon: 'home-outline', iconActive: 'home' },
+  { id: 'matches', label: 'Matches', icon: 'color-palette-outline', iconActive: 'color-palette' },
+  { id: 'closet', label: 'Closet', icon: 'shirt-outline', iconActive: 'shirt' },
+  { id: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
+];
+
+export default function BottomNavigation({ currentTab, onTabChange }) {
   const insets = useSafeAreaInsets();
 
-  const navigationItems = [
-    {
-      id: 'home',
-      label: 'Home',
-      icon: (active) => (
-        <Ionicons 
-          name={active ? 'home' : 'home-outline'} 
-          size={24} 
-          color={active ? '#6D9773' : '#999999'} 
-        />
-      ),
-    },
-    {
-      id: 'loans',
-      label: 'Loans',
-      icon: (active) => (
-        <Ionicons 
-          name={active ? 'wallet' : 'wallet-outline'} 
-          size={24} 
-          color={active ? '#6D9773' : '#999999'} 
-        />
-      ),
-    },
-    {
-      id: 'security',
-      label: 'Security',
-      icon: (active) => (
-        <Ionicons 
-          name={active ? 'shield-checkmark' : 'shield-outline'} 
-          size={24} 
-          color={active ? '#6D9773' : '#999999'} 
-        />
-      ),
-    },
-    {
-      id: 'account',
-      label: 'Account',
-      icon: (active) => (
-        <Ionicons 
-          name={active ? 'person' : 'person-outline'} 
-          size={24} 
-          color={active ? '#6D9773' : '#999999'} 
-        />
-      ),
-    },
-  ];
-
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      {navigationItems.map((item) => {
-        const isActive = currentScreen === item.id;
+    <View style={[styles.container, { paddingBottom: insets.bottom || 10 }]}>
+      {tabs.map((tab) => {
+        const isActive = tab.id === currentTab;
         return (
           <TouchableOpacity
-            key={item.id}
-            style={styles.navItem}
-            onPress={() => onNavigate(item.id)}
-            activeOpacity={0.7}
+            key={tab.id}
+            style={[styles.tab, isActive && styles.tabActive]}
+            onPress={() => onTabChange(tab.id)}
+            activeOpacity={0.85}
           >
-            {item.icon(isActive)}
-            <Text
-              style={[
-                styles.navLabel,
-                isActive && styles.navLabelActive,
-              ]}
-            >
-              {item.label}
-            </Text>
+            <Ionicons
+              name={isActive ? tab.iconActive : tab.icon}
+              size={22}
+              color={isActive ? '#0B0B0F' : '#D8E6D5'}
+            />
+            <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
           </TouchableOpacity>
         );
       })}
@@ -85,33 +41,38 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingTop: 6,
+    paddingBottom: 6,
+    gap: 6,
     borderTopWidth: 1,
     borderTopColor: '#E5E5E5',
-    paddingTop: 8,
-    paddingHorizontal: 16,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 8,
   },
-  navItem: {
+  tab: {
     flex: 1,
+    backgroundColor: 'transparent',
+    borderRadius: 0,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 8,
+    gap: 4,
   },
-  navLabel: {
+  tabActive: {
+    backgroundColor: 'transparent',
+  },
+  label: {
+    color: '#5A5A5A',
     fontSize: 12,
-    color: '#999999',
-    marginTop: 4,
-    fontFamily: 'Nunito_400Regular',
+    fontWeight: '600',
+    letterSpacing: 0.2,
+    fontFamily: 'Nunito_600SemiBold',
   },
-  navLabelActive: {
-    color: '#6D9773',
+  labelActive: {
+    color: '#5A5A5A',
     fontFamily: 'Nunito_600SemiBold',
   },
 });
