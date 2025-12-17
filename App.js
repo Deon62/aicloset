@@ -14,6 +14,7 @@ import PastEventsScreen from './screens/PastEventsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
 import LikedItemsScreen from './screens/LikedItemsScreen';
 import CartScreen from './screens/CartScreen';
+import ProductDetailScreen from './screens/ProductDetailScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import CommunityConversationScreen from './screens/CommunityConversationScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -27,7 +28,8 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
-  const [shopOverlay, setShopOverlay] = useState(null); // null | 'liked' | 'cart'
+  const [shopOverlay, setShopOverlay] = useState(null); // null | 'liked' | 'cart' | 'product'
+  const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
   const [activeCommunity, setActiveCommunity] = useState(null);
   const [joinedCommunityIds, setJoinedCommunityIds] = useState(() => new Set());
@@ -144,6 +146,29 @@ function AppContent() {
               onToggleLiked={toggleLiked}
               onToggleCart={toggleCart}
               onBack={() => setShopOverlay(null)}
+              onViewDetails={(product) => {
+                setActiveProduct(product);
+                setShopOverlay('product');
+              }}
+            />
+          );
+        }
+        if (shopOverlay === 'product') {
+          return (
+            <ProductDetailScreen
+              product={activeProduct}
+              onBack={() => {
+                setShopOverlay('cart');
+                setActiveProduct(null);
+              }}
+              onCheckout={() => {
+                setShopOverlay('cart');
+                setActiveProduct(null);
+              }}
+              onUpdate={() => {
+                setShopOverlay('cart');
+                setActiveProduct(null);
+              }}
             />
           );
         }
@@ -194,6 +219,7 @@ function AppContent() {
               setShowOnboarding(true);
               setShowPastEvents(false);
               setShopOverlay(null);
+              setActiveProduct(null);
               setCommunityOverlay(null);
               setActiveCommunity(null);
             }}
@@ -251,10 +277,11 @@ function AppContent() {
         <Animated.View style={{ flex: 1, opacity: fadeAnim, backgroundColor: '#FFFFFF' }} key={currentTab}>
           {renderTab()}
         </Animated.View>
-        {!(
-          (currentTab === 'community' && communityOverlay === 'conversation') ||
-          (currentTab === 'shop' && (shopOverlay === 'liked' || shopOverlay === 'cart'))
-        ) ? (
+        {!((
+          currentTab === 'community' && communityOverlay === 'conversation'
+        ) || (
+          currentTab === 'shop' && (shopOverlay === 'liked' || shopOverlay === 'cart' || shopOverlay === 'product')
+        )) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
         <StatusBar style="dark" />
