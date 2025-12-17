@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -42,9 +43,11 @@ export default function CartScreen({
   onBack = () => {},
 }) {
   const { height: windowHeight } = Dimensions.get('window');
+  const insets = useSafeAreaInsets();
   const headerHeight = 64;
-  const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight));
-  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.76);
+  const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
+  const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight - TAB_BAR_HEIGHT));
+  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.82);
 
   const data = useMemo(() => {
     const ids = cartIds instanceof Set ? cartIds : new Set();
@@ -70,6 +73,18 @@ export default function CartScreen({
         <View style={styles.mediaWrap}>
           <Image source={item.image} style={[styles.postImage, { height: IMAGE_HEIGHT }]} resizeMode="cover" />
 
+          <LinearGradient
+            colors={['rgba(0,0,0,0.82)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.0)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.imageOverlay}
+          >
+            <Text style={styles.overlayName}>{item.name}</Text>
+            <Text style={styles.overlayDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          </LinearGradient>
+
           <View style={styles.mediaActions}>
             <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleLiked(item.id)}>
               <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={26} color={isLiked ? '#E11D48' : '#FFFFFF'} />
@@ -86,7 +101,6 @@ export default function CartScreen({
             <Text style={styles.postPrice}>{item.price}</Text>
             {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
           </View>
-          <Text style={styles.postDescription}>{item.description}</Text>
         </View>
       </View>
     );
@@ -215,8 +229,30 @@ const styles = StyleSheet.create({
   mediaActions: {
     position: 'absolute',
     right: 12,
-    bottom: 12,
+    bottom: 64,
     alignItems: 'center',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 16,
+    backgroundColor: 'rgba(0,0,0,0.12)',
+  },
+  overlayName: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: 'Nunito_700Bold',
+  },
+  overlayDescription: {
+    marginTop: 6,
+    color: 'rgba(255,255,255,0.92)',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Nunito_400Regular',
   },
   iconBtn: {
     width: 44,
@@ -229,9 +265,8 @@ const styles = StyleSheet.create({
   },
   postBody: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 22,
-    gap: 6,
+    paddingTop: 14,
+    paddingBottom: 24,
   },
   priceRow: {
     flexDirection: 'row',

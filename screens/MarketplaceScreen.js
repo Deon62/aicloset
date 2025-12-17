@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -16,11 +17,14 @@ export default function MarketplaceScreen({
   onOpenCart = () => {},
 }) {
   const { height: windowHeight } = Dimensions.get('window');
+  const insets = useSafeAreaInsets();
   const [headerHeight, setHeaderHeight] = useState(120);
   const [query, setQuery] = useState('');
 
-  const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight));
-  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.76);
+  const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
+
+  const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight - TAB_BAR_HEIGHT));
+  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.82);
 
   const products = useMemo(
     () => [
@@ -30,6 +34,7 @@ export default function MarketplaceScreen({
         description: 'Premium cotton club tee with a clean fit.',
         price: 'KSh 900',
         originalPrice: 'KSh 1,200',
+        left: 3,
         image: require('../assets/ardena.jpg'),
       },
       {
@@ -38,6 +43,7 @@ export default function MarketplaceScreen({
         description: 'Soft, breathable, and perfect for meetups.',
         price: 'KSh 900',
         originalPrice: 'KSh 1,150',
+        left: 5,
         image: require('../assets/ardena1.jpg'),
       },
       {
@@ -46,6 +52,7 @@ export default function MarketplaceScreen({
         description: 'Limited edition print for EUCOSSA members.',
         price: 'KSh 1,000',
         originalPrice: 'KSh 1,400',
+        left: 2,
         image: require('../assets/ardena2.jpg'),
       },
     ],
@@ -70,6 +77,18 @@ export default function MarketplaceScreen({
         <View style={styles.mediaWrap}>
           <Image source={item.image} style={[styles.postImage, { height: IMAGE_HEIGHT }]} resizeMode="cover" />
 
+          <LinearGradient
+            colors={['rgba(0,0,0,0.82)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.0)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.imageOverlay}
+          >
+            <Text style={styles.overlayName}>{item.name}</Text>
+            <Text style={styles.overlayDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          </LinearGradient>
+
           <View style={styles.mediaActions}>
             <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleLiked(item.id)}>
               <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={26} color={isLiked ? '#E11D48' : '#FFFFFF'} />
@@ -83,10 +102,10 @@ export default function MarketplaceScreen({
 
         <View style={styles.postBody}>
           <View style={styles.priceRow}>
-            <Text style={styles.postPrice}>{item.price}</Text>
             {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
+            <Text style={styles.postPrice}>{item.price}</Text>
           </View>
-          <Text style={styles.postDescription}>{item.description}</Text>
+          {typeof item.left === 'number' ? <Text style={styles.scarcityText}>{item.left} units left</Text> : null}
         </View>
       </View>
     );
@@ -260,9 +279,31 @@ const styles = StyleSheet.create({
   mediaActions: {
     position: 'absolute',
     right: 12,
-    bottom: 12,
+    bottom: 64,
     gap: 14,
     alignItems: 'center',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 16,
+    backgroundColor: 'rgba(0,0,0,0.12)',
+  },
+  overlayName: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: 'Nunito_700Bold',
+  },
+  overlayDescription: {
+    marginTop: 6,
+    color: 'rgba(255,255,255,0.92)',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Nunito_400Regular',
   },
   iconBtn: {
     width: 44,
@@ -274,14 +315,11 @@ const styles = StyleSheet.create({
   },
   postBody: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 22,
-    gap: 6,
+    paddingTop: 14,
+    paddingBottom: 24,
   },
   priceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 10,
+    gap: 2,
   },
   postDescription: {
     color: '#4A4A4A',
@@ -291,7 +329,7 @@ const styles = StyleSheet.create({
   },
   postPrice: {
     color: '#0B0B0F',
-    fontSize: 18,
+    fontSize: 22,
     fontFamily: 'Nunito_700Bold',
   },
   originalPrice: {
@@ -299,5 +337,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
     textDecorationLine: 'line-through',
+  },
+  scarcityText: {
+    marginTop: 6,
+    color: '#6A6A6A',
+    fontSize: 12,
+    fontFamily: 'Nunito_600SemiBold',
   },
 });
