@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   mediaActions: {
     position: 'absolute',
     right: 12,
-    bottom: 64,
+    bottom: 18,
     gap: 12,
     alignItems: 'center',
   },
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   cartIconBtn: {
-    marginTop: 10,
+    marginTop: 0,
   },
   postBody: {
     paddingHorizontal: 16,
