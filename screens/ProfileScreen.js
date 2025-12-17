@@ -9,7 +9,12 @@ const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
 
-export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo = () => {}, onOpenSettings = () => {} }) {
+export default function ProfileScreen({
+  onLogout = () => {},
+  onOpenProfileInfo = () => {},
+  onOpenSettings = () => {},
+  onOpenFeedback = () => {},
+}) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
@@ -85,19 +90,6 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
     }
   };
 
-  const sendFeedback = async () => {
-    const url = 'mailto:eucossa@egerton.ac.ke?subject=EUCOSSA%20App%20Feedback';
-    try {
-      const canOpen = await Linking.canOpenURL(url);
-      if (!canOpen) {
-        Alert.alert('Feedback', 'Email app not available on this device.');
-        return;
-      }
-      await Linking.openURL(url);
-    } catch (e) {
-      Alert.alert('Feedback', 'Failed to open email app.');
-    }
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -130,7 +122,7 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
           <Text style={styles.linkLabel}>Settings</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={sendFeedback}>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenFeedback}>
           <Text style={styles.linkLabel}>Send us feedback</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>

@@ -22,6 +22,7 @@ import CommunityConversationScreen from './screens/CommunityConversationScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ProfileInfoScreen from './screens/ProfileInfoScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import FeedbackScreen from './screens/FeedbackScreen';
 import BottomNavigation from './components/BottomNavigation';
 
 // Keep the splash screen visible while we fetch resources
@@ -292,10 +293,14 @@ function AppContent() {
     if (profileOverlay === 'settings') {
       return <SettingsScreen onBack={() => setProfileOverlay(null)} />;
     }
+    if (profileOverlay === 'feedback') {
+      return <FeedbackScreen onBack={() => setProfileOverlay(null)} />;
+    }
     return (
       <ProfileScreen
         onOpenProfileInfo={() => setProfileOverlay('info')}
         onOpenSettings={() => setProfileOverlay('settings')}
+        onOpenFeedback={() => setProfileOverlay('feedback')}
         onLogout={() => {
           setCurrentTab('home');
           setShowLanding(false);
@@ -379,6 +384,8 @@ function AppContent() {
           currentTab === 'profile' && profileOverlay === 'info'
         ) || (
           currentTab === 'profile' && profileOverlay === 'settings'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'feedback'
         )) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
