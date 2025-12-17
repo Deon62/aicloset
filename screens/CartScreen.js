@@ -116,7 +116,7 @@ export default function CartScreen({
     return (
       <View style={styles.cartCard}>
         <View style={styles.mediaLeft}>
-          <Image source={{ uri: item.imageUrl }} style={[styles.thumb, { transform: [{ scale: 1.1 }] }]} resizeMode="contain" />
+          <Image source={{ uri: item.imageUrl }} style={styles.thumb} resizeMode="contain" />
         </View>
 
         <View style={styles.cardMid}>
@@ -323,7 +323,9 @@ const styles = StyleSheet.create({
   mediaLeft: {
     width: 96,
     alignSelf: 'stretch',
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   thumb: {
     width: '100%',

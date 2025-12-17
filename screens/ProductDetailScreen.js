@@ -14,7 +14,8 @@ export default function ProductDetailScreen({
   onUpdate = () => {},
 }) {
   const insets = useSafeAreaInsets();
-  const { width: screenWidth } = Dimensions.get('window');
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+  const HERO_HEIGHT = Math.min(460, Math.floor(screenHeight * 0.48));
 
   const images = useMemo(() => {
     const list = Array.isArray(product?.images) ? product.images : [];
@@ -68,8 +69,8 @@ export default function ProductDetailScreen({
               showsHorizontalScrollIndicator={false}
               keyExtractor={(_, idx) => `${product?.id || 'product'}-img-${idx}`}
               renderItem={({ item }) => (
-                <View style={{ width: screenWidth }}>
-                  <Image source={item} style={[styles.heroImage, { transform: [{ scale: 1.12 }] }]} resizeMode="contain" />
+                <View style={[styles.heroSlide, { width: screenWidth, height: HERO_HEIGHT }]}>
+                  <Image source={item} style={[styles.heroImage, { height: HERO_HEIGHT }]} resizeMode="cover" />
                 </View>
               )}
               onMomentumScrollEnd={(e) => {
@@ -190,10 +191,15 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
   },
+  heroSlide: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
   heroImage: {
     width: '100%',
-    height: 420,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#FFFFFF',
   },
   dotsRow: {
     position: 'absolute',
