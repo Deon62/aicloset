@@ -22,17 +22,30 @@ const EVENT_PRICE = 'Free';
 
 export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfile = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
+  const [name, setName] = useState('');
+  const [course, setCourse] = useState('');
+  const [year, setYear] = useState('');
+  const [bio, setBio] = useState('');
+  const [github, setGithub] = useState('');
 
   useEffect(() => {
-    const loadPhoto = async () => {
+    const loadProfile = async () => {
       try {
         const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
         if (storedPhoto) setPhotoUri(storedPhoto);
+
+        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github']);
+        const map = Object.fromEntries(entries);
+        setName(map['@profile_name'] || '');
+        setCourse(map['@profile_course'] || '');
+        setYear(map['@profile_year'] || '');
+        setBio(map['@profile_bio'] || '');
+        setGithub(map['@profile_github'] || '');
       } catch (e) {
         console.warn('Failed to load profile photo', e);
       }
     };
-    loadPhoto();
+    loadProfile();
   }, []);
 
   return (
@@ -50,7 +63,7 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
               <Ionicons name="notifications-outline" size={26} color={DARK} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Hello {MOCK_NAME}</Text>
+          <Text style={styles.title}>Hello {name || MOCK_NAME}</Text>
           <Text style={styles.subtitle}>welcome to Egerton Computer Science Student Association Club</Text>
         </View>
 
@@ -65,14 +78,14 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
             </View>
 
             <View style={styles.profileMain}>
-              <Text style={styles.profileName}>{MOCK_NAME}</Text>
-              <Text style={styles.profileCourse}>{MOCK_COURSE}</Text>
-              <Text style={styles.profileYear}>{MOCK_YEAR}</Text>
-              <Text style={styles.profileBio}>{MOCK_BIO}</Text>
+              <Text style={styles.profileName}>{name || MOCK_NAME}</Text>
+              <Text style={styles.profileCourse}>{course || MOCK_COURSE}</Text>
+              <Text style={styles.profileYear}>{year || MOCK_YEAR}</Text>
+              <Text style={styles.profileBio}>{bio || MOCK_BIO}</Text>
 
               <View style={styles.githubRow}>
                 <Ionicons name="logo-github" size={16} color={DARK} />
-                <Text style={styles.githubText}>{MOCK_GITHUB}</Text>
+                <Text style={styles.githubText}>{github || MOCK_GITHUB}</Text>
               </View>
             </View>
           </View>
