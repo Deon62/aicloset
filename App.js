@@ -7,9 +7,10 @@ import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import LandingPage from './screens/LandingPage';
-import UploadScreen from './screens/UploadScreen';
-import MatchesScreen from './screens/MatchesScreen';
-import ClosetScreen from './screens/ClosetScreen';
+import HomeScreen from './screens/HomeScreen';
+import EventsScreen from './screens/EventsScreen';
+import MarketplaceScreen from './screens/MarketplaceScreen';
+import CommunityScreen from './screens/CommunityScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import BottomNavigation from './components/BottomNavigation';
 
@@ -19,21 +20,23 @@ SplashScreen.preventAutoHideAsync();
 // Main App Content Component with bottom tabs
 function AppContent() {
   const [showLanding, setShowLanding] = useState(true);
-  const [currentTab, setCurrentTab] = useState('upload');
+  const [currentTab, setCurrentTab] = useState('home');
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const renderTab = () => {
     switch (currentTab) {
-      case 'upload':
-        return <UploadScreen />;
-      case 'matches':
-        return <MatchesScreen />;
-      case 'closet':
-        return <ClosetScreen />;
+      case 'home':
+        return <HomeScreen />;
+      case 'events':
+        return <EventsScreen />;
+      case 'marketplace':
+        return <MarketplaceScreen />;
+      case 'community':
+        return <CommunityScreen />;
       case 'profile':
         return <ProfileScreen />;
       default:
-        return <UploadScreen />;
+        return <HomeScreen />;
     }
   };
 

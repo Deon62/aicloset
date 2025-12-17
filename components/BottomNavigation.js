@@ -4,9 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const tabs = [
-  { id: 'upload', label: 'Home', icon: 'home-outline', iconActive: 'home' },
-  { id: 'matches', label: 'Matches', icon: 'color-palette-outline', iconActive: 'color-palette' },
-  { id: 'closet', label: 'Closet', icon: 'shirt-outline', iconActive: 'shirt' },
+  { id: 'home', label: 'Home', icon: 'home-outline', iconActive: 'home' },
+  { id: 'events', label: 'Events', icon: 'calendar-outline', iconActive: 'calendar' },
+  { id: 'marketplace', label: 'Marketplace', icon: 'pricetags-outline', iconActive: 'pricetags' },
+  { id: 'community', label: 'Community', icon: 'people-outline', iconActive: 'people' },
   { id: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];
 
@@ -27,7 +28,7 @@ export default function BottomNavigation({ currentTab, onTabChange }) {
             <Ionicons
               name={isActive ? tab.iconActive : tab.icon}
               size={22}
-              color={isActive ? '#0B0B0F' : '#D8E6D5'}
+              color={isActive ? '#0B0B0F' : '#5A5A5A'}
             />
             <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
           </TouchableOpacity>

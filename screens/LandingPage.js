@@ -15,7 +15,7 @@ export default function LandingPage({ onContinue = () => {} }) {
           <View style={styles.spacer} />
           <View style={styles.buttonSection}>
             <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9} onPress={onContinue}>
-              <Text style={styles.primaryButtonText}>Upload your wardrobe</Text>
+              <Text style={styles.primaryButtonText}>Enter EUCOSSA</Text>
             </TouchableOpacity>
           </View>
         </View>
