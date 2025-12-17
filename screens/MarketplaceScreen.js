@@ -102,10 +102,15 @@ export default function MarketplaceScreen({
 
         <View style={styles.postBody}>
           <View style={styles.priceRow}>
-            {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
+            <View style={styles.originalRow}>
+              {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
+              <View style={styles.rightMeta}>
+                {typeof item.left === 'number' ? <Text style={styles.scarcityInline}>{item.left} units left</Text> : null}
+                <Text style={styles.sizeText}>Available in all sizes</Text>
+              </View>
+            </View>
             <Text style={styles.postPrice}>{item.price}</Text>
           </View>
-          {typeof item.left === 'number' ? <Text style={styles.scarcityText}>{item.left} units left</Text> : null}
         </View>
       </View>
     );
@@ -316,10 +321,18 @@ const styles = StyleSheet.create({
   postBody: {
     paddingHorizontal: 16,
     paddingTop: 14,
-    paddingBottom: 24,
+    paddingBottom: 28,
   },
   priceRow: {
     gap: 2,
+  },
+  originalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rightMeta: {
+    alignItems: 'flex-end',
   },
   postDescription: {
     color: '#4A4A4A',
@@ -338,8 +351,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
     textDecorationLine: 'line-through',
   },
-  scarcityText: {
-    marginTop: 6,
+  scarcityInline: {
+    color: '#6A6A6A',
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  sizeText: {
+    marginTop: 2,
     color: '#6A6A6A',
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
