@@ -18,7 +18,7 @@ export default function FeedbackScreen({ onBack = () => {} }) {
       return;
     }
 
-    const url = `mailto:eucossa@egerton.ac.ke?subject=${encodeURIComponent('EUCOSSA App Feedback')}&body=${encodeURIComponent(body)}`;
+    const url = `mailto:eucossake@gmail.com?subject=${encodeURIComponent('EUCOSSA App Feedback')}&body=${encodeURIComponent(body)}`;
 
     try {
       setSending(true);

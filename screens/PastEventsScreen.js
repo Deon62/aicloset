@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import PastEventsSvg from '../assets/icons/pastevents.svg';
 
 export default function PastEventsScreen({ onBack = () => {} }) {
   const pastEvents = useMemo(
@@ -22,10 +21,20 @@ export default function PastEventsScreen({ onBack = () => {} }) {
         </View>
 
         {pastEvents.length === 0 ? (
-          <View style={styles.emptyWrap}>
-            <PastEventsSvg width={260} height={260} />
-            <Text style={styles.emptyTitle}>No past events</Text>
-            <Text style={styles.emptyText}>When events end, you will find them here.</Text>
+          <View style={styles.infoCard}>
+            <Text style={styles.infoTitle}>Past events are on our website</Text>
+            <Text style={styles.infoText}>
+              This app won’t track past events for now. You can browse all previous events on the EUCOSSA website.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.infoLinkBtn}
+              activeOpacity={0.9}
+              onPress={() => Linking.openURL('https://eucossa.com/events')}
+            >
+              <Text style={styles.infoLinkText}>Browse past events</Text>
+              <Ionicons name="open-outline" size={16} color="#1B56FD" />
+            </TouchableOpacity>
           </View>
         ) : (
           pastEvents.map((event) => (
@@ -154,24 +163,41 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
   },
-  emptyWrap: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+  infoCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
     gap: 10,
-    paddingTop: 24,
   },
-  emptyTitle: {
+  infoTitle: {
     color: '#0B0B0F',
     fontSize: 16,
     fontFamily: 'Nunito_700Bold',
   },
-  emptyText: {
+  infoText: {
     color: '#6A6A6A',
     fontSize: 13,
     lineHeight: 18,
     fontFamily: 'Nunito_400Regular',
-    textAlign: 'center',
+  },
+  infoLinkBtn: {
+    marginTop: 6,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#DCE3FF',
+    backgroundColor: '#EEF3FF',
+  },
+  infoLinkText: {
+    color: '#1B56FD',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
   },
 });
