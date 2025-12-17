@@ -9,26 +9,7 @@ const BRAND_BLUE = '#1B56FD';
 
 export default function NotificationsScreen({ onBack = () => {} }) {
   const data = useMemo(
-    () => [
-      {
-        id: 'n-1',
-        title: 'Community update',
-        body: 'New post in Data Science & AI.',
-        time: '2h ago',
-      },
-      {
-        id: 'n-2',
-        title: 'Event reminder',
-        body: 'Workshop starts today at 3:30 PM.',
-        time: '6h ago',
-      },
-      {
-        id: 'n-3',
-        title: 'Shop',
-        body: 'Your cart items are still waiting for you.',
-        time: '1d ago',
-      },
-    ],
+    () => [],
     []
   );
 
