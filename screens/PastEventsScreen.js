@@ -1,27 +1,25 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-const BRAND_BLUE = '#1B56FD';
-
-export default function EventsScreen({ onOpenPastEvents = () => {} }) {
-  const events = useMemo(
+export default function PastEventsScreen({ onBack = () => {} }) {
+  const pastEvents = useMemo(
     () => [
       {
-        id: 'web-basics',
-        title: 'Workshop: Web Development Basics',
-        description: 'Hands-on session covering HTML, CSS, and JavaScript fundamentals.',
-        date: 'Friday · 3:30 PM',
+        id: 'intro-cp',
+        title: 'Intro to Competitive Programming',
+        description: 'We covered problem-solving patterns and practice sessions.',
+        date: 'Last Friday · 3:30 PM',
         location: 'Computer Lab',
         price: 'Free',
         image: require('../assets/tech.png'),
       },
       {
         id: 'git-github',
-        title: 'Hackathon Prep: Git + GitHub',
-        description: 'Learn collaboration workflows: branches, PRs, and code reviews.',
-        date: 'Next Wednesday · 4:00 PM',
+        title: 'Git & GitHub Collaboration',
+        description: 'Branches, pull requests, and team workflows for projects.',
+        date: 'Last Month · 4:00 PM',
         location: 'ICT Lab',
         price: 'Free',
         image: require('../assets/tech.png'),
@@ -34,22 +32,14 @@ export default function EventsScreen({ onOpenPastEvents = () => {} }) {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>Events</Text>
-          <View style={styles.headerActions}>
-            <Ionicons
-              name="albums-outline"
-              size={20}
-              color="#1D1D1D"
-              onPress={onOpenPastEvents}
-              suppressHighlighting
-            />
-          </View>
+          <TouchableOpacity style={styles.backButton} activeOpacity={0.85} onPress={onBack}>
+            <Ionicons name="arrow-back" size={20} color="#1D1D1D" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Past events</Text>
+          <View style={styles.headerSpacer} />
         </View>
-        <Text style={styles.subtitle}>
-          Upcoming sessions, workshops, and competitions.
-        </Text>
 
-        {events.map((event) => (
+        {pastEvents.map((event) => (
           <View key={event.id} style={[styles.card, styles.cardAccent, styles.eventCard]}>
             <Image source={event.image} style={styles.eventHeroImage} resizeMode="cover" />
             <View style={styles.eventInfo}>
@@ -91,26 +81,29 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingBottom: 70,
   },
-  title: {
-    fontSize: 28,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
-  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  headerActions: {
-    flexDirection: 'row',
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'center',
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#4A4A4A',
-    lineHeight: 22,
-    fontFamily: 'Nunito_400Regular',
+  headerSpacer: {
+    width: 40,
+    height: 40,
+  },
+  title: {
+    fontSize: 18,
+    color: '#0B0B0F',
+    fontFamily: 'Nunito_700Bold',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -122,11 +115,6 @@ const styles = StyleSheet.create({
   },
   cardAccent: {
     borderColor: '#DCE3FF',
-  },
-  cardTitle: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
   },
   cardHeadline: {
     color: '#1D1D1D',

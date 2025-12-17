@@ -8,7 +8,7 @@ const BRAND_BLUE = '#1B56FD';
 const tabs = [
   { id: 'home', label: 'Home', icon: 'home-outline', iconActive: 'home' },
   { id: 'events', label: 'Events', icon: 'calendar-outline', iconActive: 'calendar' },
-  { id: 'shop', label: 'shop', icon: 'pricetags-outline', iconActive: 'pricetags' },
+  { id: 'shop', label: 'Shop', icon: 'pricetags-outline', iconActive: 'pricetags' },
   { id: 'community', label: 'Community', icon: 'people-outline', iconActive: 'people' },
   { id: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];

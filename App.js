@@ -10,6 +10,7 @@ import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';
+import PastEventsScreen from './screens/PastEventsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -23,6 +24,7 @@ function AppContent() {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
+  const [showPastEvents, setShowPastEvents] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const renderTab = () => {
@@ -30,8 +32,12 @@ function AppContent() {
       case 'home':
         return <HomeScreen />;
       case 'events':
-        return <EventsScreen />;
-      case 'marketplace':
+        return showPastEvents ? (
+          <PastEventsScreen onBack={() => setShowPastEvents(false)} />
+        ) : (
+          <EventsScreen onOpenPastEvents={() => setShowPastEvents(true)} />
+        );
+      case 'shop':
         return <MarketplaceScreen />;
       case 'community':
         return <CommunityScreen />;
@@ -42,6 +48,7 @@ function AppContent() {
               setCurrentTab('home');
               setShowLanding(false);
               setShowOnboarding(true);
+              setShowPastEvents(false);
             }}
           />
         );
