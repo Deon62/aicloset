@@ -174,6 +174,12 @@ function AppContent() {
     return (
       <HomeScreen
         onOpenNotifications={() => setHomeOverlay('notifications')}
+        onOpenCommunity={(community) => {
+          setHomeOverlay(null);
+          setCurrentTab('community');
+          setActiveCommunity(community);
+          setCommunityOverlay('conversation');
+        }}
         onOpenProfile={() => {
           setHomeOverlay(null);
           setCurrentTab('profile');

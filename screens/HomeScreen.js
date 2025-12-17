@@ -22,7 +22,50 @@ const EVENT_LOCATION = 'Arc Hotel, Egerton';
 const EVENT_PRICE = 'KSh 300';
 const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png';
 
-export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfile = () => {} }) {
+const COMMUNITIES = [
+  {
+    id: 'data-science-ai',
+    label: 'Data Science',
+    color: '#7C3AED',
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/datascience.jpg',
+    title: 'Data Science & AI',
+    description: 'Learn machine learning, data analysis, and AI projects together.',
+    members: 128,
+  },
+  {
+    id: 'mobile',
+    label: 'Mobile',
+    color: '#2563EB',
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/mobile.jpg',
+    title: 'Mobile',
+    description: 'Create Android/iOS apps and learn UI, APIs, and deployment.',
+    members: 96,
+  },
+  {
+    id: 'blockchain',
+    label: 'Blockchain',
+    color: '#F59E0B',
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/blockchain.jpg',
+    title: 'Blockchain',
+    description: 'Explore Web3 concepts, smart contracts, and decentralized apps.',
+    members: 49,
+  },
+  {
+    id: 'web-development',
+    label: 'Web Dev',
+    color: '#10B981',
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/web.jpg',
+    title: 'Web Development',
+    description: 'Build modern websites and web apps with HTML, CSS, JS, and frameworks.',
+    members: 214,
+  },
+];
+
+export default function HomeScreen({
+  onOpenNotifications = () => {},
+  onOpenProfile = () => {},
+  onOpenCommunity = () => {},
+}) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
@@ -67,6 +110,30 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
           </View>
           <Text style={styles.title}>Hello {name || MOCK_NAME}</Text>
           <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.storiesRow}
+          >
+            {COMMUNITIES.map((c) => (
+              <TouchableOpacity
+                key={c.id}
+                style={styles.storyItem}
+                activeOpacity={0.85}
+                onPress={() => onOpenCommunity(c)}
+              >
+                <View style={styles.storyRing}>
+                  <View style={styles.storyAvatar}>
+                    <Image source={{ uri: c.imageUrl }} style={styles.storyAvatarImage} />
+                  </View>
+                </View>
+                <Text style={styles.storyLabel} numberOfLines={1}>
+                  {c.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         <TouchableOpacity style={[styles.card, styles.profileCard]} activeOpacity={0.85} onPress={onOpenProfile}>
@@ -110,7 +177,7 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
               <View style={styles.eventMetaList}>
                 <View style={styles.eventMetaRow}>
                   <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText} numberOfLines={1}>
+                  <Text style={styles.eventMetaText} numberOfLines={2}>
                     {EVENT_DATE}
                   </Text>
                 </View>
@@ -190,6 +257,45 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     lineHeight: 21,
     fontFamily: 'Nunito_400Regular',
+  },
+  storiesRow: {
+    marginTop: 10,
+    paddingRight: 6,
+    gap: 14,
+  },
+  storyItem: {
+    width: 74,
+    alignItems: 'center',
+    gap: 6,
+  },
+  storyRing: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#1D1D1D',
+  },
+  storyAvatar: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#F7F7F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  storyAvatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  storyLabel: {
+    color: '#0B0B0F',
+    fontSize: 12,
+    fontFamily: 'Nunito_600SemiBold',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -365,10 +471,11 @@ const styles = StyleSheet.create({
   },
   eventMetaRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 8,
   },
   eventMetaText: {
+    flex: 1,
     color: '#5A5A5A',
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
