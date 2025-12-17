@@ -35,17 +35,18 @@ export default function ProductDetailScreen({
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.headerBar}>
-          <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {name}
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
+        <TouchableOpacity
+          style={[styles.backBtn, { top: (insets.top || 0) + 12 }]}
+          activeOpacity={0.85}
+          onPress={onBack}
+        >
+          <Ionicons name="arrow-back" size={20} color={DARK} />
+        </TouchableOpacity>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: (insets.bottom || 0) + 140 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: (insets.bottom || 0) + 140 }}
+        >
           <View style={styles.carouselWrap}>
             <FlatList
               data={images}
@@ -148,10 +149,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   backBtn: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 10,
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.96)',
     borderWidth: 1,
     borderColor: '#EEEEEE',
     alignItems: 'center',
@@ -175,7 +179,7 @@ const styles = StyleSheet.create({
   },
   heroImage: {
     width: '100%',
-    height: 340,
+    height: 420,
     backgroundColor: '#E5E5E5',
   },
   dotsRow: {
