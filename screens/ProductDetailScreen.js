@@ -17,7 +17,18 @@ export default function ProductDetailScreen({
   const { width: screenWidth } = Dimensions.get('window');
 
   const images = useMemo(() => {
-    if (Array.isArray(product?.images) && product.images.length > 0) return product.images;
+    const list = Array.isArray(product?.images) ? product.images : [];
+    if (list.length > 0) {
+      return list
+        .map((img) => {
+          if (typeof img === 'string') return { uri: img };
+          if (img && typeof img === 'object' && typeof img.uri === 'string') return img;
+          return null;
+        })
+        .filter(Boolean);
+    }
+    if (typeof product?.imageUrl === 'string') return [{ uri: product.imageUrl }];
+    if (typeof product?.image === 'string') return [{ uri: product.image }];
     if (product?.image) return [product.image];
     return [];
   }, [product]);

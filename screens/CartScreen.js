@@ -16,7 +16,7 @@ const ALL_PRODUCTS = [
     price: 'KSh 900',
     originalPrice: 'KSh 1,200',
     left: 3,
-    image: require('../assets/ardena.jpg'),
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena.jpg',
   },
   {
     id: 'ardena-2',
@@ -25,7 +25,7 @@ const ALL_PRODUCTS = [
     price: 'KSh 900',
     originalPrice: 'KSh 1,150',
     left: 5,
-    image: require('../assets/ardena1.jpg'),
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena1.jpg',
   },
   {
     id: 'ardena-3',
@@ -34,7 +34,25 @@ const ALL_PRODUCTS = [
     price: 'KSh 1,000',
     originalPrice: 'KSh 1,400',
     left: 2,
-    image: require('../assets/ardena2.jpg'),
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/edition.jpg',
+  },
+  {
+    id: 'datascience-tee-1',
+    name: 'Data Science T‑Shirt',
+    description: 'Clean Data Science print for meetups and workshops.',
+    price: 'KSh 1,000',
+    originalPrice: 'KSh 1,300',
+    left: 8,
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/datasciencetshirt.png',
+  },
+  {
+    id: 'eucossa-hoodie-1',
+    name: 'EUCOSSA Hoodie',
+    description: 'Warm hoodie with EUCOSSA branding. Perfect for evenings.',
+    price: 'KSh 2,500',
+    originalPrice: 'KSh 2,900',
+    left: 4,
+    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/eucossahoodie.png',
   },
 ];
 
@@ -98,7 +116,7 @@ export default function CartScreen({
     return (
       <View style={styles.cartCard}>
         <View style={styles.mediaLeft}>
-          <Image source={item.image} style={styles.thumb} resizeMode="cover" />
+          <Image source={{ uri: item.imageUrl }} style={styles.thumb} resizeMode="cover" />
         </View>
 
         <View style={styles.cardMid}>
