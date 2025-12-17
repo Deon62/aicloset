@@ -9,8 +9,11 @@ const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
 
-export default function ProfileScreen({ onLogout = () => {} }) {
+export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
+  const [name, setName] = useState('');
+  const [course, setCourse] = useState('');
+  const [year, setYear] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -18,6 +21,12 @@ export default function ProfileScreen({ onLogout = () => {} }) {
       try {
         const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
         if (storedPhoto) setPhotoUri(storedPhoto);
+
+        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year']);
+        const map = Object.fromEntries(entries);
+        setName(map['@profile_name'] || '');
+        setCourse(map['@profile_course'] || '');
+        setYear(map['@profile_year'] || '');
       } catch (e) {
         console.warn('Failed to load profile', e);
       }
@@ -92,13 +101,13 @@ export default function ProfileScreen({ onLogout = () => {} }) {
             </View>
           </TouchableOpacity>
 
-          <Text style={styles.nameText}>{MOCK_NAME}</Text>
-          <Text style={styles.courseText}>{MOCK_COURSE}</Text>
+          <Text style={styles.nameText}>{name || MOCK_NAME}</Text>
+          <Text style={styles.courseText}>{course || MOCK_COURSE}{year ? ` • ${year}` : ''}</Text>
         </View>
 
         <View style={styles.separator} />
 
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenProfileInfo}>
           <Text style={styles.linkLabel}>Profile info</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>

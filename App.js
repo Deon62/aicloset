@@ -19,6 +19,7 @@ import ProductDetailScreen from './screens/ProductDetailScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import CommunityConversationScreen from './screens/CommunityConversationScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import ProfileInfoScreen from './screens/ProfileInfoScreen';
 import BottomNavigation from './components/BottomNavigation';
 
 // Keep the splash screen visible while we fetch resources
@@ -34,6 +35,7 @@ function AppContent() {
   const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
   const [activeCommunity, setActiveCommunity] = useState(null);
+  const [profileOverlay, setProfileOverlay] = useState(null); // null | 'info'
   const [joinedCommunityIds, setJoinedCommunityIds] = useState(() => new Set());
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({
     'data-science-ai': [
@@ -211,8 +213,12 @@ function AppContent() {
           />
         );
       case 'profile':
+        if (profileOverlay === 'info') {
+          return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} />;
+        }
         return (
           <ProfileScreen
+            onOpenProfileInfo={() => setProfileOverlay('info')}
             onLogout={() => {
               setCurrentTab('home');
               setShowLanding(false);
@@ -223,6 +229,7 @@ function AppContent() {
               setActiveProduct(null);
               setCommunityOverlay(null);
               setActiveCommunity(null);
+              setProfileOverlay(null);
             }}
           />
         );
@@ -284,6 +291,8 @@ function AppContent() {
           currentTab === 'home' && homeOverlay === 'notifications'
         ) || (
           currentTab === 'shop' && (shopOverlay === 'notifications' || shopOverlay === 'cart' || shopOverlay === 'product')
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'info'
         )) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
