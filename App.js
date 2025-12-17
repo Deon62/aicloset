@@ -12,6 +12,8 @@ import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
+import LikedItemsScreen from './screens/LikedItemsScreen';
+import CartScreen from './screens/CartScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import BottomNavigation from './components/BottomNavigation';
@@ -25,7 +27,28 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
+  const [shopOverlay, setShopOverlay] = useState(null); // null | 'liked' | 'cart'
+  const [likedIds, setLikedIds] = useState(() => new Set());
+  const [cartIds, setCartIds] = useState(() => new Set());
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const toggleLiked = (id) => {
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleCart = (id) => {
+    setCartIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const renderTab = () => {
     switch (currentTab) {
@@ -38,7 +61,38 @@ function AppContent() {
           <EventsScreen onOpenPastEvents={() => setShowPastEvents(true)} />
         );
       case 'shop':
-        return <MarketplaceScreen />;
+        if (shopOverlay === 'liked') {
+          return (
+            <LikedItemsScreen
+              likedIds={likedIds}
+              cartIds={cartIds}
+              onToggleLiked={toggleLiked}
+              onToggleCart={toggleCart}
+              onBack={() => setShopOverlay(null)}
+            />
+          );
+        }
+        if (shopOverlay === 'cart') {
+          return (
+            <CartScreen
+              likedIds={likedIds}
+              cartIds={cartIds}
+              onToggleLiked={toggleLiked}
+              onToggleCart={toggleCart}
+              onBack={() => setShopOverlay(null)}
+            />
+          );
+        }
+        return (
+          <MarketplaceScreen
+            likedIds={likedIds}
+            cartIds={cartIds}
+            onToggleLiked={toggleLiked}
+            onToggleCart={toggleCart}
+            onOpenLiked={() => setShopOverlay('liked')}
+            onOpenCart={() => setShopOverlay('cart')}
+          />
+        );
       case 'community':
         return <CommunityScreen />;
       case 'profile':
@@ -49,6 +103,7 @@ function AppContent() {
               setShowLanding(false);
               setShowOnboarding(true);
               setShowPastEvents(false);
+              setShopOverlay(null);
             }}
           />
         );

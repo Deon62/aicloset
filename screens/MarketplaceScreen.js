@@ -6,13 +6,20 @@ import { Ionicons } from '@expo/vector-icons';
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 
-export default function MarketplaceScreen() {
+export default function MarketplaceScreen({
+  likedIds = new Set(),
+  cartIds = new Set(),
+  onToggleLiked = () => {},
+  onToggleCart = () => {},
+  onOpenLiked = () => {},
+  onOpenCart = () => {},
+}) {
   const { height: windowHeight } = Dimensions.get('window');
   const [headerHeight, setHeaderHeight] = useState(120);
   const [query, setQuery] = useState('');
 
   const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight));
-  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.68);
+  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.76);
 
   const products = useMemo(
     () => [
@@ -50,61 +57,29 @@ export default function MarketplaceScreen() {
     });
   }, [products, query]);
 
-  const [likedIds, setLikedIds] = useState(() => new Set());
-  const [cartIds, setCartIds] = useState(() => new Set());
-
-  const toggleLiked = (id) => {
-    setLikedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleCart = (id) => {
-    setCartIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
   const renderItem = ({ item }) => {
     const isLiked = likedIds.has(item.id);
     const inCart = cartIds.has(item.id);
 
     return (
       <View style={[styles.postCard, { height: ITEM_HEIGHT }]}>
-        <View style={styles.postHeader}>
-          <View style={styles.postHeaderLeft}>
-            <View style={styles.shopDot} />
-            <View style={styles.postHeaderText}>
-              <Text style={styles.postTitle}>EUCOSSA Shop</Text>
-              <Text style={styles.postSubTitle}>{item.name}</Text>
-            </View>
-          </View>
-          <Ionicons name="ellipsis-horizontal" size={18} color="#6A6A6A" />
-        </View>
-
         <View style={styles.mediaWrap}>
           <Image source={item.image} style={[styles.postImage, { height: IMAGE_HEIGHT }]} resizeMode="cover" />
 
           <View style={styles.mediaActions}>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => toggleLiked(item.id)}>
+            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleLiked(item.id)}>
               <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={26} color={isLiked ? '#E11D48' : '#FFFFFF'} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => toggleCart(item.id)}>
+            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
               <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? BRAND_BLUE : '#FFFFFF'} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.postBody}>
-          <Text style={styles.postDescription}>{item.description}</Text>
           <Text style={styles.postPrice}>{item.price}</Text>
+          <Text style={styles.postDescription}>{item.description}</Text>
         </View>
       </View>
     );
@@ -120,7 +95,28 @@ export default function MarketplaceScreen() {
             if (h && h > 0) setHeaderHeight(Math.ceil(h));
           }}
         >
-          <Text style={styles.title}>Shop</Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.title}>Shop</Text>
+            <View style={styles.headerIcons}>
+              <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenLiked}>
+                <Ionicons name="heart-outline" size={22} color={DARK} />
+                {likedIds.size > 0 ? (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{likedIds.size}</Text>
+                  </View>
+                ) : null}
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenCart}>
+                <Ionicons name="cart-outline" size={22} color={DARK} />
+                {cartIds.size > 0 ? (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{cartIds.size}</Text>
+                  </View>
+                ) : null}
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={styles.searchWrap}>
             <Ionicons name="search" size={18} color="#6A6A6A" />
             <TextInput
@@ -168,6 +164,45 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     gap: 12,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerIconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: BRAND_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 5,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Nunito_700Bold',
+  },
   searchWrap: {
     backgroundColor: '#FFFFFF',
     borderRadius: 999,
@@ -212,39 +247,6 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     overflow: 'hidden',
   },
-  postHeader: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  postHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  shopDot: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#EEF3FF',
-    borderWidth: 1,
-    borderColor: '#DCE3FF',
-  },
-  postHeaderText: {
-    gap: 1,
-  },
-  postTitle: {
-    color: '#0B0B0F',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
-  },
-  postSubTitle: {
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
-  },
   mediaWrap: {
     position: 'relative',
   },
@@ -268,8 +270,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   postBody: {
-    padding: 14,
-    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 12,
+    gap: 6,
   },
   postDescription: {
     color: '#4A4A4A',
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
   },
   postPrice: {
     color: '#0B0B0F',
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Nunito_700Bold',
   },
 });
