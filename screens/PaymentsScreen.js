@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -56,7 +56,7 @@ export default function PaymentsScreen({ onBack = () => {} }) {
 
           <View style={styles.sectionCard}>
             <View style={styles.sectionRow}>
-              <Ionicons name="calendar-outline" size={22} color={DARK} />
+              <MaterialCommunityIcons name="credit-card-sync-outline" size={24} color={DARK} />
               <View style={styles.sectionMain}>
                 <Text style={styles.sectionTitle}>Semester subscriptions</Text>
                 <Text style={styles.sectionBody}>Pay KSh 50 (or more) per semester to help keep the club running.</Text>
@@ -66,7 +66,7 @@ export default function PaymentsScreen({ onBack = () => {} }) {
 
           <View style={styles.sectionCard}>
             <View style={styles.sectionRow}>
-              <Ionicons name="heart-outline" size={22} color={DARK} />
+              <MaterialCommunityIcons name="hand-coin" size={24} color={DARK} />
               <View style={styles.sectionMain}>
                 <Text style={styles.sectionTitle}>Donate</Text>
                 <Text style={styles.sectionBody}>Support student-led projects, events, and community growth at EUCOSSA.</Text>
