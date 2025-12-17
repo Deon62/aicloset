@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Animated, Alert, Platform, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -76,7 +76,6 @@ function AppContent() {
   }));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
-  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const addToCalendar = async (event) => {
     try {
@@ -168,159 +167,145 @@ function AppContent() {
     return acc;
   }, {});
 
-  const renderTab = () => {
-    switch (currentTab) {
-      case 'home':
-        if (homeOverlay === 'notifications') {
-          return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
-        }
-        return (
-          <HomeScreen
-            onOpenNotifications={() => setHomeOverlay('notifications')}
-            onOpenProfile={() => {
-              setHomeOverlay(null);
-              setCurrentTab('profile');
-            }}
-          />
-        );
-      case 'events':
-        if (showPastEvents) {
-          return <PastEventsScreen onBack={() => setShowPastEvents(false)} />;
-        }
-        if (activeEvent?.id) {
-          return (
-            <EventDetailsScreen
-              event={activeEvent}
-              onBack={() => setActiveEvent(null)}
-              onRegister={() => setActiveEvent(null)}
-              onAddToCalendar={addToCalendar}
-            />
-          );
-        }
-        return (
-          <EventsScreen
-            onOpenPastEvents={() => setShowPastEvents(true)}
-            onOpenEvent={(event) => setActiveEvent(event)}
-          />
-        );
-      case 'shop':
-        if (shopOverlay === 'notifications') {
-          return (
-            <NotificationsScreen
-              onBack={() => setShopOverlay(null)}
-            />
-          );
-        }
-        if (shopOverlay === 'cart') {
-          return (
-            <CartScreen
-              likedIds={likedIds}
-              cartIds={cartIds}
-              onToggleLiked={toggleLiked}
-              onToggleCart={toggleCart}
-              onBack={() => setShopOverlay(null)}
-              onViewDetails={(product) => {
-                setActiveProduct(product);
-                setShopOverlay('product');
-              }}
-            />
-          );
-        }
-        if (shopOverlay === 'product') {
-          return (
-            <ProductDetailScreen
-              product={activeProduct}
-              onBack={() => {
-                setShopOverlay('cart');
-                setActiveProduct(null);
-              }}
-              onCheckout={() => {
-                setShopOverlay('cart');
-                setActiveProduct(null);
-              }}
-              onUpdate={() => {
-                setShopOverlay('cart');
-                setActiveProduct(null);
-              }}
-            />
-          );
-        }
-        return (
-          <MarketplaceScreen
-            likedIds={likedIds}
-            cartIds={cartIds}
-            onToggleLiked={toggleLiked}
-            onToggleCart={toggleCart}
-            onOpenCart={() => setShopOverlay('cart')}
-          />
-        );
-      case 'community':
-        if (communityOverlay === 'conversation' && activeCommunity?.id) {
-          const communityId = activeCommunity.id;
-          return (
-            <CommunityConversationScreen
-              community={activeCommunity}
-              posts={postsByCommunity?.[communityId] || []}
-              isJoined={joinedCommunityIds.has(communityId)}
-              onJoin={() => toggleJoinCommunity(communityId)}
-              onBack={() => {
-                setCommunityOverlay(null);
-                setActiveCommunity(null);
-              }}
-              onAddPost={(text) => addCommunityPost(communityId, text)}
-            />
-          );
-        }
-        return (
-          <CommunityScreen
-            joinedIds={joinedCommunityIds}
-            onToggleJoin={toggleJoinCommunity}
-            postCounts={postCountsByCommunity}
-            onOpenCommunity={(community) => {
-              setActiveCommunity(community);
-              setCommunityOverlay('conversation');
-            }}
-          />
-        );
-      case 'profile':
-        if (profileOverlay === 'info') {
-          return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} />;
-        }
-        if (profileOverlay === 'settings') {
-          return <SettingsScreen onBack={() => setProfileOverlay(null)} />;
-        }
-        return (
-          <ProfileScreen
-            onOpenProfileInfo={() => setProfileOverlay('info')}
-            onOpenSettings={() => setProfileOverlay('settings')}
-            onLogout={() => {
-              setCurrentTab('home');
-              setShowLanding(false);
-              setShowOnboarding(true);
-              setShowPastEvents(false);
-              setActiveEvent(null);
-              setHomeOverlay(null);
-              setShopOverlay(null);
-              setActiveProduct(null);
-              setCommunityOverlay(null);
-              setActiveCommunity(null);
-              setProfileOverlay(null);
-            }}
-          />
-        );
-      default:
-        return <HomeScreen />;
+  const renderHomeStack = () => {
+    if (homeOverlay === 'notifications') {
+      return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
     }
+    return (
+      <HomeScreen
+        onOpenNotifications={() => setHomeOverlay('notifications')}
+        onOpenProfile={() => {
+          setHomeOverlay(null);
+          setCurrentTab('profile');
+        }}
+      />
+    );
   };
 
-  useEffect(() => {
-    fadeAnim.setValue(0.85);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 180,
-      useNativeDriver: true,
-    }).start();
-  }, [currentTab, fadeAnim]);
+  const renderEventsStack = () => {
+    if (showPastEvents) {
+      return <PastEventsScreen onBack={() => setShowPastEvents(false)} />;
+    }
+    if (activeEvent?.id) {
+      return (
+        <EventDetailsScreen
+          event={activeEvent}
+          onBack={() => setActiveEvent(null)}
+          onRegister={() => setActiveEvent(null)}
+          onAddToCalendar={addToCalendar}
+        />
+      );
+    }
+    return <EventsScreen onOpenPastEvents={() => setShowPastEvents(true)} onOpenEvent={(event) => setActiveEvent(event)} />;
+  };
+
+  const renderShopStack = () => {
+    if (shopOverlay === 'notifications') {
+      return <NotificationsScreen onBack={() => setShopOverlay(null)} />;
+    }
+    if (shopOverlay === 'cart') {
+      return (
+        <CartScreen
+          likedIds={likedIds}
+          cartIds={cartIds}
+          onToggleLiked={toggleLiked}
+          onToggleCart={toggleCart}
+          onBack={() => setShopOverlay(null)}
+          onViewDetails={(product) => {
+            setActiveProduct(product);
+            setShopOverlay('product');
+          }}
+        />
+      );
+    }
+    if (shopOverlay === 'product') {
+      return (
+        <ProductDetailScreen
+          product={activeProduct}
+          onBack={() => {
+            setShopOverlay('cart');
+            setActiveProduct(null);
+          }}
+          onCheckout={() => {
+            setShopOverlay('cart');
+            setActiveProduct(null);
+          }}
+          onUpdate={() => {
+            setShopOverlay('cart');
+            setActiveProduct(null);
+          }}
+        />
+      );
+    }
+    return (
+      <MarketplaceScreen
+        likedIds={likedIds}
+        cartIds={cartIds}
+        onToggleLiked={toggleLiked}
+        onToggleCart={toggleCart}
+        onOpenCart={() => setShopOverlay('cart')}
+      />
+    );
+  };
+
+  const renderCommunityStack = () => {
+    if (communityOverlay === 'conversation' && activeCommunity?.id) {
+      const communityId = activeCommunity.id;
+      return (
+        <CommunityConversationScreen
+          community={activeCommunity}
+          posts={postsByCommunity?.[communityId] || []}
+          isJoined={joinedCommunityIds.has(communityId)}
+          onJoin={() => toggleJoinCommunity(communityId)}
+          onBack={() => {
+            setCommunityOverlay(null);
+            setActiveCommunity(null);
+          }}
+          onAddPost={(text) => addCommunityPost(communityId, text)}
+        />
+      );
+    }
+
+    return (
+      <CommunityScreen
+        joinedIds={joinedCommunityIds}
+        onToggleJoin={toggleJoinCommunity}
+        postCounts={postCountsByCommunity}
+        onOpenCommunity={(community) => {
+          setActiveCommunity(community);
+          setCommunityOverlay('conversation');
+        }}
+      />
+    );
+  };
+
+  const renderProfileStack = () => {
+    if (profileOverlay === 'info') {
+      return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} />;
+    }
+    if (profileOverlay === 'settings') {
+      return <SettingsScreen onBack={() => setProfileOverlay(null)} />;
+    }
+    return (
+      <ProfileScreen
+        onOpenProfileInfo={() => setProfileOverlay('info')}
+        onOpenSettings={() => setProfileOverlay('settings')}
+        onLogout={() => {
+          setCurrentTab('home');
+          setShowLanding(false);
+          setShowOnboarding(true);
+          setShowPastEvents(false);
+          setActiveEvent(null);
+          setHomeOverlay(null);
+          setShopOverlay(null);
+          setActiveProduct(null);
+          setCommunityOverlay(null);
+          setActiveCommunity(null);
+          setProfileOverlay(null);
+        }}
+      />
+    );
+  };
 
   if (showOnboarding) {
     return (
@@ -358,9 +343,21 @@ function AppContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-          <Animated.View style={{ flex: 1, opacity: fadeAnim }} key={currentTab}>
-            {renderTab()}
-          </Animated.View>
+          <View style={[styles.scene, currentTab === 'home' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'home' ? 'auto' : 'none'}>
+            {renderHomeStack()}
+          </View>
+          <View style={[styles.scene, currentTab === 'events' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'events' ? 'auto' : 'none'}>
+            {renderEventsStack()}
+          </View>
+          <View style={[styles.scene, currentTab === 'shop' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'shop' ? 'auto' : 'none'}>
+            {renderShopStack()}
+          </View>
+          <View style={[styles.scene, currentTab === 'community' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'community' ? 'auto' : 'none'}>
+            {renderCommunityStack()}
+          </View>
+          <View style={[styles.scene, currentTab === 'profile' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'profile' ? 'auto' : 'none'}>
+            {renderProfileStack()}
+          </View>
         </View>
         {!((
           currentTab === 'community' && communityOverlay === 'conversation'
@@ -384,6 +381,22 @@ function AppContent() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = {
+  scene: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  sceneActive: {
+    opacity: 1,
+  },
+  sceneHidden: {
+    opacity: 0,
+  },
+};
 
 // Main App Component with Auth Provider
 export default function App() {

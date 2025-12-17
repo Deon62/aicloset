@@ -145,32 +145,26 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
           >
             <Image source={event.image} style={styles.eventHeroImage} resizeMode="cover" />
             <View style={styles.eventInfo}>
-              <Text style={styles.eventWhen}>
-                {event?.startAt
-                  ? new Date(event.startAt).toLocaleString(undefined, {
-                      weekday: 'short',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                    })
-                  : event.date}
-              </Text>
               <Text style={styles.cardHeadline}>{event.title}</Text>
-              <Text style={styles.eventDescription}>{event.description}</Text>
 
               <View style={styles.eventMetaList}>
                 <View style={styles.eventMetaRow}>
                   <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.date}</Text>
+                  <Text style={styles.eventMetaText}>
+                    {event?.startAt
+                      ? new Date(event.startAt).toLocaleString(undefined, {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })
+                      : event.date}
+                  </Text>
                 </View>
                 <View style={styles.eventMetaRow}>
                   <Ionicons name="location-outline" size={16} color="#5A5A5A" />
                   <Text style={styles.eventMetaText}>{event.location}</Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.price}</Text>
                 </View>
               </View>
             </View>
@@ -296,28 +290,15 @@ const styles = StyleSheet.create({
   },
   eventHeroImage: {
     width: '100%',
-    height: 145,
+    height: 280,
     backgroundColor: '#E5E5E5',
   },
   eventInfo: {
     padding: 14,
-    gap: 5,
-  },
-  eventWhen: {
-    color: '#0B0B0F',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
-  },
-  eventDescription: {
-    color: '#4A4A4A',
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: 'Nunito_400Regular',
-    marginTop: 2,
+    gap: 10,
   },
   eventMetaList: {
-    marginTop: 8,
-    gap: 6,
+    gap: 8,
   },
   eventMetaRow: {
     flexDirection: 'row',
