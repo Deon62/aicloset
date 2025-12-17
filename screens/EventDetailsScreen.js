@@ -133,11 +133,14 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
               pagingEnabled
               showsHorizontalScrollIndicator={false}
               keyExtractor={(_, idx) => `${event?.id || 'event'}-img-${idx}`}
-              renderItem={({ item }) => (
-                <View style={[styles.heroSlide, { width, height: HERO_HEIGHT }]}>
-                  <Image source={item} style={[styles.heroImage, { height: HERO_HEIGHT }]} resizeMode="cover" />
-                </View>
-              )}
+              renderItem={({ item }) => {
+                const source = typeof item === 'string' ? { uri: item } : item;
+                return (
+                  <View style={[styles.heroSlide, { width, height: HERO_HEIGHT }]}>
+                    <Image source={source} style={[styles.heroImage, { height: HERO_HEIGHT }]} resizeMode="cover" />
+                  </View>
+                );
+              }}
               onMomentumScrollEnd={(e) => {
                 const x = e.nativeEvent.contentOffset.x;
                 const idx = Math.round(x / width);

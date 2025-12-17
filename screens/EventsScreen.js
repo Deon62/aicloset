@@ -14,32 +14,25 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
   const events = useMemo(
     () => [
       {
-        id: 'web-basics',
-        title: 'Workshop: Web Development Basics',
-        description: 'Hands-on session covering HTML, CSS, and JavaScript fundamentals.',
-        date: 'Friday · 3:30 PM',
-        startAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(),
-        endAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 60 * 90).toISOString(),
-        location: 'Computer Lab',
-        price: 'Free',
-        image: require('../assets/tech.png'),
-        images: [require('../assets/tech.png'), require('../assets/tech.png')],
-        requirements: ['Laptop (recommended)', 'Basic HTML knowledge', 'Notebook & pen'],
-        venueHint: 'Egerton University · Computer Lab (Main Campus)',
-      },
-      {
-        id: 'git-github',
-        title: 'Hackathon Prep: Git + GitHub',
-        description: 'Learn collaboration workflows: branches, PRs, and code reviews.',
-        date: 'Next Wednesday · 4:00 PM',
-        startAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
-        endAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 + 1000 * 60 * 90).toISOString(),
-        location: 'ICT Lab',
-        price: 'Free',
-        image: require('../assets/tech.png'),
-        images: [require('../assets/tech.png'), require('../assets/tech.png')],
-        requirements: ['Laptop', 'Git installed', 'GitHub account'],
-        venueHint: 'Egerton University · ICT Lab',
+        id: 'hack-egerton',
+        title: 'Hack Egerton',
+        description:
+          'Hack Egerton is a hybrid innovation sprint where builders ship real solutions in AI, blockchain, and hardware. The virtual phase runs from Jan 1 to Feb 25 (mentorship, team formation, online challenges), followed by an in-person finale from Feb 26 to Feb 28 at Arc Hotel, Egerton. Come with ideas, leave with a demo—and a network.',
+        date: 'Jan 1 – Feb 25 (Virtual) · Feb 26 – Feb 28 (In-person)',
+        startAt: new Date('2026-01-01T09:00:00').toISOString(),
+        endAt: new Date('2026-02-28T18:00:00').toISOString(),
+        location: 'Arc Hotel, Egerton',
+        price: 'KSh 300',
+        image: {
+          uri: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png',
+        },
+        images: [
+          {
+            uri: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png',
+          },
+        ],
+        requirements: ['Laptop', 'Internet for virtual phase', 'Team spirit'],
+        venueHint: 'Hybrid: Virtual (Jan 1 – Feb 25) · In-person (Feb 26 – Feb 28) at Arc Hotel, Egerton',
       },
     ],
     []
@@ -143,7 +136,15 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
             activeOpacity={0.9}
             onPress={() => onOpenEvent(event)}
           >
-            <Image source={event.image} style={styles.eventHeroImage} resizeMode="cover" />
+            <View style={styles.eventHeroWrap}>
+              <Image
+                source={event.image}
+                style={styles.eventHeroBlur}
+                resizeMode="cover"
+                blurRadius={18}
+              />
+              <Image source={event.image} style={styles.eventHeroImage} resizeMode="contain" />
+            </View>
             <View style={styles.eventInfo}>
               <Text style={styles.cardHeadline}>{event.title}</Text>
 
@@ -288,10 +289,24 @@ const styles = StyleSheet.create({
     padding: 0,
     overflow: 'hidden',
   },
+  eventHeroWrap: {
+    width: '100%',
+    height: 360,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  eventHeroBlur: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    transform: [{ scale: 1.08 }],
+  },
   eventHeroImage: {
     width: '100%',
-    height: 280,
-    backgroundColor: '#E5E5E5',
+    height: '100%',
+    backgroundColor: 'transparent',
   },
   eventInfo: {
     padding: 14,

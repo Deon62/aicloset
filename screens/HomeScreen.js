@@ -14,11 +14,13 @@ const MOCK_YEAR = 'Year 2';
 const MOCK_BIO = 'Interested in building web apps and joining hackathons.';
 const MOCK_GITHUB = 'deon62';
 
-const EVENT_TITLE = 'Workshop: Web Development Basics';
-const EVENT_DESCRIPTION = 'Hands-on session covering HTML, CSS, and JavaScript fundamentals.';
-const EVENT_DATE = 'Friday · 3:30 PM';
-const EVENT_LOCATION = 'Computer Lab';
-const EVENT_PRICE = 'Free';
+const EVENT_TITLE = 'Hack Egerton';
+const EVENT_DESCRIPTION =
+  'A hybrid innovation sprint focused on AI, blockchain, and hardware. Virtual phase runs Jan 1–Feb 25 (mentorship + online challenges), with an in-person finale Feb 26–28 at Arc Hotel, Egerton.';
+const EVENT_DATE = 'Jan 1 – Feb 25 (Virtual) · Feb 26 – Feb 28 (In-person)';
+const EVENT_LOCATION = 'Arc Hotel, Egerton';
+const EVENT_PRICE = 'KSh 300';
+const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png';
 
 export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfile = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
@@ -96,24 +98,34 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
         </TouchableOpacity>
 
         <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
-          <Image source={require('../assets/tech.png')} style={styles.eventHeroImage} resizeMode="cover" />
-          <View style={styles.eventInfo}>
-            <Text style={styles.cardTitle}>Next event</Text>
-            <Text style={styles.cardHeadline}>{EVENT_TITLE}</Text>
-            <Text style={styles.eventDescription}>{EVENT_DESCRIPTION}</Text>
+          <View style={styles.eventRow}>
+            <View style={styles.eventPosterWrap}>
+              <Image source={{ uri: EVENT_POSTER }} style={styles.eventPosterBlur} resizeMode="cover" blurRadius={14} />
+              <Image source={{ uri: EVENT_POSTER }} style={styles.eventPoster} resizeMode="contain" />
+            </View>
+            <View style={styles.eventMain}>
+              <Text style={styles.cardTitle}>Next event</Text>
+              <Text style={styles.cardHeadline}>{EVENT_TITLE}</Text>
 
-            <View style={styles.eventMetaList}>
-              <View style={styles.eventMetaRow}>
-                <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                <Text style={styles.eventMetaText}>{EVENT_DATE}</Text>
-              </View>
-              <View style={styles.eventMetaRow}>
-                <Ionicons name="location-outline" size={16} color="#5A5A5A" />
-                <Text style={styles.eventMetaText}>{EVENT_LOCATION}</Text>
-              </View>
-              <View style={styles.eventMetaRow}>
-                <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                <Text style={styles.eventMetaText}>{EVENT_PRICE}</Text>
+              <View style={styles.eventMetaList}>
+                <View style={styles.eventMetaRow}>
+                  <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                  <Text style={styles.eventMetaText} numberOfLines={1}>
+                    {EVENT_DATE}
+                  </Text>
+                </View>
+                <View style={styles.eventMetaRow}>
+                  <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                  <Text style={styles.eventMetaText} numberOfLines={1}>
+                    {EVENT_LOCATION}
+                  </Text>
+                </View>
+                <View style={styles.eventMetaRow}>
+                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                  <Text style={styles.eventMetaText} numberOfLines={1}>
+                    {EVENT_PRICE}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -317,21 +329,35 @@ const styles = StyleSheet.create({
     padding: 0,
     overflow: 'hidden',
   },
-  eventHeroImage: {
+  eventRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  eventPosterWrap: {
+    width: 120,
+    height: 150,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  eventPosterBlur: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    transform: [{ scale: 1.08 }],
+  },
+  eventPoster: {
     width: '100%',
-    height: 145,
-    backgroundColor: '#E5E5E5',
+    height: '100%',
+    backgroundColor: 'transparent',
   },
-  eventInfo: {
-    padding: 14,
-    gap: 5,
-  },
-  eventDescription: {
-    color: '#4A4A4A',
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: 'Nunito_400Regular',
-    marginTop: 2,
+  eventMain: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingRight: 14,
+    gap: 6,
   },
   eventMetaList: {
     marginTop: 8,
