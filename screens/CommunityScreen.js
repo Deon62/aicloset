@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function CommunityScreen() {
+export default function CommunityScreen({
+  joinedIds = new Set(),
+  onToggleJoin = () => {},
+  onOpenCommunity = () => {},
+}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,17 +76,6 @@ export default function CommunityScreen() {
     []
   );
 
-  const [joined, setJoined] = useState(() => new Set());
-
-  const toggleJoin = (id) => {
-    setJoined((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
   const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ id: `skeleton-${i}` })), []);
 
   return (
@@ -110,11 +103,16 @@ export default function CommunityScreen() {
                 </View>
               ))
             : communities.map((c, idx) => {
-            const isJoined = joined.has(c.id);
+            const isJoined = joinedIds.has(c.id);
             const isLast = idx === communities.length - 1;
 
             return (
-              <View key={c.id} style={[styles.row, isLast && styles.rowLast]}>
+              <TouchableOpacity
+                key={c.id}
+                style={[styles.row, isLast && styles.rowLast]}
+                activeOpacity={0.9}
+                onPress={() => onOpenCommunity(c)}
+              >
                 <View style={styles.rowTop}>
                   <View style={styles.avatar}>
                     <Image source={{ uri: c.imageUrl }} style={styles.avatarImage} />
@@ -129,14 +127,17 @@ export default function CommunityScreen() {
                   <TouchableOpacity
                     style={[styles.joinChip, isJoined && styles.joinChipJoined]}
                     activeOpacity={0.9}
-                    onPress={() => toggleJoin(c.id)}
+                    onPress={(e) => {
+                      e?.stopPropagation?.();
+                      onToggleJoin(c.id);
+                    }}
                   >
                     <Text style={[styles.joinChipText, isJoined && styles.joinChipTextJoined]}>
                       {isJoined ? 'Joined' : 'Join'}
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
