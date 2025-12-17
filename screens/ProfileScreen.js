@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
   const [course, setCourse] = useState('');
   const [year, setYear] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -119,16 +120,50 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
           style={[styles.linkRow, styles.logoutRow]}
           activeOpacity={0.85}
           onPress={() => {
-            Alert.alert('Logout', 'Are you sure you want to logout?', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Logout', style: 'destructive', onPress: logout },
-            ]);
+            setShowLogoutModal(true);
           }}
           disabled={saving}
         >
           <Text style={styles.logoutLabel}>{saving ? 'Saving...' : 'Logout'}</Text>
           <Ionicons name="log-out-outline" size={18} color="#D11A2A" />
         </TouchableOpacity>
+
+        <Modal
+          visible={showLogoutModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowLogoutModal(false)}
+        >
+          <Pressable style={styles.modalBackdrop} onPress={() => setShowLogoutModal(false)}>
+            <Pressable style={styles.modalCard} onPress={() => {}}>
+              <Text style={styles.modalTitle}>Logout</Text>
+              <Text style={styles.modalText}>Are you sure you want to logout?</Text>
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  style={styles.modalBtn}
+                  activeOpacity={0.85}
+                  onPress={() => setShowLogoutModal(false)}
+                  disabled={saving}
+                >
+                  <Text style={styles.modalBtnText}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.modalBtn, styles.modalBtnDanger]}
+                  activeOpacity={0.85}
+                  onPress={async () => {
+                    setShowLogoutModal(false);
+                    await logout();
+                  }}
+                  disabled={saving}
+                >
+                  <Text style={[styles.modalBtnText, styles.modalBtnDangerText]}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
 
       </View>
     </SafeAreaView>
@@ -222,5 +257,60 @@ const styles = StyleSheet.create({
     color: '#D11A2A',
     fontSize: 16,
     fontFamily: 'Nunito_700Bold',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+  },
+  modalCard: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+  },
+  modalTitle: {
+    color: '#0B0B0F',
+    fontSize: 18,
+    fontFamily: 'Nunito_700Bold',
+  },
+  modalText: {
+    marginTop: 8,
+    color: '#4A4A4A',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Nunito_400Regular',
+  },
+  modalActions: {
+    marginTop: 16,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  modalBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBtnText: {
+    color: '#0B0B0F',
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+  },
+  modalBtnDanger: {
+    borderColor: '#D11A2A',
+    backgroundColor: '#D11A2A',
+  },
+  modalBtnDangerText: {
+    color: '#FFFFFF',
   },
 });
