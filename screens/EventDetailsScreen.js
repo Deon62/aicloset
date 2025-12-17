@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Alert, FlatList, StatusBar, Modal } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Alert, FlatList, StatusBar, Modal, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -13,6 +13,13 @@ try {
   WebView = null;
 }
 
+let NavigationBar = null;
+try {
+  NavigationBar = require('expo-navigation-bar');
+} catch (e) {
+  NavigationBar = null;
+}
+
 export default function EventDetailsScreen({ event, onBack = () => {}, onRegister = () => {}, onAddToCalendar = () => {} }) {
   const insets = useSafeAreaInsets();
   const width = Dimensions.get('window').width;
@@ -21,6 +28,27 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
   const [activeIndex, setActiveIndex] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const run = async () => {
+      if (!mapOpen) return;
+      if (Platform.OS === 'android' && NavigationBar?.setVisibilityAsync) {
+        try {
+          await NavigationBar.setVisibilityAsync('hidden');
+        } catch (e) {
+          // ignore
+        }
+      }
+    };
+
+    run();
+
+    return () => {
+      if (Platform.OS === 'android' && NavigationBar?.setVisibilityAsync) {
+        NavigationBar.setVisibilityAsync('visible').catch(() => {});
+      }
+    };
+  }, [mapOpen]);
 
   const requirements = useMemo(() => {
     const list = event?.requirements;
@@ -190,11 +218,22 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
           </View>
         </ScrollView>
 
-        <Modal visible={mapOpen} animationType="slide" onRequestClose={() => setMapOpen(false)}>
-          <SafeAreaView style={styles.mapModalSafe}>
+        <Modal
+          visible={mapOpen}
+          animationType="slide"
+          onRequestClose={() => setMapOpen(false)}
+          presentationStyle="fullScreen"
+          statusBarTranslucent
+        >
+          <View style={styles.mapModalSafe}>
+            <StatusBar hidden />
             {WebView ? (
               <View style={styles.mapModalBody}>
-                <TouchableOpacity style={[styles.mapModalClose, { top: (insets.top || 0) + 12 }]} activeOpacity={0.9} onPress={() => setMapOpen(false)}>
+                <TouchableOpacity
+                  style={[styles.mapModalClose, { top: (insets.top || 0) + 12 }]}
+                  activeOpacity={0.9}
+                  onPress={() => setMapOpen(false)}
+                >
                   <Ionicons name="close" size={22} color={DARK} />
                 </TouchableOpacity>
                 <WebView originWhitelist={['*']} source={{ html: leafletHtml }} style={styles.mapModalWeb} />
@@ -205,7 +244,7 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
                 <Text style={styles.mapOverlayText}>Install react-native-webview to enable the map</Text>
               </View>
             )}
-          </SafeAreaView>
+          </View>
         </Modal>
 
         <View style={styles.stickyBar}>
@@ -415,7 +454,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   mapModalWeb: {
-    flex: 1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     backgroundColor: '#FFFFFF',
   },
   stickyBar: {
