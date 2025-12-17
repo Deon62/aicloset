@@ -64,7 +64,7 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>Hello {name || MOCK_NAME}</Text>
-          <Text style={styles.subtitle}>welcome to Egerton Computer Science Student Association Club</Text>
+          <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
         </View>
 
         <TouchableOpacity style={[styles.card, styles.profileCard]} activeOpacity={0.85} onPress={onOpenProfile}>

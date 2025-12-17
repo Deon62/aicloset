@@ -3,10 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LandingSvg from '../assets/icons/landing.svg';
 
+const BRAND_BLUE = '#1B56FD';
+
 export default function LandingPage({ onContinue = () => {} }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <View style={styles.landingHeader}>
+          <Text style={styles.landingName}>Egerton University Computer Science Students Association</Text>
+          <Text style={styles.landingTagline}>Where dreaming girnomous is the only rule to success.</Text>
+        </View>
         <View style={styles.hero}>
           <LandingSvg width={320} height={320} />
         </View>
@@ -41,8 +47,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  landingHeader: {
+    alignItems: 'center',
+    gap: 6,
+    paddingTop: 18,
+  },
+  landingName: {
+    color: '#0B0B0F',
+    fontSize: 18,
+    lineHeight: 24,
+    fontFamily: 'Nunito_700Bold',
+    textAlign: 'center',
+  },
+  landingTagline: {
+    color: '#1D1D1D',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_700Bold',
+    textAlign: 'center',
+  },
   primaryButton: {
-    backgroundColor: '#1B56FD',
+    backgroundColor: BRAND_BLUE,
     paddingVertical: 16,
     paddingHorizontal: 12,
     borderRadius: 24,
