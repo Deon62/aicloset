@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import NotsSvg from '../assets/icons/nots.svg';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -62,7 +63,7 @@ export default function NotificationsScreen({ onBack = () => {} }) {
 
         {data.length === 0 ? (
           <View style={styles.emptyWrap}>
-            <Ionicons name="notifications-outline" size={86} color={BRAND_BLUE} />
+            <NotsSvg width={240} height={240} />
             <Text style={styles.emptyTitle}>No notifications</Text>
             <Text style={styles.emptyText}>You will see updates here.</Text>
           </View>

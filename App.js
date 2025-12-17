@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Animated, Alert, Platform } from 'react-native';
+import { Animated, Alert, Platform, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -314,7 +314,7 @@ function AppContent() {
   };
 
   useEffect(() => {
-    fadeAnim.setValue(0);
+    fadeAnim.setValue(0.85);
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 180,
@@ -357,9 +357,11 @@ function AppContent() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Animated.View style={{ flex: 1, opacity: fadeAnim, backgroundColor: '#FFFFFF' }} key={currentTab}>
-          {renderTab()}
-        </Animated.View>
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+          <Animated.View style={{ flex: 1, opacity: fadeAnim }} key={currentTab}>
+            {renderTab()}
+          </Animated.View>
+        </View>
         {!((
           currentTab === 'community' && communityOverlay === 'conversation'
         ) || (
