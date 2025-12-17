@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,7 +100,7 @@ export default function ProfileInfoScreen({ onBack = () => {} }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.headerBar}>
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
             <Ionicons name="arrow-back" size={20} color={DARK} />
@@ -123,7 +123,11 @@ export default function ProfileInfoScreen({ onBack = () => {} }) {
           </TouchableOpacity>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
           {renderField({
             label: 'Name',
             value: name,
@@ -165,7 +169,7 @@ export default function ProfileInfoScreen({ onBack = () => {} }) {
             inputProps: { autoCapitalize: 'none', autoCorrect: false },
           })}
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 24,
+    paddingBottom: 140,
     gap: 14,
   },
   fieldWrap: {
