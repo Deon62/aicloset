@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Animated } from 'react-native';
+import { Animated, Alert, Platform } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -26,6 +26,13 @@ import BottomNavigation from './components/BottomNavigation';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
+
+let ExpoCalendar = null;
+try {
+  ExpoCalendar = require('expo-calendar');
+} catch (e) {
+  ExpoCalendar = null;
+}
 
 function AppContent() {
   const [showOnboarding, setShowOnboarding] = useState(true);
@@ -70,6 +77,44 @@ function AppContent() {
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const addToCalendar = async (event) => {
+    try {
+      if (!ExpoCalendar) {
+        Alert.alert('Add to calendar', 'Calendar module is not installed. Run: npx expo install expo-calendar');
+        return;
+      }
+
+      const startDate = event?.startAt ? new Date(event.startAt) : new Date(Date.now() + 60 * 60 * 1000);
+      const endDate = event?.endAt ? new Date(event.endAt) : new Date(startDate.getTime() + 90 * 60 * 1000);
+
+      const notesParts = [];
+      if (event?.venueHint) notesParts.push(event.venueHint);
+      if (Array.isArray(event?.requirements) && event.requirements.length > 0) {
+        notesParts.push(`Requirements: ${event.requirements.join(', ')}`);
+      }
+
+      const result = await ExpoCalendar.createEventInCalendarAsync(
+        {
+          title: event?.title || 'EUCOSSA Event',
+          startDate,
+          endDate,
+          location: event?.location || 'Egerton University',
+          notes: notesParts.join('\n'),
+          timeZone: undefined,
+        },
+        {}
+      );
+
+      if (result?.action === 'saved') {
+        Alert.alert('Calendar', 'Event saved.');
+        setActiveEvent(null);
+      }
+    } catch (e) {
+      Alert.alert('Add to calendar', 'Failed to add event to calendar.');
+      console.warn('Failed to add to calendar', e);
+    }
+  };
 
   const toggleLiked = (id) => {
     setLikedIds((prev) => {
@@ -148,7 +193,7 @@ function AppContent() {
               event={activeEvent}
               onBack={() => setActiveEvent(null)}
               onRegister={() => setActiveEvent(null)}
-              onAddToCalendar={() => setActiveEvent(null)}
+              onAddToCalendar={addToCalendar}
             />
           );
         }
