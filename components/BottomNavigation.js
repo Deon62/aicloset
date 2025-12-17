@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
+const BRAND_BLUE = '#1B56FD';
+
 const tabs = [
   { id: 'home', label: 'Home', icon: 'home-outline', iconActive: 'home' },
   { id: 'events', label: 'Events', icon: 'calendar-outline', iconActive: 'calendar' },
@@ -28,7 +30,7 @@ export default function BottomNavigation({ currentTab, onTabChange }) {
             <Ionicons
               name={isActive ? tab.iconActive : tab.icon}
               size={22}
-              color={isActive ? '#0B0B0F' : '#5A5A5A'}
+              color={isActive ? BRAND_BLUE : '#5A5A5A'}
             />
             <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
           </TouchableOpacity>
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
   },
   labelActive: {
-    color: '#5A5A5A',
+    color: BRAND_BLUE,
     fontFamily: 'Nunito_600SemiBold',
   },
 });

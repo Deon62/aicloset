@@ -7,6 +7,7 @@ import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import LandingPage from './screens/LandingPage';
+import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
@@ -19,7 +20,8 @@ SplashScreen.preventAutoHideAsync();
 
 // Main App Content Component with bottom tabs
 function AppContent() {
-  const [showLanding, setShowLanding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -34,7 +36,15 @@ function AppContent() {
       case 'community':
         return <CommunityScreen />;
       case 'profile':
-        return <ProfileScreen />;
+        return (
+          <ProfileScreen
+            onLogout={() => {
+              setCurrentTab('home');
+              setShowLanding(false);
+              setShowOnboarding(true);
+            }}
+          />
+        );
       default:
         return <HomeScreen />;
     }
@@ -49,11 +59,32 @@ function AppContent() {
     }).start();
   }, [currentTab, fadeAnim]);
 
+  if (showOnboarding) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <OnboardingScreen
+            onDone={() => {
+              setShowOnboarding(false);
+              setShowLanding(true);
+            }}
+          />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
   if (showLanding) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <LandingPage onContinue={() => setShowLanding(false)} />
+          <LandingPage
+            onContinue={() => {
+              setShowLanding(false);
+              setCurrentTab('home');
+            }}
+          />
           <StatusBar style="dark" />
         </SafeAreaProvider>
       </GestureHandlerRootView>

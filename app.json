@@ -4,10 +4,10 @@
     "slug": "nimo-loans",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/profile.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/profile.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/profile.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.nimo.app",
@@ -44,7 +44,7 @@
       "backgroundColor": "#0D0D0D"
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/profile.png"
     },
     "sdkVersion": "54.0.0",
     "plugins": [

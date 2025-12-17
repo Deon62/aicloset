@@ -1,97 +1,125 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
-export default function ProfileScreen() {
-  const [nickname, setNickname] = useState('');
+const BRAND_BLUE = '#1B56FD';
+const MOCK_NAME = 'Deon Student';
+const MOCK_COURSE = 'Computer Science';
+
+export default function ProfileScreen({ onLogout = () => {} }) {
+  const [photoUri, setPhotoUri] = useState('');
   const [saving, setSaving] = useState(false);
-  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    const loadNickname = async () => {
+    const loadProfile = async () => {
       try {
-        const stored = await AsyncStorage.getItem('@profile_nickname');
-        if (stored) {
-          setNickname(stored);
-        }
+        const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
+        if (storedPhoto) setPhotoUri(storedPhoto);
       } catch (e) {
-        console.warn('Failed to load nickname', e);
+        console.warn('Failed to load profile', e);
       }
     };
-    loadNickname();
+    loadProfile();
   }, []);
 
-  const saveNickname = async (value) => {
+  const saveProfile = async ({ nextPhotoUri }) => {
     try {
       setSaving(true);
-      await AsyncStorage.setItem('@profile_nickname', value.trim());
+      const writes = [];
+      if (typeof nextPhotoUri === 'string') writes.push(AsyncStorage.setItem('@profile_photo_uri', nextPhotoUri));
+      await Promise.all(writes);
     } catch (e) {
-      console.warn('Failed to save nickname', e);
+      console.warn('Failed to save profile', e);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const pickPhoto = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission?.granted) {
+        Alert.alert('Permission required', 'Please allow access to your photos to upload a profile picture.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.9,
+      });
+
+      if (result.canceled) return;
+
+      const uri = result.assets?.[0]?.uri;
+      if (!uri) return;
+
+      setPhotoUri(uri);
+      saveProfile({ nextPhotoUri: uri });
+    } catch (e) {
+      console.warn('Failed to pick image', e);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['@profile_name', '@profile_course', '@profile_photo_uri']);
+      setPhotoUri('');
+      onLogout();
+    } catch (e) {
+      console.warn('Failed to logout', e);
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
-          <Text style={styles.subtitle}>Your EUCOSSA club profile.</Text>
-          <View style={styles.avatarBlock}>
-            <Image source={require('../assets/profile.png')} style={styles.avatar} />
-            <View style={styles.nicknameRow}>
-              <Text style={styles.headerName}>{nickname || 'Your nickname'}</Text>
-              <TouchableOpacity
-                style={styles.iconButton}
-                activeOpacity={0.8}
-                onPress={() => setEditing((v) => !v)}
-              >
-                <Ionicons name="create-outline" size={18} color="#0B0B0F" />
-              </TouchableOpacity>
-            </View>
-            {editing && (
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter nickname"
-                  placeholderTextColor="#8A8A8A"
-                  value={nickname}
-                  onChangeText={setNickname}
-                  returnKeyType="done"
-                />
-                <TouchableOpacity
-                  style={[styles.saveButton, saving && styles.linkButtonDisabled]}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    saveNickname(nickname);
-                    setEditing(false);
-                  }}
-                  disabled={saving}
-                >
-                  <Text style={styles.saveText}>{saving ? 'Saving' : 'Save'}</Text>
-                </TouchableOpacity>
-              </View>
+        <Text style={styles.title}>Profile</Text>
+
+        <View style={styles.profileHeader}>
+          <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={pickPhoto}>
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarEmpty} />
             )}
-          </View>
+            <View style={styles.cameraBadge}>
+              <Ionicons name="camera" size={16} color="#FFFFFF" />
+            </View>
+          </TouchableOpacity>
+
+          <Text style={styles.nameText}>{MOCK_NAME}</Text>
+          <Text style={styles.courseText}>{MOCK_COURSE}</Text>
         </View>
 
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
-            <Text style={styles.cardTitle}>Role</Text>
-            <Text style={styles.linkText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
-            <Text style={styles.cardTitle}>Interests</Text>
-            <Text style={styles.linkText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
-            <Text style={styles.cardTitle}>Settings</Text>
-            <Text style={styles.linkText}>Edit</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={styles.separator} />
+
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
+          <Text style={styles.linkLabel}>Profile info</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
+          <Text style={styles.linkLabel}>Settings</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.linkRow, styles.logoutRow]}
+          activeOpacity={0.85}
+          onPress={() => {
+            Alert.alert('Logout', 'Are you sure you want to logout?', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Logout', style: 'destructive', onPress: logout },
+            ]);
+          }}
+          disabled={saving}
+        >
+          <Text style={styles.logoutLabel}>{saving ? 'Saving...' : 'Logout'}</Text>
+          <Ionicons name="log-out-outline" size={18} color="#D11A2A" />
+        </TouchableOpacity>
 
       </View>
     </SafeAreaView>
@@ -108,131 +136,82 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 16,
   },
-  header: {
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    gap: 6,
-  },
-  avatarBlock: {
-    alignSelf: 'center',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 12,
-  },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-  },
-  headerText: {
-    flex: 1,
-    gap: 4,
-  },
   title: {
     fontSize: 28,
     color: '#0B0B0F',
     fontFamily: 'Nunito_700Bold',
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#4A4A4A',
-    lineHeight: 22,
-    fontFamily: 'Nunito_400Regular',
-  },
-  headerName: {
-    fontSize: 16,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
-  },
-  nicknameRow: {
-    flexDirection: 'row',
+
+  profileHeader: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
-    marginTop: 6,
-  },
-  nicknameValue: {
-    color: '#0B0B0F',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
-  },
-  iconButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#F2F2F2',
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    paddingTop: 8,
     gap: 8,
-    marginTop: 8,
   },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
+  avatarWrap: {
+    width: 84,
+    height: 84,
+  },
+  avatar: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+  },
+  avatarEmpty: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: '#E5E5E5',
+  },
+  cameraBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: BRAND_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+
+  nameText: {
+    marginTop: 4,
     color: '#0B0B0F',
-    fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#FFFFFF',
-  },
-  saveButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: '#0B0B0F',
-  },
-  linkButtonDisabled: {
-    opacity: 0.6,
-  },
-  saveText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 18,
     fontFamily: 'Nunito_700Bold',
   },
-  card: {
-    backgroundColor: '#F7F7F7',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 16,
-    padding: 16,
-    gap: 12,
+  courseText: {
+    color: '#4A4A4A',
+    fontSize: 14,
+    fontFamily: 'Nunito_600SemiBold',
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
+  separator: {
+    height: 1,
+    backgroundColor: '#E5E5E5',
+    marginTop: 16,
+    marginBottom: 6,
   },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 0,
   },
-  cardTitle: {
+  linkLabel: {
     color: '#0B0B0F',
     fontSize: 16,
     fontFamily: 'Nunito_700Bold',
   },
-  cardText: {
-    color: '#4A4A4A',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+  logoutRow: {
+    marginTop: 4,
   },
-  linkButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: '#0B0B0F',
-  },
-  linkText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+  logoutLabel: {
+    color: '#D11A2A',
+    fontSize: 16,
     fontFamily: 'Nunito_700Bold',
   },
 });
