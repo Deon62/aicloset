@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Alert, FlatList, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Alert, FlatList, StatusBar, Modal } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -19,6 +19,7 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
   const { height: screenHeight } = Dimensions.get('window');
   const HERO_HEIGHT = Math.min(420, Math.floor(screenHeight * 0.42));
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mapOpen, setMapOpen] = useState(false);
   const scrollRef = useRef(null);
 
   const requirements = useMemo(() => {
@@ -170,6 +171,9 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
             {event?.venueHint ? <Text style={styles.venueHint}>{event.venueHint}</Text> : null}
             {WebView ? (
               <View style={styles.mapWrap}>
+                <TouchableOpacity style={styles.mapExpandBtn} activeOpacity={0.9} onPress={() => setMapOpen(true)}>
+                  <Ionicons name="expand-outline" size={18} color={DARK} />
+                </TouchableOpacity>
                 <WebView
                   originWhitelist={['*']}
                   source={{ html: leafletHtml }}
@@ -185,6 +189,24 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
             )}
           </View>
         </ScrollView>
+
+        <Modal visible={mapOpen} animationType="slide" onRequestClose={() => setMapOpen(false)}>
+          <SafeAreaView style={styles.mapModalSafe}>
+            {WebView ? (
+              <View style={styles.mapModalBody}>
+                <TouchableOpacity style={[styles.mapModalClose, { top: (insets.top || 0) + 12 }]} activeOpacity={0.9} onPress={() => setMapOpen(false)}>
+                  <Ionicons name="close" size={22} color={DARK} />
+                </TouchableOpacity>
+                <WebView originWhitelist={['*']} source={{ html: leafletHtml }} style={styles.mapModalWeb} />
+              </View>
+            ) : (
+              <View style={styles.mapFallback}>
+                <Ionicons name="map-outline" size={18} color="#4A4A4A" />
+                <Text style={styles.mapOverlayText}>Install react-native-webview to enable the map</Text>
+              </View>
+            )}
+          </SafeAreaView>
+        </Modal>
 
         <View style={styles.stickyBar}>
           <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.9} onPress={handleAddToCalendar}>
@@ -337,6 +359,20 @@ const styles = StyleSheet.create({
     height: 220,
     backgroundColor: '#FFFFFF',
   },
+  mapExpandBtn: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    zIndex: 5,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   mapWeb: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -356,6 +392,31 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     fontSize: 13,
     fontFamily: 'Nunito_700Bold',
+  },
+  mapModalSafe: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  mapModalClose: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapModalBody: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  mapModalWeb: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   stickyBar: {
     position: 'absolute',
