@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
 
-export default function EventsScreen({ onOpenPastEvents = () => {} }) {
+export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent = () => {} }) {
   const events = useMemo(
     () => [
       {
@@ -16,6 +16,7 @@ export default function EventsScreen({ onOpenPastEvents = () => {} }) {
         location: 'Computer Lab',
         price: 'Free',
         image: require('../assets/tech.png'),
+        images: [require('../assets/tech.png'), require('../assets/tech.png')],
       },
       {
         id: 'git-github',
@@ -25,6 +26,7 @@ export default function EventsScreen({ onOpenPastEvents = () => {} }) {
         location: 'ICT Lab',
         price: 'Free',
         image: require('../assets/tech.png'),
+        images: [require('../assets/tech.png'), require('../assets/tech.png')],
       },
     ],
     []
@@ -50,7 +52,12 @@ export default function EventsScreen({ onOpenPastEvents = () => {} }) {
         </Text>
 
         {events.map((event) => (
-          <View key={event.id} style={[styles.card, styles.cardAccent, styles.eventCard]}>
+          <TouchableOpacity
+            key={event.id}
+            style={[styles.card, styles.cardAccent, styles.eventCard]}
+            activeOpacity={0.9}
+            onPress={() => onOpenEvent(event)}
+          >
             <Image source={event.image} style={styles.eventHeroImage} resizeMode="cover" />
             <View style={styles.eventInfo}>
               <Text style={styles.cardHeadline}>{event.title}</Text>
@@ -71,7 +78,7 @@ export default function EventsScreen({ onOpenPastEvents = () => {} }) {
                 </View>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>

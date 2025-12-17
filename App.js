@@ -12,6 +12,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
+import EventDetailsScreen from './screens/EventDetailsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import CartScreen from './screens/CartScreen';
@@ -31,6 +32,7 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
+  const [activeEvent, setActiveEvent] = useState(null);
   const [homeOverlay, setHomeOverlay] = useState(null); // null | 'notifications'
   const [shopOverlay, setShopOverlay] = useState(null); // null | 'notifications' | 'cart' | 'product'
   const [activeProduct, setActiveProduct] = useState(null);
@@ -137,10 +139,24 @@ function AppContent() {
           />
         );
       case 'events':
-        return showPastEvents ? (
-          <PastEventsScreen onBack={() => setShowPastEvents(false)} />
-        ) : (
-          <EventsScreen onOpenPastEvents={() => setShowPastEvents(true)} />
+        if (showPastEvents) {
+          return <PastEventsScreen onBack={() => setShowPastEvents(false)} />;
+        }
+        if (activeEvent?.id) {
+          return (
+            <EventDetailsScreen
+              event={activeEvent}
+              onBack={() => setActiveEvent(null)}
+              onRegister={() => setActiveEvent(null)}
+              onAddToCalendar={() => setActiveEvent(null)}
+            />
+          );
+        }
+        return (
+          <EventsScreen
+            onOpenPastEvents={() => setShowPastEvents(true)}
+            onOpenEvent={(event) => setActiveEvent(event)}
+          />
         );
       case 'shop':
         if (shopOverlay === 'notifications') {
@@ -237,6 +253,7 @@ function AppContent() {
               setShowLanding(false);
               setShowOnboarding(true);
               setShowPastEvents(false);
+              setActiveEvent(null);
               setHomeOverlay(null);
               setShopOverlay(null);
               setActiveProduct(null);
@@ -304,6 +321,8 @@ function AppContent() {
           currentTab === 'home' && homeOverlay === 'notifications'
         ) || (
           currentTab === 'events' && showPastEvents
+        ) || (
+          currentTab === 'events' && activeEvent?.id
         ) || (
           currentTab === 'shop' && (shopOverlay === 'notifications' || shopOverlay === 'cart' || shopOverlay === 'product')
         ) || (
