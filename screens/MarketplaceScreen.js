@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const BRAND_BLUE = '#1B56FD';
@@ -13,7 +13,6 @@ export default function MarketplaceScreen({
   cartIds = new Set(),
   onToggleLiked = () => {},
   onToggleCart = () => {},
-  onOpenLiked = () => {},
   onOpenCart = () => {},
 }) {
   const { height: windowHeight } = Dimensions.get('window');
@@ -94,7 +93,19 @@ export default function MarketplaceScreen({
               <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={26} color={isLiked ? '#E11D48' : '#FFFFFF'} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
+            <TouchableOpacity
+              style={styles.iconBtn}
+              activeOpacity={0.85}
+              onPress={() => {
+                Share.share({
+                  message: `${item.name}\n${item.price}\n\n${item.description}`,
+                });
+              }}
+            >
+              <Feather name="share-2" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.iconBtn, styles.cartIconBtn]} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
               <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? CART_BRIGHT : '#FFFFFF'} />
             </TouchableOpacity>
           </View>
@@ -111,6 +122,7 @@ export default function MarketplaceScreen({
             </View>
             <Text style={styles.postPrice}>{item.price}</Text>
           </View>
+
         </View>
       </View>
     );
@@ -129,15 +141,6 @@ export default function MarketplaceScreen({
           <View style={styles.headerRow}>
             <Text style={styles.title}>Shop</Text>
             <View style={styles.headerIcons}>
-              <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenLiked}>
-                <Ionicons name="heart-outline" size={28} color={DARK} />
-                {likedIds.size > 0 ? (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{likedIds.size}</Text>
-                  </View>
-                ) : null}
-              </TouchableOpacity>
-
               <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenCart}>
                 <Ionicons name="cart-outline" size={28} color={DARK} />
                 {cartIds.size > 0 ? (
@@ -285,7 +288,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 12,
     bottom: 64,
-    gap: 14,
+    gap: 12,
     alignItems: 'center',
   },
   imageOverlay: {
@@ -317,6 +320,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 0,
+  },
+  cartIconBtn: {
+    marginTop: 10,
   },
   postBody: {
     paddingHorizontal: 16,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +20,7 @@ const EVENT_DATE = 'Friday · 3:30 PM';
 const EVENT_LOCATION = 'Computer Lab';
 const EVENT_PRICE = 'Free';
 
-export default function HomeScreen() {
+export default function HomeScreen({ onOpenNotifications = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
 
   useEffect(() => {
@@ -45,6 +45,10 @@ export default function HomeScreen() {
               <View style={styles.logoDivider} />
               <Image source={require('../assets/eucossa.jpg')} style={styles.logo} resizeMode="contain" />
             </View>
+
+            <TouchableOpacity style={styles.notBtn} activeOpacity={0.85} onPress={onOpenNotifications}>
+              <Ionicons name="notifications-outline" size={26} color={DARK} />
+            </TouchableOpacity>
           </View>
           <Text style={styles.title}>Welcome To Egerton University Computer Science Students Association </Text>
 
@@ -126,6 +130,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  notBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logosRow: {
     flexDirection: 'row',

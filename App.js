@@ -12,7 +12,7 @@ import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
 import MarketplaceScreen from './screens/MarketplaceScreen';
-import LikedItemsScreen from './screens/LikedItemsScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 import CartScreen from './screens/CartScreen';
 import ProductDetailScreen from './screens/ProductDetailScreen';
 import CommunityScreen from './screens/CommunityScreen';
@@ -28,7 +28,8 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
-  const [shopOverlay, setShopOverlay] = useState(null); // null | 'liked' | 'cart' | 'product'
+  const [homeOverlay, setHomeOverlay] = useState(null); // null | 'notifications'
+  const [shopOverlay, setShopOverlay] = useState(null); // null | 'notifications' | 'cart' | 'product'
   const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
   const [activeCommunity, setActiveCommunity] = useState(null);
@@ -119,7 +120,10 @@ function AppContent() {
   const renderTab = () => {
     switch (currentTab) {
       case 'home':
-        return <HomeScreen />;
+        if (homeOverlay === 'notifications') {
+          return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
+        }
+        return <HomeScreen onOpenNotifications={() => setHomeOverlay('notifications')} />;
       case 'events':
         return showPastEvents ? (
           <PastEventsScreen onBack={() => setShowPastEvents(false)} />
@@ -127,13 +131,9 @@ function AppContent() {
           <EventsScreen onOpenPastEvents={() => setShowPastEvents(true)} />
         );
       case 'shop':
-        if (shopOverlay === 'liked') {
+        if (shopOverlay === 'notifications') {
           return (
-            <LikedItemsScreen
-              likedIds={likedIds}
-              cartIds={cartIds}
-              onToggleLiked={toggleLiked}
-              onToggleCart={toggleCart}
+            <NotificationsScreen
               onBack={() => setShopOverlay(null)}
             />
           );
@@ -178,7 +178,6 @@ function AppContent() {
             cartIds={cartIds}
             onToggleLiked={toggleLiked}
             onToggleCart={toggleCart}
-            onOpenLiked={() => setShopOverlay('liked')}
             onOpenCart={() => setShopOverlay('cart')}
           />
         );
@@ -218,6 +217,7 @@ function AppContent() {
               setShowLanding(false);
               setShowOnboarding(true);
               setShowPastEvents(false);
+              setHomeOverlay(null);
               setShopOverlay(null);
               setActiveProduct(null);
               setCommunityOverlay(null);
@@ -280,7 +280,9 @@ function AppContent() {
         {!((
           currentTab === 'community' && communityOverlay === 'conversation'
         ) || (
-          currentTab === 'shop' && (shopOverlay === 'liked' || shopOverlay === 'cart' || shopOverlay === 'product')
+          currentTab === 'home' && homeOverlay === 'notifications'
+        ) || (
+          currentTab === 'shop' && (shopOverlay === 'notifications' || shopOverlay === 'cart' || shopOverlay === 'product')
         )) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
