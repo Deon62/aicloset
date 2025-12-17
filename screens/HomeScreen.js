@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 
+const MOCK_NAME = 'Deon Student';
+const MOCK_COURSE = 'Computer Science';
+const MOCK_COMMUNITY = 'Web Development';
+const MOCK_ROLE = 'Member';
+const MOCK_YEAR = 'Year 2';
+const MOCK_BIO = 'Interested in building web apps and joining hackathons.';
+
 export default function HomeScreen() {
+  const [photoUri, setPhotoUri] = useState('');
+
+  useEffect(() => {
+    const loadPhoto = async () => {
+      try {
+        const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
+        if (storedPhoto) setPhotoUri(storedPhoto);
+      } catch (e) {
+        console.warn('Failed to load profile photo', e);
+      }
+    };
+    loadPhoto();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -18,26 +40,44 @@ export default function HomeScreen() {
             </View>
           </View>
           <Text style={styles.title}>Welcome To Egerton University Computer Science Students Association </Text>
-          <Text style={styles.subtitle}>Build. Learn. Share. Compete.</Text>
+
         </View>
 
-        <View style={[styles.card, styles.cardAccent]}>
-          <View style={styles.cardRow}>
-            <View style={styles.cardMain}>
-              <Text style={styles.cardTitle}>Next event</Text>
-              <Text style={styles.cardHeadline}>Workshop: Web Development Basics</Text>
-              <Text style={styles.cardMeta}>Friday · 3:30 PM · Computer Lab</Text>
+        <View style={[styles.card, styles.profileCard]}>
+          <View style={styles.profileRow}>
+            <View style={styles.avatarWrap}>
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.avatar} />
+              ) : (
+                <View style={styles.avatarEmpty} />
+              )}
             </View>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>Upcoming</Text>
+
+            <View style={styles.profileMain}>
+              <Text style={styles.profileName}>{MOCK_NAME}</Text>
+              <Text style={styles.profileCourse}>{MOCK_COURSE}</Text>
+              <Text style={styles.profileYear}>{MOCK_YEAR}</Text>
+              <Text style={styles.profileBio}>{MOCK_BIO}</Text>
+
+              <View style={styles.metaRow}>
+                <View style={styles.metaPill}>
+                  <Text style={styles.metaPillText}>{MOCK_COMMUNITY}</Text>
+                </View>
+              </View>
             </View>
+          </View>
+
+          <View style={[styles.roleTag, styles.metaPillDark]}>
+            <Text style={[styles.roleTagText, styles.metaPillTextDark]}>{MOCK_ROLE}</Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Latest</Text>
-          <View style={styles.card}>
-            <Text style={styles.cardMeta}>Project teams sign‑up is open this week.</Text>
+        <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
+          <Image source={require('../assets/tech.png')} style={styles.eventHeroImage} resizeMode="cover" />
+          <View style={styles.eventInfo}>
+            <Text style={styles.cardTitle}>Next event</Text>
+            <Text style={styles.cardHeadline}>Workshop: Web Development Basics</Text>
+            <Text style={styles.cardMeta}>Friday · 3:30 PM · Computer Lab</Text>
           </View>
         </View>
       </ScrollView>
@@ -144,12 +184,108 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Nunito_700Bold',
   },
-  section: {
-    gap: 10,
+  profileRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
   },
-  sectionTitle: {
+  profileCard: {
+    paddingTop: 18,
+    paddingBottom: 18,
+  },
+  avatarWrap: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    marginTop: -2,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarEmpty: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#E5E5E5',
+  },
+  profileMain: {
+    flex: 1,
+    gap: 4,
+  },
+  profileName: {
     color: '#0B0B0F',
     fontSize: 16,
     fontFamily: 'Nunito_700Bold',
+  },
+  profileCourse: {
+    color: '#6A6A6A',
+    fontSize: 13,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  profileYear: {
+    color: '#6A6A6A',
+    fontSize: 13,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  profileBio: {
+    marginTop: 6,
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_400Regular',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 6,
+  },
+  metaPill: {
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+  },
+  metaPillText: {
+    color: '#1D1D1D',
+    fontSize: 12,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  metaPillDark: {
+    backgroundColor: DARK,
+    borderColor: DARK,
+  },
+  metaPillTextDark: {
+    color: '#FFFFFF',
+  },
+  roleTag: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+  },
+  roleTagText: {
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  eventCard: {
+    padding: 0,
+    overflow: 'hidden',
+  },
+  eventHeroImage: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#E5E5E5',
+  },
+  eventInfo: {
+    padding: 18,
+    gap: 6,
   },
 });
