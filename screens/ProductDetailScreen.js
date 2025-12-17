@@ -69,7 +69,7 @@ export default function ProductDetailScreen({
               keyExtractor={(_, idx) => `${product?.id || 'product'}-img-${idx}`}
               renderItem={({ item }) => (
                 <View style={{ width: screenWidth }}>
-                  <Image source={item} style={styles.heroImage} resizeMode="cover" />
+                  <Image source={item} style={[styles.heroImage, { transform: [{ scale: 1.12 }] }]} resizeMode="contain" />
                 </View>
               )}
               onMomentumScrollEnd={(e) => {

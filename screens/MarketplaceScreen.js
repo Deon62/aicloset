@@ -23,7 +23,7 @@ export default function MarketplaceScreen({
   const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
 
   const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight - TAB_BAR_HEIGHT));
-  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.82);
+  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.7);
 
   const products = useMemo(
     () => [
@@ -92,19 +92,11 @@ export default function MarketplaceScreen({
     return (
       <View style={[styles.postCard, { height: ITEM_HEIGHT }]}>
         <View style={styles.mediaWrap}>
-          <Image source={{ uri: item.imageUrl }} style={[styles.postImage, { height: IMAGE_HEIGHT }]} resizeMode="cover" />
-
-          <LinearGradient
-            colors={['rgba(0,0,0,0.82)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.0)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.imageOverlay}
-          >
-            <Text style={styles.overlayName}>{item.name}</Text>
-            <Text style={styles.overlayDescription} numberOfLines={2}>
-              {item.description}
-            </Text>
-          </LinearGradient>
+          <Image
+            source={{ uri: item.imageUrl }}
+            style={[styles.postImage, { height: IMAGE_HEIGHT }]}
+            resizeMode="cover"
+          />
 
           <View style={styles.mediaActions}>
             <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleLiked(item.id)}>
@@ -130,6 +122,12 @@ export default function MarketplaceScreen({
         </View>
 
         <View style={styles.postBody}>
+          <Text style={styles.productName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.productDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
           <View style={styles.priceRow}>
             <View style={styles.originalRow}>
               {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
@@ -300,7 +298,7 @@ const styles = StyleSheet.create({
   },
   postImage: {
     width: '100%',
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#FFFFFF',
   },
   mediaActions: {
     position: 'absolute',
@@ -309,27 +307,19 @@ const styles = StyleSheet.create({
     gap: 12,
     alignItems: 'center',
   },
-  imageOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
-    backgroundColor: 'rgba(0,0,0,0.12)',
-  },
-  overlayName: {
-    color: '#FFFFFF',
+  productName: {
+    color: '#0B0B0F',
     fontSize: 18,
+    lineHeight: 22,
     fontFamily: 'Nunito_700Bold',
+    marginBottom: 6,
   },
-  overlayDescription: {
-    marginTop: 6,
-    color: 'rgba(255,255,255,0.92)',
+  productDescription: {
+    color: '#4A4A4A',
     fontSize: 14,
     lineHeight: 20,
     fontFamily: 'Nunito_400Regular',
+    marginBottom: 10,
   },
   iconBtn: {
     width: 44,
@@ -345,8 +335,8 @@ const styles = StyleSheet.create({
   },
   postBody: {
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 28,
+    paddingTop: 8,
+    paddingBottom: 12,
   },
   priceRow: {
     gap: 2,

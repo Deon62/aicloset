@@ -116,7 +116,7 @@ export default function CartScreen({
     return (
       <View style={styles.cartCard}>
         <View style={styles.mediaLeft}>
-          <Image source={{ uri: item.imageUrl }} style={styles.thumb} resizeMode="cover" />
+          <Image source={{ uri: item.imageUrl }} style={[styles.thumb, { transform: [{ scale: 1.1 }] }]} resizeMode="contain" />
         </View>
 
         <View style={styles.cardMid}>

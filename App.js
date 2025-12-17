@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -300,6 +301,8 @@ export default function App() {
     Nunito_400Regular,
     Nunito_600SemiBold,
     Nunito_700Bold,
+    ...Ionicons.font,
+    ...Feather.font,
   });
 
   useEffect(() => {
