@@ -6,6 +6,13 @@ import { Ionicons } from '@expo/vector-icons';
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 
+let WebView = null;
+try {
+  WebView = require('react-native-webview').WebView;
+} catch (e) {
+  WebView = null;
+}
+
 export default function EventDetailsScreen({ event, onBack = () => {}, onRegister = () => {}, onAddToCalendar = () => {} }) {
   const insets = useSafeAreaInsets();
   const width = Dimensions.get('window').width;
@@ -19,6 +26,35 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
     if (Array.isArray(list) && list.length > 0) return list;
     return [];
   }, [event]);
+
+  const leafletHtml = useMemo(() => {
+    const lat = -0.3721;
+    const lng = 35.9469;
+    return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+      html, body { height: 100%; margin: 0; padding: 0; background: #ffffff; }
+      #map { height: 100%; width: 100%; }
+      .leaflet-control-attribution { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([${lat}, ${lng}], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+      L.marker([${lat}, ${lng}]).addTo(map).bindPopup('Egerton University, Njoro').openPopup();
+      setTimeout(() => { map.invalidateSize(); }, 250);
+    </script>
+  </body>
+</html>`;
+  }, []);
 
   const images = useMemo(() => {
     const input = event?.images;
@@ -132,16 +168,21 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
           <View style={styles.detailsSection}>
             <Text style={styles.sectionTitle}>Location</Text>
             {event?.venueHint ? <Text style={styles.venueHint}>{event.venueHint}</Text> : null}
-            <View style={styles.mapGrid}>
-              <View style={styles.mapCell} />
-              <View style={styles.mapCell} />
-              <View style={styles.mapCell} />
-              <View style={styles.mapCell} />
-              <View style={[styles.mapOverlay, styles.mapOverlayCentered]}>
-                <Ionicons name="map-outline" size={18} color="#4A4A4A" />
-                <Text style={styles.mapOverlayText}>Map coming soon</Text>
+            {WebView ? (
+              <View style={styles.mapWrap}>
+                <WebView
+                  originWhitelist={['*']}
+                  source={{ html: leafletHtml }}
+                  style={styles.mapWeb}
+                  scrollEnabled={false}
+                />
               </View>
-            </View>
+            ) : (
+              <View style={styles.mapFallback}>
+                <Ionicons name="map-outline" size={18} color="#4A4A4A" />
+                <Text style={styles.mapOverlayText}>Install react-native-webview to enable the map</Text>
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -287,36 +328,29 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontFamily: 'Nunito_400Regular',
   },
-  mapGrid: {
+  mapWrap: {
     marginTop: 10,
     borderWidth: 1,
     borderColor: '#E5E5E5',
     borderRadius: 16,
     overflow: 'hidden',
-    height: 140,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    height: 220,
     backgroundColor: '#FFFFFF',
   },
-  mapCell: {
-    width: '50%',
-    height: 70,
-    backgroundColor: '#F5F7FF',
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#E6EAFF',
+  mapWeb: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
-  mapOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  mapOverlayCentered: {
+  mapFallback: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 16,
+    height: 120,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
+    backgroundColor: '#FFFFFF',
   },
   mapOverlayText: {
     color: '#4A4A4A',
