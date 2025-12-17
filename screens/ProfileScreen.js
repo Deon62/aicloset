@@ -14,6 +14,7 @@ export default function ProfileScreen({
   onOpenProfileInfo = () => {},
   onOpenSettings = () => {},
   onOpenFeedback = () => {},
+  onOpenPayments = () => {},
 }) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
@@ -126,24 +127,8 @@ export default function ProfileScreen({
           <Text style={styles.linkLabel}>Send us feedback</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.linkRow}
-          activeOpacity={0.85}
-          onPress={() => {
-            Alert.alert('Member subscription', 'Payment flow not configured yet.');
-          }}
-        >
-          <Text style={styles.linkLabel}>Pay member subscription</Text>
-          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.linkRow}
-          activeOpacity={0.85}
-          onPress={() => {
-            Alert.alert('Donate', 'Donation flow not configured yet.');
-          }}
-        >
-          <Text style={styles.linkLabel}>Donate</Text>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenPayments}>
+          <Text style={styles.linkLabel}>Payments</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
         <TouchableOpacity
