@@ -6,6 +6,7 @@ export default function CommunityScreen({
   joinedIds = new Set(),
   onToggleJoin = () => {},
   onOpenCommunity = () => {},
+  postCounts = {},
 }) {
   const [loading, setLoading] = useState(true);
 
@@ -105,6 +106,7 @@ export default function CommunityScreen({
             : communities.map((c, idx) => {
             const isJoined = joinedIds.has(c.id);
             const isLast = idx === communities.length - 1;
+            const postCount = Number.isFinite(postCounts?.[c.id]) ? postCounts[c.id] : 0;
 
             return (
               <TouchableOpacity
@@ -121,7 +123,9 @@ export default function CommunityScreen({
                   <View style={styles.cardMain}>
                     <Text style={styles.communityTitle}>{c.title}</Text>
                     <Text style={styles.communityDescription}>{c.description}</Text>
-                    <Text style={styles.memberText}>{c.members} members</Text>
+                    <Text style={styles.memberText}>
+                      {c.members} members • {postCount} posts
+                    </Text>
                   </View>
 
                   <TouchableOpacity

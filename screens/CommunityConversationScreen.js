@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -19,6 +19,8 @@ export default function CommunityConversationScreen({
   const [text, setText] = useState('');
 
   const title = community?.title ?? 'Community';
+  const memberCount = typeof community?.members === 'number' ? community.members : null;
+  const postCount = Array.isArray(posts) ? posts.length : 0;
 
   const data = useMemo(() => {
     const list = Array.isArray(posts) ? posts : [];
@@ -70,11 +72,14 @@ export default function CommunityConversationScreen({
             <Ionicons name="arrow-back" size={20} color={DARK} />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              {title}
-            </Text>
+            <View style={styles.headerTitleRow}>
+              {community?.imageUrl ? <Image source={{ uri: community.imageUrl }} style={styles.communityAvatar} /> : null}
+              <Text style={styles.headerTitle} numberOfLines={1}>
+                {title}
+              </Text>
+            </View>
             <Text style={styles.headerSubTitle} numberOfLines={1}>
-              {isJoined ? 'Joined' : 'View only'}
+              {memberCount !== null ? `${memberCount} members` : 'Members'} • {postCount} posts • {isJoined ? 'Joined' : 'View only'}
             </Text>
           </View>
           {isJoined ? (
@@ -176,6 +181,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     gap: 2,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    maxWidth: '100%',
+  },
+  communityAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#1D1D1D',
   },
   headerTitle: {
     color: '#0B0B0F',

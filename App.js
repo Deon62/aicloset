@@ -108,6 +108,12 @@ function AppContent() {
     });
   };
 
+  const postCountsByCommunity = Object.keys(postsByCommunity || {}).reduce((acc, key) => {
+    const count = Array.isArray(postsByCommunity?.[key]) ? postsByCommunity[key].length : 0;
+    acc[key] = count;
+    return acc;
+  }, {});
+
   const renderTab = () => {
     switch (currentTab) {
       case 'home':
@@ -172,6 +178,7 @@ function AppContent() {
           <CommunityScreen
             joinedIds={joinedCommunityIds}
             onToggleJoin={toggleJoinCommunity}
+            postCounts={postCountsByCommunity}
             onOpenCommunity={(community) => {
               setActiveCommunity(community);
               setCommunityOverlay('conversation');
