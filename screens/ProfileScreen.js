@@ -9,7 +9,7 @@ const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
 
-export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo = () => {} }) {
+export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo = () => {}, onOpenSettings = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
@@ -112,7 +112,7 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
           <Text style={styles.linkLabel}>Profile info</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenSettings}>
           <Text style={styles.linkLabel}>Settings</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
