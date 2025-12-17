@@ -20,7 +20,7 @@ const EVENT_DATE = 'Friday · 3:30 PM';
 const EVENT_LOCATION = 'Computer Lab';
 const EVENT_PRICE = 'Free';
 
-export default function HomeScreen({ onOpenNotifications = () => {} }) {
+export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfile = () => {} }) {
   const [photoUri, setPhotoUri] = useState('');
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function HomeScreen({ onOpenNotifications = () => {} }) {
 
         </View>
 
-        <View style={[styles.card, styles.profileCard]}>
+        <TouchableOpacity style={[styles.card, styles.profileCard]} activeOpacity={0.85} onPress={onOpenProfile}>
           <View style={styles.profileRow}>
             <View style={styles.avatarWrap}>
               {photoUri ? (
@@ -80,7 +80,7 @@ export default function HomeScreen({ onOpenNotifications = () => {} }) {
           <View style={[styles.roleTag, styles.metaPillDark]}>
             <Text style={[styles.roleTagText, styles.metaPillTextDark]}>{MOCK_ROLE}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
           <Image source={require('../assets/tech.png')} style={styles.eventHeroImage} resizeMode="cover" />

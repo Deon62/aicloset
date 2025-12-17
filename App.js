@@ -126,7 +126,15 @@ function AppContent() {
         if (homeOverlay === 'notifications') {
           return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
         }
-        return <HomeScreen onOpenNotifications={() => setHomeOverlay('notifications')} />;
+        return (
+          <HomeScreen
+            onOpenNotifications={() => setHomeOverlay('notifications')}
+            onOpenProfile={() => {
+              setHomeOverlay(null);
+              setCurrentTab('profile');
+            }}
+          />
+        );
       case 'events':
         return showPastEvents ? (
           <PastEventsScreen onBack={() => setShowPastEvents(false)} />
