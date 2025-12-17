@@ -169,8 +169,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEDED',
+    borderBottomWidth: 0,
   },
   backBtn: {
     width: 40,
@@ -188,12 +187,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#0B0B0F',
-    fontSize: 16,
+    fontSize: 22,
     fontFamily: 'Nunito_700Bold',
   },
   headerSubTitle: {
     color: '#6A6A6A',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
   },
   headerSpacer: {
