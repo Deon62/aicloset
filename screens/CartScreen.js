@@ -1,8 +1,7 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import CartSvg from '../assets/icons/cart.svg';
 
 const BRAND_BLUE = '#1B56FD';
@@ -46,72 +45,105 @@ export default function CartScreen({
   onToggleCart = () => {},
   onBack = () => {},
 }) {
-  const { height: windowHeight } = Dimensions.get('window');
   const insets = useSafeAreaInsets();
-  const headerHeight = 64;
-  const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
-  const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight - TAB_BAR_HEIGHT));
-  const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.82);
+  const [quantities, setQuantities] = useState(() => ({}));
 
   const data = useMemo(() => {
     const ids = cartIds instanceof Set ? cartIds : new Set();
     return ALL_PRODUCTS.filter((p) => ids.has(p.id));
   }, [cartIds]);
 
+  useEffect(() => {
+    setQuantities((prev) => {
+      const next = { ...(prev || {}) };
+      const ids = cartIds instanceof Set ? cartIds : new Set();
+
+      ALL_PRODUCTS.forEach((p) => {
+        if (ids.has(p.id) && typeof next[p.id] !== 'number') {
+          next[p.id] = 1;
+        }
+      });
+
+      Object.keys(next).forEach((id) => {
+        if (!ids.has(id)) delete next[id];
+      });
+
+      return next;
+    });
+  }, [cartIds]);
+
+  const parsePriceNumber = (price) => {
+    const num = Number(String(price || '').replace(/[^0-9]/g, ''));
+    return Number.isFinite(num) ? num : 0;
+  };
+
   const total = useMemo(() => {
     const ids = cartIds instanceof Set ? cartIds : new Set();
     const sum = ALL_PRODUCTS.reduce((acc, p) => {
       if (!ids.has(p.id)) return acc;
-      const num = Number(String(p.price).replace(/[^0-9]/g, ''));
-      return acc + (Number.isFinite(num) ? num : 0);
+      const qty = typeof quantities?.[p.id] === 'number' ? quantities[p.id] : 1;
+      const num = parsePriceNumber(p.price);
+      return acc + num * Math.max(1, qty);
     }, 0);
     return `KSh ${sum.toLocaleString()}`;
-  }, [cartIds]);
+  }, [cartIds, quantities]);
+
+  const subtotal = total;
+  const delivery = 'KSh 0';
 
   const renderItem = ({ item }) => {
-    const isLiked = likedIds.has(item.id);
-    const inCart = cartIds.has(item.id);
+    const qty = typeof quantities?.[item.id] === 'number' ? quantities[item.id] : 1;
 
     return (
-      <View style={[styles.postCard, { height: ITEM_HEIGHT }]}>
-        <View style={styles.mediaWrap}>
-          <Image source={item.image} style={[styles.postImage, { height: IMAGE_HEIGHT }]} resizeMode="cover" />
+      <View style={styles.cartCard}>
+        <View style={styles.mediaLeft}>
+          <Image source={item.image} style={styles.thumb} resizeMode="cover" />
+        </View>
 
-          <LinearGradient
-            colors={['rgba(0,0,0,0.82)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.0)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.imageOverlay}
-          >
-            <Text style={styles.overlayName}>{item.name}</Text>
-            <Text style={styles.overlayDescription} numberOfLines={2}>
-              {item.description}
-            </Text>
-          </LinearGradient>
+        <View style={styles.cardMid}>
+          <Text style={styles.itemName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.itemPrice}>{item.price}</Text>
 
-          <View style={styles.mediaActions}>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleLiked(item.id)}>
-              <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={26} color={isLiked ? '#E11D48' : '#FFFFFF'} />
+          <View style={styles.qtyRow}>
+            <TouchableOpacity
+              style={styles.qtyBtn}
+              activeOpacity={0.85}
+              onPress={() =>
+                setQuantities((prev) => {
+                  const next = { ...(prev || {}) };
+                  const current = typeof next[item.id] === 'number' ? next[item.id] : 1;
+                  next[item.id] = Math.max(1, current - 1);
+                  return next;
+                })
+              }
+            >
+              <Ionicons name="remove" size={18} color={DARK} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
-              <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? CART_BRIGHT : '#FFFFFF'} />
+            <Text style={styles.qtyText}>{qty}</Text>
+
+            <TouchableOpacity
+              style={styles.qtyBtn}
+              activeOpacity={0.85}
+              onPress={() =>
+                setQuantities((prev) => {
+                  const next = { ...(prev || {}) };
+                  const current = typeof next[item.id] === 'number' ? next[item.id] : 1;
+                  next[item.id] = current + 1;
+                  return next;
+                })
+              }
+            >
+              <Ionicons name="add" size={18} color={DARK} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.postBody}>
-          <View style={styles.priceRow}>
-            <View style={styles.originalRow}>
-              {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
-              <View style={styles.rightMeta}>
-                {typeof item.left === 'number' ? <Text style={styles.scarcityInline}>{item.left} units left</Text> : null}
-                <Text style={styles.sizeText}>Available in all sizes</Text>
-              </View>
-            </View>
-            <Text style={styles.postPrice}>{item.price}</Text>
-          </View>
-        </View>
+        <TouchableOpacity style={styles.deleteBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
+          <Ionicons name="trash-outline" size={20} color="#E11D48" />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -125,7 +157,6 @@ export default function CartScreen({
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Cart</Text>
-            <Text style={styles.headerSubTitle}>Total: {total}</Text>
           </View>
           <View style={styles.headerSpacer} />
         </View>
@@ -137,18 +168,44 @@ export default function CartScreen({
             <Text style={styles.emptyText}>Tap the cart icon on any product to add it here.</Text>
           </View>
         ) : (
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            pagingEnabled
-            snapToInterval={ITEM_HEIGHT}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-            getItemLayout={(_, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-          />
+          <>
+            <FlatList
+              data={data}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.listContent,
+                { paddingBottom: (insets.bottom || 0) + styles.priceCard.height + 18 },
+              ]}
+              ItemSeparatorComponent={() => <View style={styles.cardDivider} />}
+            />
+
+            <View style={[styles.priceCard, { paddingBottom: (insets.bottom || 0) + 14 }]}>
+              <Text style={styles.priceCardTitle}>Price breakdown</Text>
+
+              <View style={styles.priceRowLine}>
+                <Text style={styles.priceLabel}>Subtotal</Text>
+                <Text style={styles.priceValue}>{subtotal}</Text>
+              </View>
+
+              <View style={styles.priceRowLine}>
+                <Text style={styles.priceLabel}>Delivery</Text>
+                <Text style={styles.priceValue}>{delivery}</Text>
+              </View>
+
+              <View style={styles.priceDivider} />
+
+              <View style={styles.priceRowLine}>
+                <Text style={styles.totalLabel}>Total</Text>
+                <Text style={styles.totalValue}>{total}</Text>
+              </View>
+
+              <TouchableOpacity style={styles.orderBtn} activeOpacity={0.9}>
+                <Text style={styles.orderBtnText}>Make order</Text>
+              </TouchableOpacity>
+            </View>
+          </>
         )}
       </View>
     </SafeAreaView>
@@ -190,17 +247,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: 'Nunito_700Bold',
   },
-  headerSubTitle: {
-    color: '#6A6A6A',
-    fontSize: 13,
-    fontFamily: 'Nunito_600SemiBold',
-  },
   headerSpacer: {
     width: 40,
     height: 40,
   },
   listContent: {
-    paddingBottom: 0,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  cardDivider: {
+    height: 12,
   },
   emptyWrap: {
     flex: 1,
@@ -221,100 +277,133 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
     textAlign: 'center',
   },
-  postCard: {
+  cartCard: {
     backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEDED',
-    borderRadius: 0,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    flexDirection: 'row',
+    alignItems: 'center',
     overflow: 'hidden',
+    height: 88,
   },
-  mediaWrap: {
-    position: 'relative',
-  },
-  postImage: {
-    width: '100%',
+  mediaLeft: {
+    width: 86,
+    alignSelf: 'stretch',
     backgroundColor: '#E5E5E5',
   },
-  mediaActions: {
-    position: 'absolute',
-    right: 12,
-    bottom: 64,
-    alignItems: 'center',
+  thumb: {
+    width: '100%',
+    height: '100%',
   },
-  imageOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
-    backgroundColor: 'rgba(0,0,0,0.12)',
+  cardMid: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
-  overlayName: {
-    color: '#FFFFFF',
-    fontSize: 18,
+  itemName: {
+    color: '#0B0B0F',
+    fontSize: 14,
     fontFamily: 'Nunito_700Bold',
   },
-  overlayDescription: {
-    marginTop: 6,
-    color: 'rgba(255,255,255,0.92)',
+  itemPrice: {
+    marginTop: 2,
+    color: '#0B0B0F',
     fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+    fontFamily: 'Nunito_700Bold',
   },
-  iconBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+  qtyRow: {
+    marginTop: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 14,
-  },
-  postBody: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 28,
-  },
-  priceRow: {
     gap: 10,
   },
-  originalRow: {
+  qtyBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F2F2F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E7E7E7',
+  },
+  qtyText: {
+    minWidth: 18,
+    textAlign: 'center',
+    color: '#0B0B0F',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  deleteBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 6,
+  },
+  priceCard: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 0,
+    height: 230,
+    backgroundColor: CART_BRIGHT,
+    borderRadius: 16,
+    borderWidth: 0,
+    paddingTop: 14,
+    paddingHorizontal: 14,
+  },
+  priceCardTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontFamily: 'Nunito_700Bold',
+    marginBottom: 10,
+  },
+  priceRowLine: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingVertical: 6,
   },
-  rightMeta: {
-    alignItems: 'flex-end',
+  priceLabel: {
+    color: 'rgba(255,255,255,0.92)',
+    fontSize: 13,
+    fontFamily: 'Nunito_600SemiBold',
   },
-  postDescription: {
-    color: '#4A4A4A',
-    fontSize: 15,
-    lineHeight: 21,
-    fontFamily: 'Nunito_400Regular',
-  },
-  postPrice: {
-    color: '#0B0B0F',
-    fontSize: 22,
+  priceValue: {
+    color: '#FFFFFF',
+    fontSize: 13,
     fontFamily: 'Nunito_700Bold',
-    marginTop: 0,
   },
-  originalPrice: {
-    color: '#8A8A8A',
+  priceDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  totalLabel: {
+    color: '#FFFFFF',
     fontSize: 14,
-    fontFamily: 'Nunito_600SemiBold',
-    textDecorationLine: 'line-through',
-  },
-  scarcityInline: {
-    color: '#6A6A6A',
-    fontSize: 12,
     fontFamily: 'Nunito_700Bold',
   },
-  sizeText: {
-    marginTop: 2,
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+  totalValue: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'Nunito_700Bold',
+  },
+  orderBtn: {
+    marginTop: 14,
+    height: 46,
+    borderRadius: 999,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderBtnText: {
+    color: DARK,
+    fontSize: 15,
+    fontFamily: 'Nunito_700Bold',
   },
 });
