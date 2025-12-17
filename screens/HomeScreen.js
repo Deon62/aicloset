@@ -50,8 +50,8 @@ export default function HomeScreen({ onOpenNotifications = () => {}, onOpenProfi
               <Ionicons name="notifications-outline" size={26} color={DARK} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Welcome To Egerton University Computer Science Students Association </Text>
-
+          <Text style={styles.title}>Hello {MOCK_NAME}</Text>
+          <Text style={styles.subtitle}>welcome to Egerton Computer Science Student Association Club</Text>
         </View>
 
         <TouchableOpacity style={[styles.card, styles.profileCard]} activeOpacity={0.85} onPress={onOpenProfile}>
