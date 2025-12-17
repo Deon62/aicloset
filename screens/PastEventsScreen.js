@@ -40,24 +40,26 @@ export default function PastEventsScreen({ onBack = () => {} }) {
         </View>
 
         {pastEvents.map((event) => (
-          <View key={event.id} style={[styles.card, styles.cardAccent, styles.eventCard]}>
-            <Image source={event.image} style={styles.eventHeroImage} resizeMode="cover" />
-            <View style={styles.eventInfo}>
-              <Text style={styles.cardHeadline}>{event.title}</Text>
-              <Text style={styles.eventDescription}>{event.description}</Text>
+          <View key={event.id} style={[styles.card, styles.cardAccent, styles.pastEventCard]}>
+            <View style={styles.pastEventRow}>
+              <Image source={event.image} style={styles.pastEventThumb} resizeMode="cover" />
+              <View style={styles.pastEventInfo}>
+                <Text style={styles.cardHeadline}>{event.title}</Text>
+                <Text style={styles.eventDescription}>{event.description}</Text>
 
-              <View style={styles.eventMetaList}>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.date}</Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="location-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.location}</Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.price}</Text>
+                <View style={styles.eventMetaList}>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText}>{event.date}</Text>
+                  </View>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText}>{event.location}</Text>
+                  </View>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText}>{event.price}</Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -122,17 +124,23 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontFamily: 'Nunito_700Bold',
   },
-  eventCard: {
-    padding: 0,
-    overflow: 'hidden',
+  pastEventCard: {
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
-  eventHeroImage: {
-    width: '100%',
-    height: 145,
+  pastEventRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  pastEventThumb: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     backgroundColor: '#E5E5E5',
   },
-  eventInfo: {
-    padding: 14,
+  pastEventInfo: {
+    flex: 1,
     gap: 5,
   },
   eventDescription: {
