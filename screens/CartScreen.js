@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions }
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import CartSvg from '../assets/icons/cart.svg';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -131,7 +132,7 @@ export default function CartScreen({
 
         {data.length === 0 ? (
           <View style={styles.emptyWrap}>
-            <Ionicons name="cart-outline" size={28} color="#6A6A6A" />
+            <CartSvg width={110} height={110} />
             <Text style={styles.emptyTitle}>Your cart is empty</Text>
             <Text style={styles.emptyText}>Tap the cart icon on any product to add it here.</Text>
           </View>

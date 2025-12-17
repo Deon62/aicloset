@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions }
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import LikeSvg from '../assets/icons/like.svg';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -118,7 +119,7 @@ export default function LikedItemsScreen({
 
         {data.length === 0 ? (
           <View style={styles.emptyWrap}>
-            <Ionicons name="heart-outline" size={28} color="#6A6A6A" />
+            <LikeSvg width={110} height={110} />
             <Text style={styles.emptyTitle}>No liked items</Text>
             <Text style={styles.emptyText}>Tap the heart on any product to save it here.</Text>
           </View>
