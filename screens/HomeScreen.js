@@ -279,9 +279,9 @@ const styles = StyleSheet.create({
     borderColor: '#1D1D1D',
   },
   storyAvatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: '100%',
+    height: '100%',
+    borderRadius: 31,
     backgroundColor: '#F7F7F7',
     alignItems: 'center',
     justifyContent: 'center',
