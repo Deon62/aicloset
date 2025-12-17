@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
-const MOCK_COMMUNITY = 'Web Development';
 const MOCK_ROLE = 'Member';
 const MOCK_YEAR = 'Year 2';
 const MOCK_BIO = 'Interested in building web apps and joining hackathons.';
+const MOCK_GITHUB = 'deon62';
 
 export default function HomeScreen() {
   const [photoUri, setPhotoUri] = useState('');
@@ -59,10 +60,9 @@ export default function HomeScreen() {
               <Text style={styles.profileYear}>{MOCK_YEAR}</Text>
               <Text style={styles.profileBio}>{MOCK_BIO}</Text>
 
-              <View style={styles.metaRow}>
-                <View style={styles.metaPill}>
-                  <Text style={styles.metaPillText}>{MOCK_COMMUNITY}</Text>
-                </View>
+              <View style={styles.githubRow}>
+                <Ionicons name="logo-github" size={16} color={DARK} />
+                <Text style={styles.githubText}>{MOCK_GITHUB}</Text>
               </View>
             </View>
           </View>
@@ -237,23 +237,15 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontFamily: 'Nunito_400Regular',
   },
-  metaRow: {
+  githubRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 8,
-    marginTop: 6,
+    marginTop: 10,
   },
-  metaPill: {
-    backgroundColor: '#F3F4F6',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-  },
-  metaPillText: {
+  githubText: {
     color: '#1D1D1D',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
   },
   metaPillDark: {
