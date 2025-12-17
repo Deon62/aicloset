@@ -86,8 +86,8 @@ export default function CommunityScreen() {
         <View style={styles.list}>
           {loading
             ? skeletons.map((s) => (
-                <View key={s.id} style={styles.communityCard}>
-                  <View style={styles.cardTopRow}>
+                <View key={s.id} style={styles.row}>
+                  <View style={styles.rowTop}>
                     <View style={[styles.avatar, styles.skeletonBlock]} />
 
                     <View style={styles.cardMain}>
@@ -101,8 +101,9 @@ export default function CommunityScreen() {
                   </View>
                 </View>
               ))
-            : communities.map((c) => {
+            : communities.map((c, idx) => {
             const isJoined = joined.has(c.id);
+            const isLast = idx === communities.length - 1;
             const initials = c.title
               .replace('&', ' ')
               .split(' ')
@@ -112,8 +113,8 @@ export default function CommunityScreen() {
               .join('');
 
             return (
-              <View key={c.id} style={styles.communityCard}>
-                <View style={styles.cardTopRow}>
+              <View key={c.id} style={[styles.row, isLast && styles.rowLast]}>
+                <View style={styles.rowTop}>
                   <View style={styles.avatar}>
                     <Text style={styles.avatarText}>{initials}</Text>
                   </View>
@@ -168,21 +169,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
   },
   list: {
-    gap: 12,
     paddingTop: 6,
   },
-  communityCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 16,
-    padding: 14,
-    gap: 12,
+  row: {
+    paddingVertical: 16,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5',
   },
-  cardTopRow: {
+  rowLast: {
+    borderBottomWidth: 0,
+    marginBottom: 0,
+  },
+  rowTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
+    paddingHorizontal: 2,
   },
   avatar: {
     width: 48,
