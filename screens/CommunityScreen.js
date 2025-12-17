@@ -1,8 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CommunityScreen() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
+  }, []);
+
   const communities = useMemo(
     () => [
       {
@@ -68,6 +75,8 @@ export default function CommunityScreen() {
     });
   };
 
+  const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ id: `skeleton-${i}` })), []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -75,7 +84,24 @@ export default function CommunityScreen() {
         <Text style={styles.subtitle}>Choose a track and join the discussion.</Text>
 
         <View style={styles.list}>
-          {communities.map((c) => {
+          {loading
+            ? skeletons.map((s) => (
+                <View key={s.id} style={styles.communityCard}>
+                  <View style={styles.cardTopRow}>
+                    <View style={[styles.avatar, styles.skeletonBlock]} />
+
+                    <View style={styles.cardMain}>
+                      <View style={[styles.skeletonLine, styles.skeletonLineTitle]} />
+                      <View style={[styles.skeletonLine, styles.skeletonLineBody]} />
+                      <View style={[styles.skeletonLine, styles.skeletonLineBodyShort]} />
+                      <View style={[styles.skeletonLine, styles.skeletonLineMeta]} />
+                    </View>
+
+                    <View style={[styles.skeletonPill]} />
+                  </View>
+                </View>
+              ))
+            : communities.map((c) => {
             const isJoined = joined.has(c.id);
             const initials = c.title
               .replace('&', ' ')
@@ -152,11 +178,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   cardTopRow: {
     flexDirection: 'row',
@@ -219,5 +240,35 @@ const styles = StyleSheet.create({
   },
   joinChipTextJoined: {
     color: '#1D1D1D',
+  },
+
+  skeletonBlock: {
+    backgroundColor: '#F3F4F6',
+    borderColor: '#F3F4F6',
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+  },
+  skeletonLineTitle: {
+    width: '68%',
+    height: 14,
+  },
+  skeletonLineBody: {
+    width: '92%',
+  },
+  skeletonLineBodyShort: {
+    width: '78%',
+  },
+  skeletonLineMeta: {
+    width: '40%',
+    height: 11,
+  },
+  skeletonPill: {
+    width: 68,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
   },
 });
