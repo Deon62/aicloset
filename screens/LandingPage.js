@@ -1,48 +1,41 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LandingSvg from '../assets/icons/landing.svg';
 
 export default function LandingPage({ onContinue = () => {} }) {
   return (
-    <ImageBackground
-      source={require('../assets/closet.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.overlay} />
-        <View style={styles.container}>
-          <View style={styles.spacer} />
-          <View style={styles.buttonSection}>
-            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9} onPress={onContinue}>
-              <Text style={styles.primaryButtonText}>Enter EUCOSSA</Text>
-            </TouchableOpacity>
-          </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.hero}>
+          <LandingSvg width={320} height={320} />
         </View>
-      </SafeAreaView>
-    </ImageBackground>
+        <View style={styles.buttonSection}>
+          <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9} onPress={onContinue}>
+            <Text style={styles.primaryButtonText}>Join EUCOSSA</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 40,
+    paddingTop: 24,
     paddingBottom: 32,
+    justifyContent: 'space-between',
   },
-  safeArea: {
+  hero: {
     flex: 1,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-  },
-  spacer: {
-    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonSection: {
     justifyContent: 'flex-end',
