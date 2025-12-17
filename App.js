@@ -251,7 +251,10 @@ function AppContent() {
         <Animated.View style={{ flex: 1, opacity: fadeAnim, backgroundColor: '#FFFFFF' }} key={currentTab}>
           {renderTab()}
         </Animated.View>
-        {!(currentTab === 'community' && communityOverlay === 'conversation') ? (
+        {!(
+          (currentTab === 'community' && communityOverlay === 'conversation') ||
+          (currentTab === 'shop' && (shopOverlay === 'liked' || shopOverlay === 'cart'))
+        ) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
         <StatusBar style="dark" />
