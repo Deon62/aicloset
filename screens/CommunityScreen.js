@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CommunityScreen() {
@@ -17,48 +17,56 @@ export default function CommunityScreen() {
         title: 'Data Science & AI',
         description: 'Learn machine learning, data analysis, and AI projects together.',
         members: 128,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/datascience.jpg',
       },
       {
         id: 'web-development',
         title: 'Web Development',
         description: 'Build modern websites and web apps with HTML, CSS, JS, and frameworks.',
         members: 214,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/web.jpg',
       },
       {
         id: 'mobile',
         title: 'Mobile',
         description: 'Create Android/iOS apps and learn UI, APIs, and deployment.',
         members: 96,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/mobile.jpg',
       },
       {
         id: 'devops',
         title: 'DevOps',
         description: 'CI/CD, Docker, Linux, and cloud basics for shipping software.',
         members: 74,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/devops.jpg',
       },
       {
         id: 'iot',
         title: 'IoT',
         description: 'Sensors, microcontrollers, and smart systems with real devices.',
         members: 61,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/iot.jpg',
       },
       {
         id: 'graphics-design',
         title: 'Graphics Design',
         description: 'Design posters, brand assets, and UI visuals for club projects.',
         members: 83,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/desighn.jpg',
       },
       {
         id: 'cybersecurity',
         title: 'Cybersecurity',
         description: 'Learn security basics, CTF practice, and safe hacking fundamentals.',
         members: 102,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/android.jpg',
       },
       {
         id: 'blockchain',
         title: 'Blockchain',
         description: 'Explore Web3 concepts, smart contracts, and decentralized apps.',
         members: 49,
+        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/blockchain.jpg',
       },
     ],
     []
@@ -104,19 +112,12 @@ export default function CommunityScreen() {
             : communities.map((c, idx) => {
             const isJoined = joined.has(c.id);
             const isLast = idx === communities.length - 1;
-            const initials = c.title
-              .replace('&', ' ')
-              .split(' ')
-              .filter(Boolean)
-              .slice(0, 2)
-              .map((w) => w[0]?.toUpperCase())
-              .join('');
 
             return (
               <View key={c.id} style={[styles.row, isLast && styles.rowLast]}>
                 <View style={styles.rowTop}>
                   <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{initials}</Text>
+                    <Image source={{ uri: c.imageUrl }} style={styles.avatarImage} />
                   </View>
 
                   <View style={styles.cardMain}>
@@ -188,14 +189,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#F2F4FF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#DCE3FF',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   avatarText: {
     color: '#1B56FD',
