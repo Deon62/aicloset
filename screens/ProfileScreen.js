@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressable, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -85,6 +85,20 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
     }
   };
 
+  const sendFeedback = async () => {
+    const url = 'mailto:eucossa@egerton.ac.ke?subject=EUCOSSA%20App%20Feedback';
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (!canOpen) {
+        Alert.alert('Feedback', 'Email app not available on this device.');
+        return;
+      }
+      await Linking.openURL(url);
+    } catch (e) {
+      Alert.alert('Feedback', 'Failed to open email app.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -114,6 +128,30 @@ export default function ProfileScreen({ onLogout = () => {}, onOpenProfileInfo =
         </TouchableOpacity>
         <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenSettings}>
           <Text style={styles.linkLabel}>Settings</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={sendFeedback}>
+          <Text style={styles.linkLabel}>Send us feedback</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.linkRow}
+          activeOpacity={0.85}
+          onPress={() => {
+            Alert.alert('Member subscription', 'Payment flow not configured yet.');
+          }}
+        >
+          <Text style={styles.linkLabel}>Pay member subscription</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.linkRow}
+          activeOpacity={0.85}
+          onPress={() => {
+            Alert.alert('Donate', 'Donation flow not configured yet.');
+          }}
+        >
+          <Text style={styles.linkLabel}>Donate</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
         <TouchableOpacity
