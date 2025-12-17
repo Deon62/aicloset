@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 import WelcomeIcon from '../assets/icons/welcome.svg';
 import EventsIcon from '../assets/icons/events.svg';
@@ -38,6 +39,7 @@ export default function OnboardingScreen({ onDone = () => {} }) {
 
   const [stepIndex, setStepIndex] = useState(0);
   const isLast = stepIndex === steps.length - 1;
+  const canGoBack = stepIndex > 0;
 
   const step = steps[stepIndex];
   const StepIcon = step?.Icon;
@@ -70,19 +72,33 @@ export default function OnboardingScreen({ onDone = () => {} }) {
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.nextButton}
-            activeOpacity={0.9}
-            onPress={() => {
-              if (isLast) {
-                onDone();
-                return;
-              }
-              setStepIndex((v) => Math.min(steps.length - 1, v + 1));
-            }}
-          >
-            <Text style={styles.nextButtonText}>&gt;</Text>
-          </TouchableOpacity>
+          <View style={styles.footerRow}>
+            {canGoBack ? (
+              <TouchableOpacity
+                style={styles.bottomBackButton}
+                activeOpacity={0.85}
+                onPress={() => setStepIndex((v) => Math.max(0, v - 1))}
+              >
+                <Ionicons name="arrow-back" size={18} color="#0B0B0F" />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.bottomBackSpacer} />
+            )}
+
+            <TouchableOpacity
+              style={styles.nextButton}
+              activeOpacity={0.9}
+              onPress={() => {
+                if (isLast) {
+                  onDone();
+                  return;
+                }
+                setStepIndex((v) => Math.min(steps.length - 1, v + 1));
+              }}
+            >
+              <Text style={styles.nextButtonText}>&gt;</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -150,25 +166,53 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingBottom: 12,
-    alignItems: 'flex-end',
+    alignItems: 'stretch',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  bottomBackSpacer: {
+    width: 46,
+    height: 46,
+  },
+  bottomBackButton: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
   nextButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: BRAND_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
   },
   nextButtonText: {
     color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Nunito_700Bold',
     marginTop: -2,
   },
   skipButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
   },
   skipText: {
     color: '#5A5A5A',
