@@ -44,6 +44,7 @@ export default function CartScreen({
   onToggleLiked = () => {},
   onToggleCart = () => {},
   onBack = () => {},
+  onViewDetails = () => {},
 }) {
   const insets = useSafeAreaInsets();
   const [quantities, setQuantities] = useState(() => ({}));
@@ -107,20 +108,24 @@ export default function CartScreen({
           <Text style={styles.itemPrice}>{item.price}</Text>
 
           <View style={styles.qtyRow}>
-            <TouchableOpacity
-              style={styles.qtyBtn}
-              activeOpacity={0.85}
-              onPress={() =>
-                setQuantities((prev) => {
-                  const next = { ...(prev || {}) };
-                  const current = typeof next[item.id] === 'number' ? next[item.id] : 1;
-                  next[item.id] = Math.max(1, current - 1);
-                  return next;
-                })
-              }
-            >
-              <Ionicons name="remove" size={18} color={DARK} />
-            </TouchableOpacity>
+            {qty > 1 ? (
+              <TouchableOpacity
+                style={styles.qtyBtn}
+                activeOpacity={0.85}
+                onPress={() =>
+                  setQuantities((prev) => {
+                    const next = { ...(prev || {}) };
+                    const current = typeof next[item.id] === 'number' ? next[item.id] : 1;
+                    next[item.id] = Math.max(1, current - 1);
+                    return next;
+                  })
+                }
+              >
+                <Ionicons name="remove" size={18} color={DARK} />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.qtyBtnSpacer} />
+            )}
 
             <Text style={styles.qtyText}>{qty}</Text>
 
@@ -141,9 +146,14 @@ export default function CartScreen({
           </View>
         </View>
 
-        <TouchableOpacity style={styles.deleteBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
-          <Ionicons name="trash-outline" size={20} color="#E11D48" />
-        </TouchableOpacity>
+        <View style={styles.cardRight}>
+          <TouchableOpacity style={styles.deleteBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
+            <Ionicons name="trash-outline" size={20} color="#E11D48" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.detailsLink} activeOpacity={0.85} onPress={() => onViewDetails(item)}>
+            <Text style={styles.detailsLinkText}>View details</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -281,14 +291,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#EFEFEF',
+    borderColor: '#F0F0F0',
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
-    height: 88,
+    height: 102,
+    shadowColor: '#000000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   mediaLeft: {
-    width: 86,
+    width: 96,
     alignSelf: 'stretch',
     backgroundColor: '#E5E5E5',
   },
@@ -298,8 +313,8 @@ const styles = StyleSheet.create({
   },
   cardMid: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
   },
   itemName: {
     color: '#0B0B0F',
@@ -313,10 +328,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   qtyRow: {
-    marginTop: 8,
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+  },
+  qtyBtnSpacer: {
+    width: 30,
+    height: 30,
+  },
+  detailsLink: {
+    marginTop: 6,
+  },
+  detailsLinkText: {
+    color: DARK,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+    textDecorationLine: 'underline',
   },
   qtyBtn: {
     width: 30,
@@ -335,13 +363,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Nunito_700Bold',
   },
+  cardRight: {
+    alignSelf: 'stretch',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingRight: 10,
+    paddingVertical: 12,
+  },
   deleteBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 6,
   },
   priceCard: {
     position: 'absolute',
