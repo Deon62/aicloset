@@ -1,26 +1,96 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LandingSvg from '../assets/icons/landing.svg';
 
 const BRAND_BLUE = '#1B56FD';
 
 export default function LandingPage({ onContinue = () => {} }) {
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const heroAnim = useRef(new Animated.Value(0)).current;
+  const buttonAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(120, [
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 420,
+        useNativeDriver: true,
+      }),
+      Animated.spring(heroAnim, {
+        toValue: 1,
+        friction: 7,
+        tension: 90,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonAnim, {
+        toValue: 1,
+        duration: 420,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [buttonAnim, headerAnim, heroAnim]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.landingHeader}>
+        <Animated.View
+          style={[
+            styles.landingHeader,
+            {
+              opacity: headerAnim,
+              transform: [
+                {
+                  translateY: headerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-10, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <Text style={styles.landingName}>Egerton University Computer Science Students Association</Text>
           <Text style={styles.landingTagline}>Where dreaming girnomous is the only rule to success.</Text>
-        </View>
-        <View style={styles.hero}>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.hero,
+            {
+              opacity: heroAnim,
+              transform: [
+                {
+                  scale: heroAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.96, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <LandingSvg width={320} height={320} />
-        </View>
-        <View style={styles.buttonSection}>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.buttonSection,
+            {
+              opacity: buttonAnim,
+              transform: [
+                {
+                  translateY: buttonAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [10, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9} onPress={onContinue}>
             <Text style={styles.primaryButtonText}>Join EUCOSSA</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );
