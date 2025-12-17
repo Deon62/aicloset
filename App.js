@@ -303,6 +303,8 @@ function AppContent() {
         ) || (
           currentTab === 'home' && homeOverlay === 'notifications'
         ) || (
+          currentTab === 'events' && showPastEvents
+        ) || (
           currentTab === 'shop' && (shopOverlay === 'notifications' || shopOverlay === 'cart' || shopOverlay === 'product')
         ) || (
           currentTab === 'profile' && profileOverlay === 'info'

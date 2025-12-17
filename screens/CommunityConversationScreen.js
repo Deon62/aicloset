@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import PostsSvg from '../assets/icons/posts.svg';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -93,6 +94,7 @@ export default function CommunityConversationScreen({
 
         {data.length === 0 ? (
           <View style={styles.emptyWrap}>
+            <PostsSvg width={120} height={120} />
             <Text style={styles.emptyTitle}>No posts yet</Text>
             <Text style={styles.emptyText}>{isJoined ? 'Be the first to post in this community.' : 'Join this community to start posting.'}</Text>
           </View>

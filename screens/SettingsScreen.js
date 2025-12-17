@@ -11,6 +11,7 @@ export default function SettingsScreen({ onBack = () => {} }) {
     { id: 'account', label: 'Account', icon: 'person-outline' },
     { id: 'notifications', label: 'Notifications', icon: 'notifications-outline' },
     { id: 'privacy', label: 'Privacy', icon: 'hand-left-outline' },
+    { id: 'eucossa', label: 'EUCOSSA official website', icon: 'globe-outline', url: 'https://eucossa.com' },
     { id: 'help', label: 'Help', icon: 'help-circle-outline' },
     { id: 'about', label: 'About', icon: 'information-circle-outline' },
   ];
@@ -32,7 +33,13 @@ export default function SettingsScreen({ onBack = () => {} }) {
               const showDivider = idx !== rows.length - 1;
               return (
                 <View key={row.id}>
-                  <TouchableOpacity style={styles.row} activeOpacity={0.85} onPress={() => {}}>
+                  <TouchableOpacity
+                    style={styles.row}
+                    activeOpacity={0.85}
+                    onPress={() => {
+                      if (row.url) Linking.openURL(row.url);
+                    }}
+                  >
                     <View style={styles.rowLeft}>
                       <Ionicons name={row.icon} size={18} color={DARK} />
                       <Text style={styles.rowLabel}>{row.label}</Text>
