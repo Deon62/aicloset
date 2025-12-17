@@ -14,6 +14,12 @@ const MOCK_YEAR = 'Year 2';
 const MOCK_BIO = 'Interested in building web apps and joining hackathons.';
 const MOCK_GITHUB = 'deon62';
 
+const EVENT_TITLE = 'Workshop: Web Development Basics';
+const EVENT_DESCRIPTION = 'Hands-on session covering HTML, CSS, and JavaScript fundamentals.';
+const EVENT_DATE = 'Friday · 3:30 PM';
+const EVENT_LOCATION = 'Computer Lab';
+const EVENT_PRICE = 'Free';
+
 export default function HomeScreen() {
   const [photoUri, setPhotoUri] = useState('');
 
@@ -76,8 +82,23 @@ export default function HomeScreen() {
           <Image source={require('../assets/tech.png')} style={styles.eventHeroImage} resizeMode="cover" />
           <View style={styles.eventInfo}>
             <Text style={styles.cardTitle}>Next event</Text>
-            <Text style={styles.cardHeadline}>Workshop: Web Development Basics</Text>
-            <Text style={styles.cardMeta}>Friday · 3:30 PM · Computer Lab</Text>
+            <Text style={styles.cardHeadline}>{EVENT_TITLE}</Text>
+            <Text style={styles.eventDescription}>{EVENT_DESCRIPTION}</Text>
+
+            <View style={styles.eventMetaList}>
+              <View style={styles.eventMetaRow}>
+                <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                <Text style={styles.eventMetaText}>{EVENT_DATE}</Text>
+              </View>
+              <View style={styles.eventMetaRow}>
+                <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                <Text style={styles.eventMetaText}>{EVENT_LOCATION}</Text>
+              </View>
+              <View style={styles.eventMetaRow}>
+                <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                <Text style={styles.eventMetaText}>{EVENT_PRICE}</Text>
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -273,11 +294,32 @@ const styles = StyleSheet.create({
   },
   eventHeroImage: {
     width: '100%',
-    height: 180,
+    height: 145,
     backgroundColor: '#E5E5E5',
   },
   eventInfo: {
-    padding: 18,
+    padding: 14,
+    gap: 5,
+  },
+  eventDescription: {
+    color: '#4A4A4A',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Nunito_400Regular',
+    marginTop: 2,
+  },
+  eventMetaList: {
+    marginTop: 8,
     gap: 6,
+  },
+  eventMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  eventMetaText: {
+    color: '#5A5A5A',
+    fontSize: 12,
+    fontFamily: 'Nunito_600SemiBold',
   },
 });
