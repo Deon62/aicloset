@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -33,7 +34,8 @@ export default function ProductDetailScreen({
   const price = product?.price ?? '';
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
       <View style={styles.container}>
         <TouchableOpacity
           style={[styles.backBtn, { top: (insets.top || 0) + 12 }]}
