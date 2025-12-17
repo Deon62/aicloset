@@ -137,7 +137,13 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
                 const source = typeof item === 'string' ? { uri: item } : item;
                 return (
                   <View style={[styles.heroSlide, { width, height: HERO_HEIGHT }]}>
-                    <Image source={source} style={[styles.heroImage, { height: HERO_HEIGHT }]} resizeMode="cover" />
+                    <Image
+                      source={source}
+                      style={[styles.heroBlur, { height: HERO_HEIGHT }]}
+                      resizeMode="cover"
+                      blurRadius={20}
+                    />
+                    <Image source={source} style={[styles.heroImage, { height: HERO_HEIGHT }]} resizeMode="contain" />
                   </View>
                 );
               }}
@@ -304,9 +310,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     overflow: 'hidden',
   },
+  heroBlur: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    transform: [{ scale: 1.08 }],
+  },
   heroImage: {
     width: '100%',
-    backgroundColor: '#E5E5E5',
+    backgroundColor: 'transparent',
   },
   dotsRow: {
     position: 'absolute',
