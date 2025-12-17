@@ -2,29 +2,11 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import PastEventsSvg from '../assets/icons/pastevents.svg';
 
 export default function PastEventsScreen({ onBack = () => {} }) {
   const pastEvents = useMemo(
-    () => [
-      {
-        id: 'intro-cp',
-        title: 'Intro to Competitive Programming',
-        description: 'We covered problem-solving patterns and practice sessions.',
-        date: 'Last Friday · 3:30 PM',
-        location: 'Computer Lab',
-        price: 'Free',
-        image: require('../assets/tech.png'),
-      },
-      {
-        id: 'git-github',
-        title: 'Git & GitHub Collaboration',
-        description: 'Branches, pull requests, and team workflows for projects.',
-        date: 'Last Month · 4:00 PM',
-        location: 'ICT Lab',
-        price: 'Free',
-        image: require('../assets/tech.png'),
-      },
-    ],
+    () => [],
     []
   );
 
@@ -39,32 +21,40 @@ export default function PastEventsScreen({ onBack = () => {} }) {
           <View style={styles.headerSpacer} />
         </View>
 
-        {pastEvents.map((event) => (
-          <View key={event.id} style={[styles.card, styles.cardAccent, styles.pastEventCard]}>
-            <View style={styles.pastEventRow}>
-              <Image source={event.image} style={styles.pastEventThumb} resizeMode="cover" />
-              <View style={styles.pastEventInfo}>
-                <Text style={styles.cardHeadline}>{event.title}</Text>
-                <Text style={styles.eventDescription}>{event.description}</Text>
+        {pastEvents.length === 0 ? (
+          <View style={styles.emptyWrap}>
+            <PastEventsSvg width={260} height={260} />
+            <Text style={styles.emptyTitle}>No past events</Text>
+            <Text style={styles.emptyText}>When events end, you will find them here.</Text>
+          </View>
+        ) : (
+          pastEvents.map((event) => (
+            <View key={event.id} style={[styles.card, styles.cardAccent, styles.pastEventCard]}>
+              <View style={styles.pastEventRow}>
+                <Image source={event.image} style={styles.pastEventThumb} resizeMode="cover" />
+                <View style={styles.pastEventInfo}>
+                  <Text style={styles.cardHeadline}>{event.title}</Text>
+                  <Text style={styles.eventDescription}>{event.description}</Text>
 
-                <View style={styles.eventMetaList}>
-                  <View style={styles.eventMetaRow}>
-                    <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                    <Text style={styles.eventMetaText}>{event.date}</Text>
-                  </View>
-                  <View style={styles.eventMetaRow}>
-                    <Ionicons name="location-outline" size={16} color="#5A5A5A" />
-                    <Text style={styles.eventMetaText}>{event.location}</Text>
-                  </View>
-                  <View style={styles.eventMetaRow}>
-                    <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                    <Text style={styles.eventMetaText}>{event.price}</Text>
+                  <View style={styles.eventMetaList}>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>{event.date}</Text>
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>{event.location}</Text>
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>{event.price}</Text>
+                    </View>
                   </View>
                 </View>
               </View>
             </View>
-          </View>
-        ))}
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -163,5 +153,25 @@ const styles = StyleSheet.create({
     color: '#5A5A5A',
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  emptyWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    gap: 10,
+    paddingTop: 24,
+  },
+  emptyTitle: {
+    color: '#0B0B0F',
+    fontSize: 16,
+    fontFamily: 'Nunito_700Bold',
+  },
+  emptyText: {
+    color: '#6A6A6A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_400Regular',
+    textAlign: 'center',
   },
 });
