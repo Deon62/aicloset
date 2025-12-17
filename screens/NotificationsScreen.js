@@ -34,12 +34,6 @@ export default function NotificationsScreen({ onBack = () => {} }) {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
-        <View style={styles.rowLeft}>
-          <View style={styles.iconCircle}>
-            <Ionicons name="notifications-outline" size={18} color={DARK} />
-          </View>
-        </View>
-
         <View style={styles.rowMain}>
           <View style={styles.rowTop}>
             <Text style={styles.rowTitle} numberOfLines={1}>
@@ -47,7 +41,7 @@ export default function NotificationsScreen({ onBack = () => {} }) {
             </Text>
             <Text style={styles.rowTime}>{item.time}</Text>
           </View>
-          <Text style={styles.rowBody} numberOfLines={2}>
+          <Text style={styles.rowBody} numberOfLines={3}>
             {item.body}
           </Text>
         </View>
@@ -130,28 +124,14 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#EFEFEF',
-    marginVertical: 12,
+    marginVertical: 0,
   },
   row: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  rowLeft: {
-    paddingTop: 2,
-  },
-  iconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#F2F4FF',
-    borderWidth: 1,
-    borderColor: '#DCE3FF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 18,
   },
   rowMain: {
-    flex: 1,
-    gap: 4,
+    gap: 10,
   },
   rowTop: {
     flexDirection: 'row',
@@ -162,18 +142,18 @@ const styles = StyleSheet.create({
   rowTitle: {
     flex: 1,
     color: '#0B0B0F',
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Nunito_700Bold',
   },
   rowTime: {
     color: '#6A6A6A',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
   },
   rowBody: {
     color: '#4A4A4A',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: 'Nunito_400Regular',
   },
   emptyWrap: {
