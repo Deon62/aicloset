@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
+const CART_BRIGHT = '#00A3FF';
 
 const ALL_PRODUCTS = [
   {
@@ -12,6 +13,7 @@ const ALL_PRODUCTS = [
     name: 'Ardena T‑Shirt',
     description: 'Premium cotton club tee with a clean fit.',
     price: 'KSh 900',
+    originalPrice: 'KSh 1,200',
     image: require('../assets/ardena.jpg'),
   },
   {
@@ -19,6 +21,7 @@ const ALL_PRODUCTS = [
     name: 'Ardena T‑Shirt (Alt)',
     description: 'Soft, breathable, and perfect for meetups.',
     price: 'KSh 900',
+    originalPrice: 'KSh 1,150',
     image: require('../assets/ardena1.jpg'),
   },
   {
@@ -26,6 +29,7 @@ const ALL_PRODUCTS = [
     name: 'Ardena T‑Shirt (Edition)',
     description: 'Limited edition print for EUCOSSA members.',
     price: 'KSh 1,000',
+    originalPrice: 'KSh 1,400',
     image: require('../assets/ardena2.jpg'),
   },
 ];
@@ -62,13 +66,16 @@ export default function LikedItemsScreen({
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
-              <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? BRAND_BLUE : '#FFFFFF'} />
+              <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? CART_BRIGHT : '#FFFFFF'} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.postBody}>
-          <Text style={styles.postPrice}>{item.price}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.postPrice}>{item.price}</Text>
+            {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
+          </View>
           <Text style={styles.postDescription}>{item.description}</Text>
         </View>
       </View>
@@ -201,7 +208,13 @@ const styles = StyleSheet.create({
   postBody: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 12,
+    paddingBottom: 22,
+    gap: 6,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
   },
   postDescription: {
     color: '#4A4A4A',
@@ -214,5 +227,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito_700Bold',
     marginTop: 0,
+  },
+  originalPrice: {
+    color: '#8A8A8A',
+    fontSize: 14,
+    fontFamily: 'Nunito_600SemiBold',
+    textDecorationLine: 'line-through',
   },
 });

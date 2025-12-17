@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
+const CART_BRIGHT = '#00A3FF';
 
 export default function MarketplaceScreen({
   likedIds = new Set(),
@@ -28,6 +29,7 @@ export default function MarketplaceScreen({
         name: 'Ardena T‑Shirt',
         description: 'Premium cotton club tee with a clean fit.',
         price: 'KSh 900',
+        originalPrice: 'KSh 1,200',
         image: require('../assets/ardena.jpg'),
       },
       {
@@ -35,6 +37,7 @@ export default function MarketplaceScreen({
         name: 'Ardena T‑Shirt (Alt)',
         description: 'Soft, breathable, and perfect for meetups.',
         price: 'KSh 900',
+        originalPrice: 'KSh 1,150',
         image: require('../assets/ardena1.jpg'),
       },
       {
@@ -42,6 +45,7 @@ export default function MarketplaceScreen({
         name: 'Ardena T‑Shirt (Edition)',
         description: 'Limited edition print for EUCOSSA members.',
         price: 'KSh 1,000',
+        originalPrice: 'KSh 1,400',
         image: require('../assets/ardena2.jpg'),
       },
     ],
@@ -72,13 +76,16 @@ export default function MarketplaceScreen({
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconBtn} activeOpacity={0.85} onPress={() => onToggleCart(item.id)}>
-              <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? BRAND_BLUE : '#FFFFFF'} />
+              <Ionicons name={inCart ? 'cart' : 'cart-outline'} size={26} color={inCart ? CART_BRIGHT : '#FFFFFF'} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.postBody}>
-          <Text style={styles.postPrice}>{item.price}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.postPrice}>{item.price}</Text>
+            {item.originalPrice ? <Text style={styles.originalPrice}>{item.originalPrice}</Text> : null}
+          </View>
           <Text style={styles.postDescription}>{item.description}</Text>
         </View>
       </View>
@@ -99,7 +106,7 @@ export default function MarketplaceScreen({
             <Text style={styles.title}>Shop</Text>
             <View style={styles.headerIcons}>
               <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenLiked}>
-                <Ionicons name="heart-outline" size={22} color={DARK} />
+                <Ionicons name="heart-outline" size={28} color={DARK} />
                 {likedIds.size > 0 ? (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{likedIds.size}</Text>
@@ -108,7 +115,7 @@ export default function MarketplaceScreen({
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenCart}>
-                <Ionicons name="cart-outline" size={22} color={DARK} />
+                <Ionicons name="cart-outline" size={28} color={DARK} />
                 {cartIds.size > 0 ? (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{cartIds.size}</Text>
@@ -175,19 +182,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerIconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#EEEEEE',
+    paddingHorizontal: 6,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
+    top: -2,
+    right: -2,
     minWidth: 18,
     height: 18,
     borderRadius: 9,
@@ -272,8 +275,13 @@ const styles = StyleSheet.create({
   postBody: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 12,
+    paddingBottom: 22,
     gap: 6,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
   },
   postDescription: {
     color: '#4A4A4A',
@@ -285,5 +293,11 @@ const styles = StyleSheet.create({
     color: '#0B0B0F',
     fontSize: 18,
     fontFamily: 'Nunito_700Bold',
+  },
+  originalPrice: {
+    color: '#8A8A8A',
+    fontSize: 14,
+    fontFamily: 'Nunito_600SemiBold',
+    textDecorationLine: 'line-through',
   },
 });
