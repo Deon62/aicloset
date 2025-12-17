@@ -17,6 +17,8 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
         price: 'Free',
         image: require('../assets/tech.png'),
         images: [require('../assets/tech.png'), require('../assets/tech.png')],
+        requirements: ['Laptop (recommended)', 'Basic HTML knowledge', 'Notebook & pen'],
+        venueHint: 'Egerton University · Computer Lab (Main Campus)',
       },
       {
         id: 'git-github',
@@ -27,6 +29,8 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
         price: 'Free',
         image: require('../assets/tech.png'),
         images: [require('../assets/tech.png'), require('../assets/tech.png')],
+        requirements: ['Laptop', 'Git installed', 'GitHub account'],
+        venueHint: 'Egerton University · ICT Lab',
       },
     ],
     []

@@ -14,6 +14,12 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
 
+  const requirements = useMemo(() => {
+    const list = event?.requirements;
+    if (Array.isArray(list) && list.length > 0) return list;
+    return [];
+  }, [event]);
+
   const images = useMemo(() => {
     const input = event?.images;
     if (Array.isArray(input) && input.length > 0) return input;
@@ -108,6 +114,35 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
               ) : null}
             </View>
           </View>
+
+          {requirements.length > 0 ? (
+            <View style={styles.detailsSection}>
+              <Text style={styles.sectionTitle}>Requirements</Text>
+              <View style={styles.requirementsList}>
+                {requirements.map((item, idx) => (
+                  <View key={`${idx}-${String(item)}`} style={styles.requirementRow}>
+                    <View style={styles.requirementDot} />
+                    <Text style={styles.requirementText}>{String(item)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
+
+          <View style={styles.detailsSection}>
+            <Text style={styles.sectionTitle}>Location</Text>
+            {event?.venueHint ? <Text style={styles.venueHint}>{event.venueHint}</Text> : null}
+            <View style={styles.mapGrid}>
+              <View style={styles.mapCell} />
+              <View style={styles.mapCell} />
+              <View style={styles.mapCell} />
+              <View style={styles.mapCell} />
+              <View style={[styles.mapOverlay, styles.mapOverlayCentered]}>
+                <Ionicons name="map-outline" size={18} color="#4A4A4A" />
+                <Text style={styles.mapOverlayText}>Map coming soon</Text>
+              </View>
+            </View>
+          </View>
         </ScrollView>
 
         <View style={styles.stickyBar}>
@@ -197,10 +232,23 @@ const styles = StyleSheet.create({
     color: '#0B0B0F',
     fontFamily: 'Nunito_700Bold',
   },
+  sectionTitle: {
+    fontSize: 16,
+    lineHeight: 22,
+    color: '#0B0B0F',
+    fontFamily: 'Nunito_700Bold',
+    marginTop: 2,
+  },
   description: {
     color: '#4A4A4A',
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: 'Nunito_400Regular',
+  },
+  venueHint: {
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
     fontFamily: 'Nunito_400Regular',
   },
   metaList: {
@@ -215,6 +263,65 @@ const styles = StyleSheet.create({
     color: '#5A5A5A',
     fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  requirementsList: {
+    gap: 8,
+    marginTop: 6,
+  },
+  requirementRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  requirementDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: BRAND_BLUE,
+    marginTop: 7,
+  },
+  requirementText: {
+    flex: 1,
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_400Regular',
+  },
+  mapGrid: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 16,
+    overflow: 'hidden',
+    height: 140,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: '#FFFFFF',
+  },
+  mapCell: {
+    width: '50%',
+    height: 70,
+    backgroundColor: '#F5F7FF',
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E6EAFF',
+  },
+  mapOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  mapOverlayCentered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  mapOverlayText: {
+    color: '#4A4A4A',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
   },
   stickyBar: {
     position: 'absolute',
