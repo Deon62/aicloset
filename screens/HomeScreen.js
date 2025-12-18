@@ -35,6 +35,7 @@ export default function HomeScreen({
   onOpenProfile = () => {},
   onOpenCards = () => {},
   onOpenJobs = () => {},
+  onOpenResources = () => {},
   onRefresh = async () => {},
   profileVersion = 0,
 }) {
@@ -239,7 +240,7 @@ export default function HomeScreen({
             <Text style={styles.extrasLabel}>Jobs</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Resources', 'Coming soon.')}
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenResources}
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="book-outline" size={22} color={DARK} />
