@@ -88,7 +88,7 @@ export default function CommunityConversationScreen({
         <View style={styles.voteRow}>
           <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, 1)}>
             <Ionicons
-              name={item.userVote === 1 ? 'arrow-up' : 'arrow-up-outline'}
+              name={item.userVote === 1 ? 'arrow-up-circle' : 'arrow-up-circle-outline'}
               size={22}
               color={item.userVote === 1 ? BRAND_BLUE : DARK}
             />
@@ -96,14 +96,21 @@ export default function CommunityConversationScreen({
           <Text style={styles.voteScore}>{item.voteScore ?? 0}</Text>
           <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, -1)}>
             <Ionicons
-              name={item.userVote === -1 ? 'arrow-down' : 'arrow-down-outline'}
+              name={item.userVote === -1 ? 'arrow-down-circle' : 'arrow-down-circle-outline'}
               size={22}
               color={item.userVote === -1 ? '#D11A2A' : DARK}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.replyBtn} activeOpacity={0.8} onPress={() => setReplyTo(item)}>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={styles.replyIconBtn}
+            activeOpacity={0.8}
+            onPress={() => {
+              setReplyTo(item);
+              setComposerOpen(true);
+            }}
+          >
             <Ionicons name="arrow-redo-outline" size={20} color={DARK} />
-            <Text style={styles.replyText}>Quote</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -271,11 +278,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Nunito_700Bold',
   },
+  replyIconBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
   quoteCard: {
     marginTop: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: BRAND_BLUE,
-    backgroundColor: '#F7F9FF',
+    backgroundColor: '#F6F6F6',
     borderRadius: 10,
     padding: 10,
     gap: 4,
