@@ -215,7 +215,7 @@ export default function HomeScreen({
           <Text style={styles.subtitle}>welcome to Your Eucossa Account</Text>
         </View>
 
-        <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text>
+        {/* <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text> */}
 
         <View style={styles.premiumCard}>
           <View style={styles.premiumTopRow}>
