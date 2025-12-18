@@ -649,6 +649,7 @@ function AppContent() {
         onOpenResources={() => openHomeOverlay('resources')}
         onOpenProjects={() => openHomeOverlay('projects')}
         onOpenStartups={() => openHomeOverlay('startups')}
+        onOpenEvents={() => setCurrentTab('events')}
         onRedeemPoints={() => openHomeOverlay('redeemPoints')}
         onRefresh={async () => {
           await refreshProfileCache(userId);
@@ -667,7 +668,7 @@ function AppContent() {
       return <NotificationsScreen onBack={closeHomeOverlay} />;
     }
     if (homeOverlayMounted === 'cards') {
-      return <CardsScreen onBack={closeHomeOverlay} />;
+      return <CardsScreen onBack={closeHomeOverlay} onRedeemPoints={() => openHomeOverlay('redeemPoints')} />;
     }
     if (homeOverlayMounted === 'redeemPoints') {
       return <RedeemPointsScreen onBack={closeHomeOverlay} />;

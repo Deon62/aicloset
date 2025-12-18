@@ -38,6 +38,9 @@ export default function HomeScreen({
   onOpenResources = () => {},
   onOpenProjects = () => {},
   onOpenStartups = () => {},
+  onOpenEvents = () => {
+    Alert.alert('Event', 'Coming soon.');
+  },
   onRedeemPoints = () => {
     Alert.alert('Redeem Points', 'Rewards are coming soon.');
   },
@@ -268,8 +271,14 @@ export default function HomeScreen({
               <Image source={{ uri: EVENT_POSTER }} style={styles.eventPoster} resizeMode="contain" />
             </View>
             <View style={styles.eventMain}>
-              <Text style={styles.cardTitle}>Next event</Text>
-              <Text style={styles.cardHeadline}>{EVENT_TITLE}</Text>
+              <View style={styles.eventTitleRow}>
+                <Text style={styles.cardHeadline} numberOfLines={1}>
+                  {EVENT_TITLE}
+                </Text>
+                <View style={styles.upcomingTag}>
+                  <Text style={styles.upcomingTagText}>Upcoming</Text>
+                </View>
+              </View>
 
               <View style={styles.eventMetaList}>
                 <View style={styles.eventMetaRow}>
@@ -291,6 +300,11 @@ export default function HomeScreen({
                   </Text>
                 </View>
               </View>
+
+              <TouchableOpacity style={styles.viewEventBtn} activeOpacity={0.9} onPress={onOpenEvents}>
+                <Text style={styles.viewEventBtnText}>View event</Text>
+                <Ionicons name="chevron-forward" size={16} color={BRAND_BLUE} />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -700,7 +714,7 @@ const styles = StyleSheet.create({
   },
   eventPosterWrap: {
     width: 120,
-    height: 150,
+    height: 132,
     backgroundColor: 'transparent',
     overflow: 'hidden',
   },
@@ -719,13 +733,32 @@ const styles = StyleSheet.create({
   },
   eventMain: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingRight: 14,
-    gap: 6,
+    gap: 4,
+  },
+  eventTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  upcomingTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    backgroundColor: '#EEF3FF',
+    borderWidth: 1,
+    borderColor: '#DCE3FF',
+  },
+  upcomingTagText: {
+    color: BRAND_BLUE,
+    fontSize: 11,
+    fontFamily: 'Nunito_700Bold',
   },
   eventMetaList: {
-    marginTop: 8,
-    gap: 6,
+    marginTop: 4,
+    gap: 4,
   },
   eventMetaRow: {
     flexDirection: 'row',
@@ -737,6 +770,19 @@ const styles = StyleSheet.create({
     color: '#5A5A5A',
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  viewEventBtn: {
+    marginTop: 4,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 3,
+  },
+  viewEventBtnText: {
+    color: BRAND_BLUE,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
   },
   extrasCard: {
     flexDirection: 'row',

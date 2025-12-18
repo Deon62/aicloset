@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
 
-export default function CardsScreen({ onBack = () => {} }) {
+export default function CardsScreen({ onBack = () => {}, onRedeemPoints = () => {} }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerBar}>
@@ -95,6 +95,11 @@ export default function CardsScreen({ onBack = () => {} }) {
             <Text style={styles.stepNum}>3</Text>
             <Text style={styles.stepText}>We will confirm eligibility automatically once the gateway integration is live.</Text>
           </View>
+
+          <TouchableOpacity style={styles.redeemLink} activeOpacity={0.9} onPress={onRedeemPoints}>
+            <Text style={styles.redeemLinkText}>Redeem points</Text>
+            <Ionicons name="chevron-forward" size={16} color={BRAND_BLUE} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.noteBox}>
@@ -206,4 +211,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noteText: { flex: 1, color: '#4A4A4A', fontSize: 13, lineHeight: 18, fontFamily: 'Nunito_600SemiBold' },
+  redeemLink: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 6,
+  },
+  redeemLinkText: {
+    color: BRAND_BLUE,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
 });
