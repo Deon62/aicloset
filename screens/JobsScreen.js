@@ -24,6 +24,12 @@ export default function JobsScreen({ onBack = () => {} }) {
         description: 'Learn industry-ready networking/cloud skills and access Huawei training opportunities.',
         link: 'https://e.huawei.com/en/talent/#/ict-academy',
       },
+      {
+        id: 'stellar',
+        name: 'Stellar Blockchain',
+        description: 'Learn about blockchain and build real-world apps on the Stellar ecosystem.',
+        link: 'https://www.stellar.org/',
+      },
     ],
     []
   );
