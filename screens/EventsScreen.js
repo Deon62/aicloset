@@ -176,6 +176,10 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
                   <Ionicons name="location-outline" size={16} color="#5A5A5A" />
                   <Text style={styles.eventMetaText}>{event.location}</Text>
                 </View>
+                <View style={styles.eventMetaRow}>
+                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                  <Text style={styles.eventMetaText}>{event.price || 'Free'}</Text>
+                </View>
               </View>
             </View>
           </TouchableOpacity>
