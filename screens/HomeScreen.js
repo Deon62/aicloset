@@ -38,6 +38,9 @@ export default function HomeScreen({
   onOpenResources = () => {},
   onOpenProjects = () => {},
   onOpenStartups = () => {},
+  onRedeemPoints = () => {
+    Alert.alert('Redeem Points', 'Rewards are coming soon.');
+  },
   onRefresh = async () => {},
   profileVersion = 0,
 }) {
@@ -201,7 +204,7 @@ export default function HomeScreen({
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>Hello {profile.name || MOCK_NAME} 🖐</Text>
-          <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
+          <Text style={styles.subtitle}>welcome to Your Eucossa Account</Text>
         </View>
 
         <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text>
@@ -237,7 +240,18 @@ export default function HomeScreen({
               <Text style={styles.pointsValue}>{showPoints ? profile.points.toLocaleString() : '••••'}</Text>
             </View>
           </View>
-          <Text style={styles.pointsNote}>Use points to redeem tees & event passes</Text>
+
+          <TouchableOpacity
+            style={styles.redeemBtn}
+            activeOpacity={0.9}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onRedeemPoints();
+            }}
+          >
+            <Text style={styles.redeemBtnText}>Redeem Points</Text>
+            <Ionicons name="chevron-forward" size={18} color="#0B0B0F" />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.cardLinkOutsideBtn} activeOpacity={0.85} onPress={onOpenCards}>
@@ -474,6 +488,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     fontFamily: 'Nunito_600SemiBold',
+  },
+  redeemBtn: {
+    marginTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 999,
+    backgroundColor: '#E5E7FF',
+  },
+  redeemBtnText: {
+    color: '#0B0B0F',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
   },
   cardLinkOutsideBtn: {
     marginTop: -4,

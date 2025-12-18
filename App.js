@@ -18,6 +18,7 @@ import JobsScreen from './screens/JobsScreen';
 import ResourcesScreen from './screens/ResourcesScreen';
 import ProjectsScreen from './screens/ProjectsScreen';
 import StartupsScreen from './screens/StartupsScreen';
+import RedeemPointsScreen from './screens/RedeemPointsScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
 import EventDetailsScreen from './screens/EventDetailsScreen';
@@ -648,6 +649,7 @@ function AppContent() {
         onOpenResources={() => openHomeOverlay('resources')}
         onOpenProjects={() => openHomeOverlay('projects')}
         onOpenStartups={() => openHomeOverlay('startups')}
+        onRedeemPoints={() => openHomeOverlay('redeemPoints')}
         onRefresh={async () => {
           await refreshProfileCache(userId);
         }}
@@ -666,6 +668,9 @@ function AppContent() {
     }
     if (homeOverlayMounted === 'cards') {
       return <CardsScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'redeemPoints') {
+      return <RedeemPointsScreen onBack={closeHomeOverlay} />;
     }
     if (homeOverlayMounted === 'jobs') {
       return <JobsScreen onBack={closeHomeOverlay} />;
