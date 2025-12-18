@@ -29,6 +29,7 @@ const EVENT_PRICE = 'KSh 300';
 const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png';
 
 export default function HomeScreen({
+  loading = false,
   onOpenNotifications = () => {},
   onOpenProfile = () => {},
   profileVersion = 0,
@@ -41,14 +42,17 @@ export default function HomeScreen({
   const [github, setGithub] = useState('');
 
   useEffect(() => {
+    let mounted = true;
     const loadProfile = async () => {
       try {
         const storedPhoto = (await AsyncStorage.getItem('@profile_photo_uri')) || '';
         const normalizedPhoto = storedPhoto.trim() || PRESET_AVATARS[0];
+        if (!mounted) return;
         setPhotoUri(normalizedPhoto);
 
         const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github']);
         const map = Object.fromEntries(entries);
+        if (!mounted) return;
         setName(map['@profile_name'] || '');
         setCourse(map['@profile_course'] || '');
         setYear(map['@profile_year'] || '');
@@ -59,7 +63,39 @@ export default function HomeScreen({
       }
     };
     loadProfile();
+    return () => {
+      mounted = false;
+      setPhotoUri('');
+      setName('');
+      setCourse('');
+      setYear('');
+      setBio('');
+      setGithub('');
+    };
   }, [profileVersion]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.container} contentContainerStyle={[styles.content, { gap: 12 }]}>
+          <View style={styles.header}>
+            <View style={[styles.skeletonBlock, { height: 24, width: 220, marginBottom: 8 }]} />
+            <View style={[styles.skeletonBlock, { height: 14, width: '80%' }]} />
+          </View>
+          <View style={[styles.card, styles.profileCard]}>
+            <View style={styles.profileRow}>
+              <View style={[styles.avatarWrap, styles.skeletonBlock]} />
+              <View style={{ flex: 1, gap: 8 }}>
+                <View style={[styles.skeletonBlock, { height: 14, width: '60%' }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: '40%' }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: '30%' }]} />
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -48,6 +48,7 @@ function AppContent() {
   const [authScreen, setAuthScreen] = useState(null); // null | 'signup' | 'login'
   const [authBooting, setAuthBooting] = useState(true);
   const [profileVersion, setProfileVersion] = useState(0);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [userId, setUserId] = useState(null);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
@@ -89,16 +90,23 @@ function AppContent() {
 
     boot();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       setAuthScreen(session ? null : 'login');
       setUserId(session?.user?.id || null);
       // reset cached membership/posts on any auth change
       setJoinedCommunityIds(new Set());
       setPostsByCommunity({});
+      await clearProfileCache();
       if (session?.user?.id) {
-        loadMemberships(session.user.id);
-        refreshProfileCache(session.user.id);
+        setProfileLoading(true);
+        await Promise.all([
+          loadMemberships(session.user.id),
+          refreshProfileCache(session.user.id),
+        ]);
+        setProfileLoading(false);
+      } else {
+        setProfileLoading(false);
       }
     });
 
@@ -179,6 +187,21 @@ function AppContent() {
     }
   };
 
+  const clearProfileCache = async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        '@profile_github',
+        '@profile_name',
+        '@profile_course',
+        '@profile_year',
+        '@profile_bio',
+        '@profile_photo_uri',
+      ]);
+    } catch (e) {
+      console.warn('Clear profile cache failed', e);
+    }
+  };
+
   const refreshProfileCache = async (uid) => {
     if (!uid) return;
     try {
@@ -231,6 +254,10 @@ function AppContent() {
   const toggleJoinCommunity = async (id) => {
     if (!userId) {
       Alert.alert('Join community', 'Please login to join communities.');
+      setShowOnboarding(false);
+      setShowLanding(false);
+      setAuthScreen('login');
+      setCurrentTab('home');
       return;
     }
     const wasJoined = joinedCommunityIds.has(id);
@@ -307,6 +334,7 @@ function AppContent() {
     }
     return (
       <HomeScreen
+        loading={profileLoading}
         onOpenNotifications={() => setHomeOverlay('notifications')}
         profileVersion={profileVersion}
         onOpenProfile={() => {
