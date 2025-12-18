@@ -15,7 +15,7 @@ const STORAGE_KEYS = {
   github: '@profile_github',
 };
 
-export default function ProfileInfoScreen({ onBack = () => {} }) {
+export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -69,6 +69,7 @@ export default function ProfileInfoScreen({ onBack = () => {} }) {
         [STORAGE_KEYS.github, String(github || '').trim()],
       ]);
       setEditing(false);
+      onSaved();
     } catch (e) {
       console.warn('Failed to save profile info', e);
       Alert.alert('Failed to save', 'Please try again.');

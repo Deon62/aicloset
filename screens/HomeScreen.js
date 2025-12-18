@@ -25,6 +25,7 @@ const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object
 export default function HomeScreen({
   onOpenNotifications = () => {},
   onOpenProfile = () => {},
+  profileVersion = 0,
 }) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
@@ -51,7 +52,7 @@ export default function HomeScreen({
       }
     };
     loadProfile();
-  }, []);
+  }, [profileVersion]);
 
   return (
     <SafeAreaView style={styles.safeArea}>

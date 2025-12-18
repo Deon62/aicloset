@@ -44,6 +44,7 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [authScreen, setAuthScreen] = useState(null); // null | 'signup' | 'login'
   const [authBooting, setAuthBooting] = useState(true);
+  const [profileVersion, setProfileVersion] = useState(0);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
@@ -216,6 +217,7 @@ function AppContent() {
     return (
       <HomeScreen
         onOpenNotifications={() => setHomeOverlay('notifications')}
+        profileVersion={profileVersion}
         onOpenProfile={() => {
           setCurrentTab('profile');
         }}
@@ -322,7 +324,7 @@ function AppContent() {
 
   const renderProfileStack = () => {
     if (profileOverlay === 'info') {
-      return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} />;
+      return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} onSaved={() => setProfileVersion((v) => v + 1)} />;
     }
     if (profileOverlay === 'settings') {
       return <SettingsScreen onBack={() => setProfileOverlay(null)} />;
