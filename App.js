@@ -67,6 +67,7 @@ function AppContent() {
   const [profileVersion, setProfileVersion] = useState(0);
   const [profileLoading, setProfileLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+  const authScreenRef = useRef(authScreen);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
@@ -86,6 +87,10 @@ function AppContent() {
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
+
+  useEffect(() => {
+    authScreenRef.current = authScreen;
+  }, [authScreen]);
 
   useEffect(() => {
     let mounted = true;
@@ -204,6 +209,11 @@ function AppContent() {
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
+
+      if (authScreenRef.current === 'signup' && session) {
+        return;
+      }
+
       setAuthScreen(session ? null : 'login');
       setUserId(session?.user?.id || null);
       // reset cached membership/posts on any auth change

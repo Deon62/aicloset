@@ -238,6 +238,12 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
         await syncProfileToLocal(profile);
       }
 
+      try {
+        await supabase.auth.signOut();
+      } catch (e) {
+        console.warn('Failed to sign out after signup', e);
+      }
+
       // After successful signup, send user to login first as requested
       onNeedLogin();
     } catch (e) {
