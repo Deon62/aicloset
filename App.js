@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Platform, View, BackHandler } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -455,6 +455,80 @@ function AppContent() {
       fetchCommunityPosts(activeCommunity.id);
     }
   }, [communityOverlay, activeCommunity?.id]);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (showLanding || showOnboarding || authScreen) return false;
+
+      if (shopOverlay === 'product') {
+        setShopOverlay('cart');
+        setActiveProduct(null);
+        return true;
+      }
+      if (shopOverlay === 'payment') {
+        setShopOverlay('cart');
+        return true;
+      }
+      if (shopOverlay === 'orders') {
+        setShopOverlay(null);
+        return true;
+      }
+      if (shopOverlay === 'cart' || shopOverlay === 'notifications') {
+        setShopOverlay(null);
+        return true;
+      }
+
+      if (communityOverlay === 'conversation') {
+        setCommunityOverlay(null);
+        setActiveCommunity(null);
+        return true;
+      }
+
+      if (homeOverlay) {
+        setHomeOverlay(null);
+        return true;
+      }
+
+      if (activeEvent?.id) {
+        setActiveEvent(null);
+        return true;
+      }
+      if (showPastEvents) {
+        setShowPastEvents(false);
+        return true;
+      }
+
+      if (profileOverlay === 'help' || profileOverlay === 'privacy' || profileOverlay === 'about' || profileOverlay === 'accountSettings' || profileOverlay === 'notificationSettings') {
+        setProfileOverlay('settings');
+        return true;
+      }
+      if (profileOverlay) {
+        setProfileOverlay(null);
+        return true;
+      }
+
+      if (currentTab !== 'home') {
+        setCurrentTab('home');
+        return true;
+      }
+
+      return false;
+    };
+
+    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => sub.remove();
+  }, [
+    activeEvent?.id,
+    authScreen,
+    communityOverlay,
+    currentTab,
+    homeOverlay,
+    profileOverlay,
+    shopOverlay,
+    showLanding,
+    showOnboarding,
+    showPastEvents,
+  ]);
 
   const renderHomeStack = () => {
     if (homeOverlay === 'notifications') {

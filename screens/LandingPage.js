@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
   landingHeader: {
     alignItems: 'center',
     gap: 6,
-    paddingTop: 18,
+    paddingTop: 34,
   },
   landingName: {
     color: '#0B0B0F',
-    fontSize: 18,
-    lineHeight: 24,
+    fontSize: 22,
+    lineHeight: 30,
     fontFamily: 'Nunito_700Bold',
     textAlign: 'center',
   },
