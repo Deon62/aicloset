@@ -201,8 +201,6 @@ export default function HomeScreen({
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
             <View style={styles.logosRow}>
-              <Image source={require('../assets/egerton.png')} style={styles.logo} resizeMode="contain" />
-              <View style={styles.logoDivider} />
               <Image source={require('../assets/eucossa.jpg')} style={styles.logo} resizeMode="contain" />
             </View>
 
@@ -322,16 +320,21 @@ export default function HomeScreen({
         {/* <Text style={styles.sectionTitle}>Extras</Text> */}
 
         <LinearGradient
-          colors={['#2F6BFF', '#1B56FD', '#78B3FF', '#E9F2FF']}
-          locations={[0, 0.45, 0.8, 1]}
-          start={{ x: 0.14, y: 0.14 }}
-          end={{ x: 0.95, y: 0.92 }}
+          colors={[
+            'rgba(27,86,253,0.18)',
+            'rgba(27,86,253,0.10)',
+            'rgba(120,179,255,0.06)',
+            'rgba(233,242,255,0.02)',
+          ]}
+          locations={[0, 0.52, 0.82, 1]}
+          start={{ x: 0.1, y: 0.12 }}
+          end={{ x: 0.95, y: 0.9 }}
           style={[styles.card, styles.extrasCard, styles.extrasGradient]}
         >
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenJobs}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="people-outline" size={22} color="#FFFFFF" />
+              <Ionicons name="people-outline" size={22} color={DARK} />
               {miniClubsCount > 0 ? (
                 <View style={styles.resourcesCountBadge}>
                   <Text style={styles.resourcesCountBadgeText}>{miniClubsBadgeText}</Text>
@@ -344,7 +347,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenResources}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="book-outline" size={22} color="#FFFFFF" />
+              <Ionicons name="book-outline" size={22} color={DARK} />
               {resourcesCount > 0 ? (
                 <View style={styles.resourcesCountBadge}>
                   <Text style={styles.resourcesCountBadgeText}>{resourcesBadgeText}</Text>
@@ -357,7 +360,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="code-slash-outline" size={22} color="#FFFFFF" />
+              <Ionicons name="code-slash-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Projects</Text>
           </TouchableOpacity>
@@ -365,7 +368,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="bulb-outline" size={22} color="#FFFFFF" />
+              <Ionicons name="bulb-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Startups</Text>
           </TouchableOpacity>
@@ -423,8 +426,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logo: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
     borderRadius: 8,
   },
   logoDivider: {
@@ -854,18 +857,18 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: BRAND_BLUE,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.55)',
+    borderColor: '#FFFFFF',
   },
   resourcesCountBadgeText: {
-    color: BRAND_BLUE,
+    color: '#FFFFFF',
     fontSize: 10,
     lineHeight: 12,
     fontFamily: 'Nunito_700Bold',
   },
   extrasLabel: {
-    color: 'rgba(255,255,255,0.92)',
+    color: DARK,
     fontSize: 12,
     textAlign: 'center',
     fontFamily: 'Nunito_700Bold',
