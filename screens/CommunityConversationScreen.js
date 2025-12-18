@@ -15,6 +15,7 @@ export default function CommunityConversationScreen({
   onBack = () => {},
   onAddPost = () => {},
   onJoin = () => {},
+  onVote = () => {},
 }) {
   const insets = useSafeAreaInsets();
   const [composerOpen, setComposerOpen] = useState(false);
@@ -68,6 +69,24 @@ export default function CommunityConversationScreen({
         </View>
 
         <Text style={styles.postBody}>{item?.text ?? ''}</Text>
+
+        <View style={styles.voteRow}>
+          <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, 1)}>
+            <Ionicons
+              name={item.userVote === 1 ? 'caret-up' : 'caret-up-outline'}
+              size={22}
+              color={item.userVote === 1 ? BRAND_BLUE : DARK}
+            />
+          </TouchableOpacity>
+          <Text style={styles.voteScore}>{item.voteScore ?? 0}</Text>
+          <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, -1)}>
+            <Ionicons
+              name={item.userVote === -1 ? 'caret-down' : 'caret-down-outline'}
+              size={22}
+              color={item.userVote === -1 ? '#D11A2A' : DARK}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -181,6 +200,25 @@ const styles = StyleSheet.create({
   },
   spinnerText: {
     color: BRAND_BLUE,
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+  },
+  voteRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  voteBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  voteScore: {
+    minWidth: 28,
+    textAlign: 'center',
+    color: DARK,
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
   },

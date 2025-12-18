@@ -162,6 +162,46 @@ function AppContent() {
     }
   };
 
+  const togglePostVote = async (communityId, postId, value) => {
+    if (!userId) {
+      Alert.alert('Vote', 'Please login to vote.');
+      setShowOnboarding(false);
+      setShowLanding(false);
+      setAuthScreen('login');
+      setCurrentTab('home');
+      return;
+    }
+
+    setPostsByCommunity((prev) => {
+      const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
+      const updated = existing.map((post) => {
+        if (post.id !== postId) return post;
+        const nextVote = post.userVote === value ? 0 : value;
+        const nextScore = (post.voteScore || 0) - (post.userVote || 0) + nextVote;
+        return { ...post, userVote: nextVote, voteScore: nextScore };
+      });
+      return { ...(prev || {}), [communityId]: updated };
+    });
+
+    const { data, error } = await supabase
+      .from('post_votes')
+      .select('value')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const currentVote = Number(data?.value) || 0;
+    const nextVote = currentVote === value ? 0 : value;
+
+    if (nextVote === 0) {
+      await supabase.from('post_votes').delete().eq('post_id', postId).eq('user_id', userId);
+    } else {
+      await supabase
+        .from('post_votes')
+        .upsert({ post_id: postId, user_id: userId, value: nextVote }, { onConflict: 'post_id,user_id' });
+    }
+  };
+
   const toggleLiked = (id) => {
     setLikedIds((prev) => {
       const next = new Set(prev);
@@ -246,14 +286,41 @@ function AppContent() {
         console.warn('Fetch posts error', error);
         return;
       }
-      const mapped = (data || []).map((row) => ({
-        id: row.id,
-        text: row.body,
-        createdAt: new Date(row.created_at).getTime(),
-        authorName: row.author?.name || 'Member',
-        authorGithub: row.author?.github_username || '',
-        authorAvatar: row.author?.avatar_url || DEFAULT_AVATAR,
-      }));
+      let votesMap = {};
+      const postIds = (data || []).map((row) => row.id).filter(Boolean);
+      if (postIds.length > 0) {
+        const { data: voteRows, error: voteError } = await supabase
+          .from('post_votes')
+          .select('post_id, value, user_id')
+          .in('post_id', postIds);
+        if (voteError) {
+          console.warn('Fetch post votes error', voteError);
+        } else {
+          votesMap = (voteRows || []).reduce((acc, row) => {
+            const pid = row.post_id;
+            if (!pid) return acc;
+            if (!acc[pid]) acc[pid] = { score: 0, userVote: 0 };
+            const val = Number(row.value) === -1 ? -1 : 1;
+            acc[pid].score += val;
+            if (row.user_id === userId) acc[pid].userVote = val;
+            return acc;
+          }, {});
+        }
+      }
+
+      const mapped = (data || []).map((row) => {
+        const vote = votesMap[row.id] || { score: 0, userVote: 0 };
+        return {
+          id: row.id,
+          text: row.body,
+          createdAt: new Date(row.created_at).getTime(),
+          authorName: row.author?.name || 'Member',
+          authorGithub: row.author?.github_username || '',
+          authorAvatar: row.author?.avatar_url || DEFAULT_AVATAR,
+          voteScore: vote.score,
+          userVote: vote.userVote,
+        };
+      });
       setPostsByCommunity((prev) => ({ ...(prev || {}), [communityId]: mapped }));
       setLoadedCommunityIds((prev) => {
         const next = new Set(prev);
@@ -435,6 +502,7 @@ function AppContent() {
           posts={postsByCommunity?.[communityId] || []}
           loading={postsLoading || !loadedCommunityIds.has(communityId)}
           isJoined={joinedCommunityIds.has(communityId)}
+          onVote={(postId, value) => togglePostVote(communityId, postId, value)}
           onJoin={() => toggleJoinCommunity(communityId)}
           onBack={() => {
             setCommunityOverlay(null);
