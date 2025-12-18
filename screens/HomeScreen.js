@@ -41,68 +41,118 @@ export default function HomeScreen({
   onRefresh = async () => {},
   profileVersion = 0,
 }) {
-  const [photoUri, setPhotoUri] = useState('');
-  const [name, setName] = useState('');
-  const [course, setCourse] = useState('');
-  const [year, setYear] = useState('');
-  const [bio, setBio] = useState('');
+  const [profile, setProfile] = useState({
+    photoUri: '',
+    name: '',
+    course: '',
+    year: '',
+    bio: '',
+    github: '',
+    points: 0,
+  });
   const [showPoints, setShowPoints] = useState(true);
-  const [points, setPoints] = useState(0);
-  const [github, setGithub] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [profileBooted, setProfileBooted] = useState(false);
+
+  useEffect(() => {
+    if (loading) setProfileBooted(false);
+  }, [loading]);
 
   useEffect(() => {
     let mounted = true;
     const loadProfile = async () => {
       try {
-        const storedPhoto = (await AsyncStorage.getItem('@profile_photo_uri')) || '';
-        const normalizedPhoto = storedPhoto.trim() || PRESET_AVATARS[0];
-        if (!mounted) return;
-        setPhotoUri(normalizedPhoto);
-
-        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github', '@profile_points']);
+        const [storedPhoto, entries] = await Promise.all([
+          AsyncStorage.getItem('@profile_photo_uri'),
+          AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github', '@profile_points']),
+        ]);
         const map = Object.fromEntries(entries);
-        if (!mounted) return;
-        setName(map['@profile_name'] || '');
-        setCourse(map['@profile_course'] || '');
-        setYear(map['@profile_year'] || '');
-        setBio(map['@profile_bio'] || '');
-        setGithub(map['@profile_github'] || '');
+        const normalizedPhoto = String(storedPhoto || '').trim() || PRESET_AVATARS[0];
         const p = Number(String(map['@profile_points'] || '').replace(/[^0-9-]/g, ''));
-        setPoints(Number.isFinite(p) ? p : 0);
+        if (!mounted) return;
+        setProfile({
+          photoUri: normalizedPhoto,
+          name: map['@profile_name'] || '',
+          course: map['@profile_course'] || '',
+          year: map['@profile_year'] || '',
+          bio: map['@profile_bio'] || '',
+          github: map['@profile_github'] || '',
+          points: Number.isFinite(p) ? p : 0,
+        });
       } catch (e) {
         console.warn('Failed to load profile photo', e);
+      } finally {
+        if (mounted) setProfileBooted(true);
       }
     };
     loadProfile();
     return () => {
       mounted = false;
-      setPhotoUri('');
-      setName('');
-      setCourse('');
-      setYear('');
-      setBio('');
-      setPoints(0);
-      setGithub('');
     };
   }, [profileVersion]);
 
-  if (loading) {
+  if (loading || !profileBooted) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView style={styles.container} contentContainerStyle={[styles.content, { gap: 12 }]}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <View style={[styles.skeletonBlock, { height: 24, width: 220, marginBottom: 8 }]} />
-            <View style={[styles.skeletonBlock, { height: 14, width: '80%' }]} />
+            <View style={styles.headerTopRow}>
+              <View style={[styles.skeletonBlock, { height: 44, width: 120, borderRadius: 12 }]} />
+              <View style={[styles.skeletonCircle, { width: 34, height: 34 }]} />
+            </View>
+            <View style={[styles.skeletonBlock, { height: 22, width: 220, marginTop: 8 }]} />
+            <View style={[styles.skeletonBlock, { height: 14, width: '86%' }]} />
           </View>
-          <View style={[styles.card, styles.profileCard]}>
-            <View style={styles.profileRow}>
-              <View style={[styles.avatarWrap, styles.skeletonBlock]} />
+
+          <View style={[styles.skeletonBlock, { height: 14, width: 220, borderRadius: 8, marginTop: 6 }]} />
+          <View style={[styles.premiumCard, { backgroundColor: '#0B0B0F' }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
               <View style={{ flex: 1, gap: 8 }}>
-                <View style={[styles.skeletonBlock, { height: 14, width: '60%' }]} />
-                <View style={[styles.skeletonBlock, { height: 12, width: '40%' }]} />
-                <View style={[styles.skeletonBlock, { height: 12, width: '30%' }]} />
+                <View style={[styles.skeletonBlockDark, { height: 12, width: 120 }]} />
+                <View style={[styles.skeletonBlockDark, { height: 18, width: 170 }]} />
+                <View style={[styles.skeletonBlockDark, { height: 14, width: 110 }]} />
+                <View style={[styles.skeletonBlockDark, { height: 14, width: 140 }]} />
               </View>
+              <View style={{ width: 90, alignItems: 'flex-end', gap: 10 }}>
+                <View style={[styles.skeletonBlockDark, { height: 12, width: 70 }]} />
+                <View style={[styles.skeletonBlockDark, { height: 26, width: 80 }]} />
+              </View>
+            </View>
+            <View style={[styles.skeletonBlockDark, { height: 12, width: '70%', alignSelf: 'center', marginTop: 6 }]} />
+          </View>
+
+          <View style={{ alignItems: 'center' }}>
+            <View style={[styles.skeletonBlock, { height: 14, width: 130, borderRadius: 8 }]} />
+          </View>
+
+          <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
+            <View style={styles.eventRow}>
+              <View style={[styles.skeletonBlock, { width: 92, height: 92, borderRadius: 16 }]} />
+              <View style={{ flex: 1, gap: 10 }}>
+                <View style={[styles.skeletonBlock, { height: 12, width: 90 }]} />
+                <View style={[styles.skeletonBlock, { height: 16, width: '75%' }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: '85%' }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: '65%' }]} />
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.card, styles.extrasCard]}>
+            <View style={styles.extrasItem}>
+              <View style={[styles.skeletonCircle, { width: 34, height: 34 }]} />
+              <View style={[styles.skeletonBlock, { height: 12, width: 44 }]} />
+            </View>
+            <View style={styles.extrasItem}>
+              <View style={[styles.skeletonCircle, { width: 34, height: 34 }]} />
+              <View style={[styles.skeletonBlock, { height: 12, width: 70 }]} />
+            </View>
+            <View style={styles.extrasItem}>
+              <View style={[styles.skeletonCircle, { width: 34, height: 34 }]} />
+              <View style={[styles.skeletonBlock, { height: 12, width: 62 }]} />
+            </View>
+            <View style={styles.extrasItem}>
+              <View style={[styles.skeletonCircle, { width: 34, height: 34 }]} />
+              <View style={[styles.skeletonBlock, { height: 12, width: 62 }]} />
             </View>
           </View>
         </ScrollView>
@@ -150,7 +200,7 @@ export default function HomeScreen({
               <Ionicons name="notifications-outline" size={26} color={DARK} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Hello {name || MOCK_NAME} 🖐</Text>
+          <Text style={styles.title}>Hello {profile.name || MOCK_NAME} 🖐</Text>
           <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
         </View>
 
@@ -162,19 +212,19 @@ export default function HomeScreen({
               <Text style={styles.premiumLabel}>EUCOSSA Premium</Text>
               <View style={styles.infoRow}>
                 <Ionicons name="person-outline" size={16} color="#E5E7FF" />
-                <Text style={styles.premiumName}>{name || MOCK_NAME}</Text>
+                <Text style={styles.premiumName}>{profile.name || MOCK_NAME}</Text>
               </View>
               <View style={styles.premiumGithubRow}>
                 <Ionicons name="logo-github" size={16} color="#E5E7FF" />
-                <Text style={styles.premiumGithubText}>{github || 'EUCOSSA'}</Text>
+                <Text style={styles.premiumGithubText}>{profile.github || 'EUCOSSA'}</Text>
               </View>
               <View style={styles.infoRow}>
                 <Ionicons name="school-outline" size={16} color="#E5E7FF" />
-                <Text style={styles.premiumMeta}>{course || MOCK_COURSE}</Text>
+                <Text style={styles.premiumMeta}>{profile.course || MOCK_COURSE}</Text>
               </View>
               <View style={styles.infoRow}>
                 <Ionicons name="calendar-outline" size={16} color="#E5E7FF" />
-                <Text style={styles.premiumMeta}>{year || MOCK_YEAR}</Text>
+                <Text style={styles.premiumMeta}>{profile.year || MOCK_YEAR}</Text>
               </View>
             </View>
             <View style={styles.premiumRight}>
@@ -184,7 +234,7 @@ export default function HomeScreen({
                   <Ionicons name={showPoints ? 'eye' : 'eye-off'} size={18} color="#E5E7FF" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.pointsValue}>{showPoints ? points.toLocaleString() : '••••'}</Text>
+              <Text style={styles.pointsValue}>{showPoints ? profile.points.toLocaleString() : '••••'}</Text>
             </View>
           </View>
           <Text style={styles.pointsNote}>Use points to redeem tees & event passes</Text>
@@ -283,6 +333,18 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 16,
     paddingBottom: 110,
+  },
+  skeletonBlock: {
+    backgroundColor: '#EFEFEF',
+    borderRadius: 10,
+  },
+  skeletonCircle: {
+    backgroundColor: '#EFEFEF',
+    borderRadius: 999,
+  },
+  skeletonBlockDark: {
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    borderRadius: 10,
   },
   header: {
     gap: 8,
