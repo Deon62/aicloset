@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
 import SignUpSvg from '../assets/icons/signup.svg';
 
 const DARK = '#1D1D1D';
@@ -27,25 +26,48 @@ const STORAGE_KEYS = {
   github: '@profile_github',
 };
 
-export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onNeedLogin = () => {} }) {
+export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {} }) {
   const [saving, setSaving] = useState(false);
+  const [attempted, setAttempted] = useState(false);
 
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
   const [year, setYear] = useState('');
   const [github, setGithub] = useState('');
 
+  const nameError = useMemo(() => {
+    if (!attempted) return '';
+    if (!String(name || '').trim()) return 'Name is required.';
+    return '';
+  }, [attempted, name]);
+
+  const courseError = useMemo(() => {
+    if (!attempted) return '';
+    if (!String(course || '').trim()) return 'Course is required.';
+    return '';
+  }, [attempted, course]);
+
+  const yearError = useMemo(() => {
+    if (!attempted) return '';
+    if (!String(year || '').trim()) return 'Year is required.';
+    return '';
+  }, [attempted, year]);
+
   const canSubmit = useMemo(() => {
-    return !saving;
-  }, [saving]);
+    if (saving) return false;
+    const n = String(name || '').trim();
+    const c = String(course || '').trim();
+    const y = String(year || '').trim();
+    return Boolean(n && c && y);
+  }, [course, name, saving, year]);
 
   const submit = async () => {
+    setAttempted(true);
     const n = String(name || '').trim();
+    const c = String(course || '').trim();
+    const y = String(year || '').trim();
 
-    if (!n) {
-      Alert.alert('Sign up', 'Please enter your name.');
-      return;
-    }
+    if (!n || !c || !y) return;
 
     try {
       setSaving(true);
@@ -53,8 +75,8 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
         [STORAGE_KEYS.hasAccount, '1'],
         [STORAGE_KEYS.loggedIn, '1'],
         [STORAGE_KEYS.name, n],
-        [STORAGE_KEYS.course, String(course || '').trim()],
-        [STORAGE_KEYS.year, String(year || '').trim()],
+        [STORAGE_KEYS.course, c],
+        [STORAGE_KEYS.year, y],
         [STORAGE_KEYS.github, String(github || '').trim()],
       ]);
       onDone();
@@ -86,19 +108,12 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.headerBar}>
-          <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Create account</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
+          <Text style={styles.pageTitle}>Create account</Text>
           <View style={styles.illustrationWrap}>
             <SignUpSvg width={240} height={240} />
           </View>
@@ -109,6 +124,7 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
             onChangeText: setName,
             inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
           })}
+          {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
 
           {renderField({
             label: 'Course',
@@ -117,6 +133,7 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
             onChangeText: setCourse,
             inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
           })}
+          {courseError ? <Text style={styles.errorText}>{courseError}</Text> : null}
 
           {renderField({
             label: 'Year',
@@ -125,6 +142,7 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
             onChangeText: setYear,
             inputProps: { returnKeyType: 'next' },
           })}
+          {yearError ? <Text style={styles.errorText}>{yearError}</Text> : null}
 
           {renderField({
             label: 'GitHub',
@@ -134,7 +152,7 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onN
             inputProps: { autoCapitalize: 'none', autoCorrect: false },
           })}
 
-          <TouchableOpacity style={styles.primaryBtn} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
+          <TouchableOpacity style={[styles.primaryBtn, !canSubmit && styles.primaryBtnDisabled]} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
             <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
           </TouchableOpacity>
 
@@ -155,37 +173,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#EEEEEE',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
-  },
-  headerSpacer: {
-    width: 40,
-    height: 40,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 140,
     gap: 14,
+  },
+  pageTitle: {
+    color: '#0B0B0F',
+    fontSize: 24,
+    fontFamily: 'Nunito_700Bold',
+    textAlign: 'center',
+    marginTop: 6,
   },
   illustrationWrap: {
     alignItems: 'center',
@@ -215,6 +214,13 @@ const styles = StyleSheet.create({
   inputMultiline: {
     minHeight: 110,
   },
+  errorText: {
+    marginTop: -8,
+    color: '#D11A2A',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Nunito_600SemiBold',
+  },
   primaryBtn: {
     marginTop: 6,
     height: 50,
@@ -222,6 +228,9 @@ const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  primaryBtnDisabled: {
+    opacity: 0.55,
   },
   primaryBtnText: {
     color: '#FFFFFF',

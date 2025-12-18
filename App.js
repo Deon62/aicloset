@@ -208,14 +208,7 @@ function AppContent() {
     return (
       <HomeScreen
         onOpenNotifications={() => setHomeOverlay('notifications')}
-        onOpenCommunity={(community) => {
-          setHomeOverlay(null);
-          setCurrentTab('community');
-          setActiveCommunity(community);
-          setCommunityOverlay('conversation');
-        }}
         onOpenProfile={() => {
-          setHomeOverlay(null);
           setCurrentTab('profile');
         }}
       />
@@ -415,10 +408,6 @@ function AppContent() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
           <SignUpScreen
-            onBack={() => {
-              setShowLanding(true);
-              setAuthScreen(null);
-            }}
             onNeedLogin={() => setAuthScreen('login')}
             onDone={() => {
               setAuthScreen(null);
@@ -436,10 +425,6 @@ function AppContent() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
           <LoginScreen
-            onBack={() => {
-              setShowLanding(true);
-              setAuthScreen(null);
-            }}
             onNeedSignUp={() => setAuthScreen('signup')}
             onDone={() => {
               setAuthScreen(null);

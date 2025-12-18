@@ -14,20 +14,27 @@ const STORAGE_KEYS = {
   password: '@auth_password',
 };
 
-export default function LoginScreen({ onDone = () => {}, onBack = () => {}, onNeedSignUp = () => {} }) {
+export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {} }) {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+
+  const passwordError = useMemo(() => {
+    if (!attempted) return '';
+    if (!String(password || '').trim()) return 'Password is required.';
+    return '';
+  }, [attempted, password]);
 
   const canSubmit = useMemo(() => {
-    return !loading;
-  }, [loading]);
+    if (loading) return false;
+    return Boolean(String(password || '').trim());
+  }, [loading, password]);
 
   const login = async () => {
-    const pwd = String(password || '');
-    if (!pwd) {
-      Alert.alert('Login', 'Please enter your password.');
-      return;
-    }
+    setAttempted(true);
+    const pwd = String(password || '').trim();
+    if (!pwd) return;
 
     try {
       setLoading(true);
@@ -65,34 +72,38 @@ export default function LoginScreen({ onDone = () => {}, onBack = () => {}, onNe
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.headerBar}>
-          <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Login</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-
         <View style={styles.content}>
+          <Text style={styles.pageTitle}>Login</Text>
           <View style={styles.illustrationWrap}>
             <LoginSvg width={260} height={260} />
           </View>
 
           <View style={styles.fieldWrap}>
             <Text style={styles.fieldLabel}>Password</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Enter password"
-              placeholderTextColor="#8A8A8A"
-              style={styles.input}
-              autoCapitalize="none"
-              secureTextEntry
-              editable={!loading}
-            />
+            <View style={styles.passwordRow}>
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter password"
+                placeholderTextColor="#8A8A8A"
+                style={[styles.input, styles.passwordInput]}
+                autoCapitalize="none"
+                secureTextEntry={!showPassword}
+                editable={!loading}
+              />
+              <TouchableOpacity
+                style={styles.eyeBtn}
+                activeOpacity={0.8}
+                onPress={() => setShowPassword((v) => !v)}
+                disabled={loading}
+              >
+                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+              </TouchableOpacity>
+            </View>
+            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
           </View>
 
-          <TouchableOpacity style={styles.primaryBtn} activeOpacity={0.9} onPress={login} disabled={!canSubmit}>
+          <TouchableOpacity style={[styles.primaryBtn, !canSubmit && styles.primaryBtnDisabled]} activeOpacity={0.9} onPress={login} disabled={!canSubmit}>
             <Text style={styles.primaryBtnText}>{loading ? 'Logging in…' : 'Login'}</Text>
           </TouchableOpacity>
 
@@ -113,37 +124,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#EEEEEE',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
-  },
-  headerSpacer: {
-    width: 40,
-    height: 40,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 8,
     gap: 14,
+  },
+  pageTitle: {
+    color: '#0B0B0F',
+    fontSize: 24,
+    fontFamily: 'Nunito_700Bold',
+    textAlign: 'center',
+    marginTop: 6,
   },
   illustrationWrap: {
     alignItems: 'center',
@@ -158,6 +150,28 @@ const styles = StyleSheet.create({
     color: '#0B0B0F',
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
+  },
+  passwordRow: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  passwordInput: {
+    paddingRight: 46,
+  },
+  eyeBtn: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    width: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorText: {
+    color: '#D11A2A',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Nunito_600SemiBold',
   },
   input: {
     borderWidth: 1,
@@ -177,6 +191,9 @@ const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  primaryBtnDisabled: {
+    opacity: 0.55,
   },
   primaryBtnText: {
     color: '#FFFFFF',
