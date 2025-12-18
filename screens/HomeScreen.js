@@ -289,7 +289,14 @@ export default function HomeScreen({
             <View style={styles.eventPosterWrap}>
               <Image source={{ uri: EVENT_POSTER }} style={styles.eventPosterBlur} resizeMode="cover" blurRadius={14} />
               <Image source={{ uri: EVENT_POSTER }} style={styles.eventPoster} resizeMode="contain" />
-              <View pointerEvents="none" style={styles.eventPosterOverlay} />
+              <LinearGradient
+                pointerEvents="none"
+                colors={['rgba(246,247,251,0.28)', 'rgba(27,86,253,0.16)']}
+                locations={[0, 1]}
+                start={{ x: 0.2, y: 0.2 }}
+                end={{ x: 0.95, y: 0.95 }}
+                style={styles.eventPosterOverlay}
+              />
             </View>
             <View style={styles.eventMain}>
               <View style={styles.eventTitleRow}>
@@ -808,7 +815,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.14)',
+    backgroundColor: 'transparent',
   },
   eventPosterBlur: {
     position: 'absolute',
@@ -817,12 +824,14 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     transform: [{ scale: 1.08 }],
+    opacity: 0.78,
   },
   eventPoster: {
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
     transform: [{ scale: 1.08 }],
+    opacity: 0.88,
   },
   eventMain: {
     flex: 1,
