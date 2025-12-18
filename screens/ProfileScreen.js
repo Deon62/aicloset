@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressable, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressable, Linking, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../lib/supabase';
 
 const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
+const PRESET_AVATARS = [
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female1.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male1.jpg',
+];
 
 export default function ProfileScreen({
   onLogout = () => {},
@@ -23,12 +28,14 @@ export default function ProfileScreen({
   const [year, setYear] = useState('');
   const [saving, setSaving] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
         const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
         if (storedPhoto) setPhotoUri(storedPhoto);
+        else setPhotoUri(PRESET_AVATARS[0]);
 
         const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year']);
         const map = Object.fromEntries(entries);
@@ -41,57 +48,6 @@ export default function ProfileScreen({
     };
     loadProfile();
   }, []);
-
-  const uploadProfilePhoto = async (localUri) => {
-    try {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError) {
-        console.warn('Failed to get user', authError);
-        Alert.alert('Profile photo', 'Failed to upload. Please login again.');
-        return null;
-      }
-
-      const userId = authData?.user?.id;
-      if (!userId) {
-        Alert.alert('Profile photo', 'Failed to upload. Please login again.');
-        return null;
-      }
-
-      const ext = (String(localUri || '').split('.').pop() || 'jpg').toLowerCase();
-      const path = `avatars/${userId}-${Date.now()}.${ext}`;
-
-      const res = await fetch(localUri);
-      const blob = await res.blob();
-      const contentType = blob?.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`;
-
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(path, blob, {
-        contentType,
-        upsert: true,
-      });
-
-      if (uploadError) {
-        console.warn('Upload error', uploadError);
-        Alert.alert('Profile photo', uploadError.message || 'Upload failed.');
-        return null;
-      }
-
-      const { data: publicData } = supabase.storage.from('avatars').getPublicUrl(path);
-      const publicUrl = publicData?.publicUrl || '';
-      if (!publicUrl) return null;
-
-      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', userId);
-      if (updateError) {
-        console.warn('Failed to update profile avatar_url', updateError);
-      }
-
-      await AsyncStorage.setItem('@profile_photo_uri', publicUrl);
-      return publicUrl;
-    } catch (e) {
-      console.warn('Failed to upload profile photo', e);
-      Alert.alert('Profile photo', 'Upload failed. Please try again.');
-      return null;
-    }
-  };
 
   const saveProfile = async ({ nextPhotoUri }) => {
     try {
@@ -106,31 +62,30 @@ export default function ProfileScreen({
     }
   };
 
-  const pickPhoto = async () => {
+  const setPresetAvatar = async (uri) => {
     try {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission?.granted) {
-        Alert.alert('Permission required', 'Please allow access to your photos to upload a profile picture.');
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.9,
-      });
-
-      if (result.canceled) return;
-
-      const uri = result.assets?.[0]?.uri;
-      if (!uri) return;
-
+      setSaving(true);
       setPhotoUri(uri);
-      saveProfile({ nextPhotoUri: uri });
-      await uploadProfilePhoto(uri);
+      await AsyncStorage.setItem('@profile_photo_uri', uri);
+
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.warn('Failed to get user', authError);
+      } else {
+        const userId = authData?.user?.id;
+        if (userId) {
+          const { error: updateError } = await supabase.from('profiles').update({ avatar_url: uri }).eq('id', userId);
+          if (updateError) {
+            console.warn('Failed to update profile avatar_url', updateError);
+          }
+        }
+      }
     } catch (e) {
-      console.warn('Failed to pick image', e);
+      console.warn('Failed to set preset avatar', e);
+      Alert.alert('Profile photo', 'Failed to set avatar. Please try again.');
+    } finally {
+      setSaving(false);
+      setShowAvatarModal(false);
     }
   };
 
@@ -149,7 +104,7 @@ export default function ProfileScreen({
         <Text style={styles.title}>Profile</Text>
 
         <View style={styles.profileHeader}>
-          <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={pickPhoto}>
+          <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={() => setShowAvatarModal(true)}>
             {photoUri ? (
               <Image source={{ uri: photoUri }} style={styles.avatar} />
             ) : (
@@ -158,6 +113,14 @@ export default function ProfileScreen({
             <View style={styles.cameraBadge}>
               <Ionicons name="camera" size={16} color="#FFFFFF" />
             </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.changeAvatarBtn}
+            activeOpacity={0.85}
+            onPress={() => setShowAvatarModal(true)}
+            disabled={saving}
+          >
+            <Text style={styles.changeAvatarText}>{saving ? 'Saving...' : 'Choose avatar'}</Text>
           </TouchableOpacity>
 
           <Text style={styles.nameText}>{name || MOCK_NAME}</Text>
@@ -231,6 +194,45 @@ export default function ProfileScreen({
           </Pressable>
         </Modal>
 
+        <Modal
+          visible={showAvatarModal}
+          transparent
+          statusBarTranslucent
+          presentationStyle="overFullScreen"
+          animationType="fade"
+          onRequestClose={() => setShowAvatarModal(false)}
+        >
+          <Pressable style={styles.modalBackdrop} onPress={() => setShowAvatarModal(false)}>
+            <Pressable style={styles.modalCard} onPress={() => {}}>
+              <Text style={styles.modalTitle}>Choose an avatar</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarOptions}>
+                {PRESET_AVATARS.map((uri) => (
+                  <TouchableOpacity
+                    key={uri}
+                    style={[
+                      styles.avatarOption,
+                      photoUri === uri ? styles.avatarOptionActive : null,
+                    ]}
+                    onPress={() => setPresetAvatar(uri)}
+                    disabled={saving}
+                    activeOpacity={0.85}
+                  >
+                    <Image source={{ uri }} style={styles.avatarOptionImage} />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnClose]}
+                activeOpacity={0.85}
+                onPress={() => setShowAvatarModal(false)}
+                disabled={saving}
+              >
+                <Text style={styles.modalBtnText}>Close</Text>
+              </TouchableOpacity>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
       </View>
     </SafeAreaView>
   );
@@ -297,6 +299,25 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  avatarOptions: {
+    paddingVertical: 8,
+    gap: 10,
+  },
+  avatarOption: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  avatarOptionActive: {
+    borderColor: BRAND_BLUE,
+  },
+  avatarOptionImage: {
+    width: '100%',
+    height: '100%',
   },
   separator: {
     height: 1,
@@ -373,10 +394,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   modalBtnDanger: {
-    borderColor: '#D11A2A',
-    backgroundColor: '#D11A2A',
+    backgroundColor: '#F9E5E7',
   },
   modalBtnDangerText: {
-    color: '#FFFFFF',
+    color: '#0B0B0F',
+  },
+  modalBtnClose: {
+    marginTop: 12,
   },
 });

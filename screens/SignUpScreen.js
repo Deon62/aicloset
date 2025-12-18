@@ -18,6 +18,12 @@ import { supabase } from '../lib/supabase';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
+const PRESET_AVATARS = [
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female1.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male1.jpg',
+];
 
 export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {} }) {
   const [saving, setSaving] = useState(false);
@@ -40,13 +46,14 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
 
   const syncProfileToLocal = async (profile) => {
     try {
+      const avatar = String(profile?.avatar_url || '').trim() || PRESET_AVATARS[0];
       await AsyncStorage.multiSet([
         ['@profile_github', String(profile?.github_username || '').trim()],
         ['@profile_name', String(profile?.name || '').trim()],
         ['@profile_course', String(profile?.course || '').trim()],
         ['@profile_year', String(profile?.year || '').trim()],
         ['@profile_bio', ''],
-        ['@profile_photo_uri', String(profile?.avatar_url || '').trim()],
+        ['@profile_photo_uri', avatar],
       ]);
     } catch (e) {
       console.warn('Failed to sync profile', e);
