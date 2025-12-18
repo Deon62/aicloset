@@ -15,6 +15,7 @@ export default function ProfileScreen({
   onOpenSettings = () => {},
   onOpenFeedback = () => {},
   onOpenPayments = () => {},
+  onOpenCreatePassword = () => {},
 }) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
@@ -83,8 +84,12 @@ export default function ProfileScreen({
 
   const logout = async () => {
     try {
-      await AsyncStorage.multiRemove(['@profile_name', '@profile_course', '@profile_photo_uri']);
-      setPhotoUri('');
+      const savedPassword = await AsyncStorage.getItem('@auth_password');
+      if (!savedPassword) {
+        Alert.alert('Create password', 'Please create a password before logging out.');
+        onOpenCreatePassword();
+        return;
+      }
       onLogout();
     } catch (e) {
       console.warn('Failed to logout', e);
@@ -125,6 +130,10 @@ export default function ProfileScreen({
         </TouchableOpacity>
         <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenFeedback}>
           <Text style={styles.linkLabel}>Send us feedback</Text>
+          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenCreatePassword}>
+          <Text style={styles.linkLabel}>Create password</Text>
           <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenPayments}>

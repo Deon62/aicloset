@@ -7,6 +7,7 @@ import { Alert, Platform, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -24,6 +25,9 @@ import ProfileInfoScreen from './screens/ProfileInfoScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import PaymentsScreen from './screens/PaymentsScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import LoginScreen from './screens/LoginScreen';
+import CreatePasswordScreen from './screens/CreatePasswordScreen';
 import BottomNavigation from './components/BottomNavigation';
 
 // Keep the splash screen visible while we fetch resources
@@ -39,6 +43,7 @@ try {
 function AppContent() {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showLanding, setShowLanding] = useState(false);
+  const [authScreen, setAuthScreen] = useState(null); // null | 'signup' | 'login'
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
@@ -47,7 +52,7 @@ function AppContent() {
   const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
   const [activeCommunity, setActiveCommunity] = useState(null);
-  const [profileOverlay, setProfileOverlay] = useState(null); // null | 'info' | 'settings' | 'feedback' | 'payments'
+  const [profileOverlay, setProfileOverlay] = useState(null); // null | 'info' | 'settings' | 'feedback' | 'payments' | 'createPassword'
   const [joinedCommunityIds, setJoinedCommunityIds] = useState(() => new Set());
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({
     'data-science-ai': [
@@ -78,6 +83,33 @@ function AppContent() {
   }));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
+
+  useEffect(() => {
+    const loadAuth = async () => {
+      try {
+        const entries = await AsyncStorage.multiGet(['@auth_has_account', '@auth_logged_in']);
+        const map = Object.fromEntries(entries);
+        const hasAccount = map['@auth_has_account'] === '1';
+        const isLoggedIn = map['@auth_logged_in'] === '1';
+
+        if (!hasAccount) {
+          setAuthScreen('signup');
+          return;
+        }
+
+        if (!isLoggedIn) {
+          setAuthScreen('login');
+          return;
+        }
+
+        setAuthScreen(null);
+      } catch (e) {
+        console.warn('Failed to load auth state', e);
+      }
+    };
+
+    loadAuth();
+  }, []);
 
   const addToCalendar = async (event) => {
     try {
@@ -300,16 +332,20 @@ function AppContent() {
     if (profileOverlay === 'payments') {
       return <PaymentsScreen onBack={() => setProfileOverlay(null)} />;
     }
+    if (profileOverlay === 'createPassword') {
+      return <CreatePasswordScreen onBack={() => setProfileOverlay(null)} />;
+    }
     return (
       <ProfileScreen
         onOpenProfileInfo={() => setProfileOverlay('info')}
         onOpenSettings={() => setProfileOverlay('settings')}
         onOpenFeedback={() => setProfileOverlay('feedback')}
         onOpenPayments={() => setProfileOverlay('payments')}
+        onOpenCreatePassword={() => setProfileOverlay('createPassword')}
         onLogout={() => {
           setCurrentTab('home');
           setShowLanding(false);
-          setShowOnboarding(true);
+          setShowOnboarding(false);
           setShowPastEvents(false);
           setActiveEvent(null);
           setHomeOverlay(null);
@@ -318,6 +354,8 @@ function AppContent() {
           setCommunityOverlay(null);
           setActiveCommunity(null);
           setProfileOverlay(null);
+          AsyncStorage.setItem('@auth_logged_in', '0');
+          setAuthScreen('login');
         }}
       />
     );
@@ -344,8 +382,66 @@ function AppContent() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
           <LandingPage
-            onContinue={() => {
+            onContinue={async () => {
               setShowLanding(false);
+              try {
+                const entries = await AsyncStorage.multiGet(['@auth_has_account', '@auth_logged_in']);
+                const map = Object.fromEntries(entries);
+                const hasAccount = map['@auth_has_account'] === '1';
+                const isLoggedIn = map['@auth_logged_in'] === '1';
+
+                if (!hasAccount) {
+                  setAuthScreen('signup');
+                } else if (!isLoggedIn) {
+                  setAuthScreen('login');
+                } else {
+                  setAuthScreen(null);
+                  setCurrentTab('home');
+                }
+              } catch (e) {
+                console.warn('Failed to load auth state', e);
+                setAuthScreen('signup');
+              }
+            }}
+          />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (authScreen === 'signup') {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <SignUpScreen
+            onBack={() => {
+              setShowLanding(true);
+              setAuthScreen(null);
+            }}
+            onDone={() => {
+              setAuthScreen(null);
+              setCurrentTab('home');
+            }}
+          />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (authScreen === 'login') {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <LoginScreen
+            onBack={() => {
+              setShowLanding(true);
+              setAuthScreen(null);
+            }}
+            onNeedSignUp={() => setAuthScreen('signup')}
+            onDone={() => {
+              setAuthScreen(null);
               setCurrentTab('home');
             }}
           />
@@ -393,6 +489,8 @@ function AppContent() {
           currentTab === 'profile' && profileOverlay === 'feedback'
         ) || (
           currentTab === 'profile' && profileOverlay === 'payments'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'createPassword'
         )) ? (
           <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
         ) : null}
