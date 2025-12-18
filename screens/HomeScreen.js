@@ -302,8 +302,8 @@ export default function HomeScreen({
               </View>
 
               <TouchableOpacity style={styles.viewEventBtn} activeOpacity={0.9} onPress={onOpenEvents}>
+                <Ionicons name="grid-outline" size={16} color={BRAND_BLUE} />
                 <Text style={styles.viewEventBtnText}>View event</Text>
-                <Ionicons name="chevron-forward" size={16} color={BRAND_BLUE} />
               </TouchableOpacity>
             </View>
           </View>

@@ -73,6 +73,7 @@ function AppContent() {
   const [homeOverlay, setHomeOverlay] = useState(null); // null | 'notifications' | 'cards' | 'jobs' | 'resources' | 'projects' | 'startups'
   const [homeOverlayMounted, setHomeOverlayMounted] = useState(null);
   const homeOverlayAnim = useRef(new Animated.Value(0)).current;
+  const homeOverlayContentAnim = useRef(new Animated.Value(1)).current;
   const homeOverlayClosingRef = useRef(false);
   const [shopOverlay, setShopOverlay] = useState(null); // null | 'notifications' | 'cart' | 'product'
   const [activeProduct, setActiveProduct] = useState(null);
@@ -116,6 +117,7 @@ function AppContent() {
       setHomeOverlay(key);
       setHomeOverlayMounted(key);
       homeOverlayAnim.setValue(0);
+      homeOverlayContentAnim.setValue(1);
       Animated.timing(homeOverlayAnim, {
         toValue: 1,
         duration: 240,
@@ -123,7 +125,34 @@ function AppContent() {
         useNativeDriver: true,
       }).start();
     },
-    [homeOverlayAnim]
+    [homeOverlayAnim, homeOverlayContentAnim]
+  );
+
+  const switchHomeOverlay = useCallback(
+    (key) => {
+      if (!homeOverlayMounted) {
+        openHomeOverlay(key);
+        return;
+      }
+      if (homeOverlayMounted === key) return;
+      Animated.timing(homeOverlayContentAnim, {
+        toValue: 0,
+        duration: 90,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (!finished) return;
+        setHomeOverlay(key);
+        setHomeOverlayMounted(key);
+        Animated.timing(homeOverlayContentAnim, {
+          toValue: 1,
+          duration: 140,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }).start();
+      });
+    },
+    [homeOverlayMounted, homeOverlayContentAnim, openHomeOverlay]
   );
 
   const closeHomeOverlay = useCallback(() => {
@@ -668,7 +697,7 @@ function AppContent() {
       return <NotificationsScreen onBack={closeHomeOverlay} />;
     }
     if (homeOverlayMounted === 'cards') {
-      return <CardsScreen onBack={closeHomeOverlay} onRedeemPoints={() => openHomeOverlay('redeemPoints')} />;
+      return <CardsScreen onBack={closeHomeOverlay} onRedeemPoints={() => switchHomeOverlay('redeemPoints')} />;
     }
     if (homeOverlayMounted === 'redeemPoints') {
       return <RedeemPointsScreen onBack={closeHomeOverlay} />;
@@ -989,7 +1018,9 @@ function AppContent() {
                   ],
                 }}
               >
-                {renderHomeOverlay()}
+                <Animated.View style={{ flex: 1, opacity: homeOverlayContentAnim }}>
+                  {renderHomeOverlay()}
+                </Animated.View>
               </Animated.View>
             ) : null}
           </View>
