@@ -32,6 +32,42 @@ export default function ResourcesScreen({ onBack = () => {} }) {
         description: 'Learn Git basics and workflows for collaborating on projects.',
         link: 'https://guides.github.com/introduction/git-handbook/',
       },
+      {
+        id: 'res-5',
+        title: 'System Design Course (EnjoyAlgorithms)',
+        description: 'Learn scalable system design concepts with structured lessons and examples.',
+        link: 'https://www.enjoyalgorithms.com/system-design-courses/',
+      },
+      {
+        id: 'res-6',
+        title: 'Data Science Course (EnjoyAlgorithms)',
+        description: 'A guided path through data science fundamentals, tools, and real-world workflows.',
+        link: 'https://www.enjoyalgorithms.com/data-science-course/',
+      },
+      {
+        id: 'res-7',
+        title: 'OOPs Course (EnjoyAlgorithms)',
+        description: 'Object-oriented programming concepts explained with practical examples.',
+        link: 'https://www.enjoyalgorithms.com/oops-course/',
+      },
+      {
+        id: 'res-8',
+        title: 'Machine Learning Courses (EnjoyAlgorithms)',
+        description: 'Machine learning learning paths covering core theory and applied practice.',
+        link: 'https://www.enjoyalgorithms.com/machine-learning-courses/',
+      },
+      {
+        id: 'res-9',
+        title: 'Flask YouTube Tutorial (Corey Schafer)',
+        description: 'A practical Flask tutorial series covering fundamentals and building real apps.',
+        link: 'https://youtu.be/MwZwr5Tvyxo?si=DKXYRsR11poFI8PL',
+      },
+      {
+        id: 'res-10',
+        title: 'LangChain Learn (Python)',
+        description: 'Official LangChain learning docs for building LLM apps in Python.',
+        link: 'https://docs.langchain.com/oss/python/learn',
+      },
     ],
     []
   );
