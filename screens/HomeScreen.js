@@ -23,7 +23,7 @@ const MOCK_GITHUB = 'deon62';
 const EVENT_TITLE = 'Hack Egerton';
 const EVENT_DESCRIPTION =
   'A hybrid innovation sprint focused on AI, blockchain, and hardware. Virtual phase runs Jan 1–Feb 25 (mentorship + online challenges), with an in-person finale Feb 26–28 at Arc Hotel, Egerton.';
-const EVENT_DATE = 'Jan 1 – Feb 25 (Virtual) · Feb 26 – Feb 28 (In-person)';
+const EVENT_DATE = 'Jan 1st – Feb 28th';
 const EVENT_LOCATION = 'Arc Hotel, Egerton';
 const EVENT_PRICE = 'KSh 300';
 const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png';

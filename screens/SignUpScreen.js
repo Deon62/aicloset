@@ -235,7 +235,8 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
         await syncProfileToLocal(profile);
       }
 
-      onDone();
+      // After successful signup, send user to login first as requested
+      onNeedLogin();
     } catch (e) {
       console.warn('Failed to sign up', e);
       Alert.alert('Sign up', 'Failed to create account. Please try again.');
