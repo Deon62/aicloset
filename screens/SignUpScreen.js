@@ -388,18 +388,23 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
                 {confirmError ? <Text style={styles.errorText}>{confirmError}</Text> : null}
               </View>
 
-              <View style={styles.actionsRow}>
+              <View style={styles.actionsColumn}>
                 <TouchableOpacity
-                  style={[styles.secondaryBtn]}
+                  style={[styles.primaryBtn, styles.primaryBtnElevated, !canSubmit && styles.primaryBtnDisabled]}
+                  activeOpacity={0.9}
+                  onPress={submit}
+                  disabled={!canSubmit}
+                >
+                  <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.secondaryBtn, styles.secondaryBtnGhost]}
                   activeOpacity={0.85}
                   onPress={() => setCurrentStep(0)}
                   disabled={saving}
                 >
-                  <Text style={styles.secondaryBtnText}>Back</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.primaryBtn, !canSubmit && styles.primaryBtnDisabled]} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
-                  <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
+                  <Text style={[styles.secondaryBtnText, styles.secondaryBtnGhostText]}>Back</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -486,6 +491,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
   },
+  primaryBtnElevated: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
   secondaryBtn: {
     height: 50,
     borderRadius: 16,
@@ -501,9 +513,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
   },
+  secondaryBtnGhost: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    marginTop: 8,
+  },
+  secondaryBtnGhostText: {
+    color: '#4A4A4A',
+  },
   actionsRow: {
     flexDirection: 'row',
     gap: 10,
+    marginTop: 6,
+  },
+  actionsColumn: {
+    gap: 8,
     marginTop: 6,
   },
   loginLink: {
