@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 
 import { RESOURCES } from './ResourcesScreen';
+import { MINI_CLUBS } from './JobsScreen';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -64,6 +65,9 @@ export default function HomeScreen({
 
   const resourcesCount = RESOURCES.length;
   const resourcesBadgeText = resourcesCount > 99 ? '99+' : String(resourcesCount);
+
+  const miniClubsCount = MINI_CLUBS.length;
+  const miniClubsBadgeText = miniClubsCount > 99 ? '99+' : String(miniClubsCount);
 
   useEffect(() => {
     if (loading) setProfileBooted(false);
@@ -258,7 +262,7 @@ export default function HomeScreen({
             }}
           >
             <Text style={styles.redeemBtnText}>Redeem Points</Text>
-            <Ionicons name="chevron-forward" size={18} color="#0B0B0F" />
+            {/* <Ionicons name="chevron-forward" size={18} color="#0B0B0F" /> */}
           </TouchableOpacity>
         </View>
 
@@ -320,6 +324,11 @@ export default function HomeScreen({
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="people-outline" size={22} color={DARK} />
+              {miniClubsCount > 0 ? (
+                <View style={styles.resourcesCountBadge}>
+                  <Text style={styles.resourcesCountBadgeText}>{miniClubsBadgeText}</Text>
+                </View>
+              ) : null}
             </View>
             <Text style={styles.extrasLabel}>Mini Clubs</Text>
           </TouchableOpacity>

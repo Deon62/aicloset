@@ -1,39 +1,34 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-
-import JobsIcon from '../assets/icons/jobs.svg';
 
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
 const REQUEST_EMAIL = 'eucossake@gmail.com';
 
-export default function JobsScreen({ onBack = () => {} }) {
-  const clubs = useMemo(
-    () => [
-      {
-        id: 'ieee',
-        name: 'IEEE Student Branch',
-        description: 'Engineering community for networking, talks, and hands-on technical activities.',
-        link: 'https://www.ieee.org/',
-      },
-      {
-        id: 'huawei',
-        name: 'Huawei ICT Academy',
-        description: 'Learn industry-ready networking/cloud skills and access Huawei training opportunities.',
-        link: 'https://e.huawei.com/en/talent/#/ict-academy',
-      },
-      {
-        id: 'stellar',
-        name: 'Stellar Blockchain',
-        description: 'Learn about blockchain and build real-world apps on the Stellar ecosystem.',
-        link: 'https://www.stellar.org/',
-      },
-    ],
-    []
-  );
+export const MINI_CLUBS = [
+  {
+    id: 'ieee',
+    name: 'IEEE Student Branch',
+    description: 'Engineering community for networking, talks, and hands-on technical activities.',
+    link: 'https://www.ieee.org/',
+  },
+  {
+    id: 'huawei',
+    name: 'Huawei ICT Academy',
+    description: 'Learn industry-ready networking/cloud skills and access Huawei training opportunities.',
+    link: 'https://e.huawei.com/en/talent/#/ict-academy',
+  },
+  {
+    id: 'stellar',
+    name: 'Stellar Blockchain',
+    description: 'Learn about blockchain and build real-world apps on the Stellar ecosystem.',
+    link: 'https://www.stellar.org/',
+  },
+];
 
+export default function JobsScreen({ onBack = () => {} }) {
   const openRequestEmail = async () => {
     try {
       const url = `mailto:${REQUEST_EMAIL}`;
@@ -77,13 +72,12 @@ export default function JobsScreen({ onBack = () => {} }) {
           contentContainerStyle={styles.content}
         >
           <View style={styles.hero}>
-            <JobsIcon width={220} height={160} />
             <Text style={styles.heroTitle}>External clubs in EUCOSSA</Text>
             <Text style={styles.heroText}>Explore partner communities and programs you can join alongside EUCOSSA.</Text>
           </View>
 
           <View style={styles.list}>
-            {clubs.map((club) => (
+            {MINI_CLUBS.map((club) => (
               <TouchableOpacity
                 key={club.id}
                 style={styles.clubCard}
@@ -160,7 +154,7 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
   },
   heroTitle: {
-    marginTop: 10,
+    marginTop: 4,
     color: DARK,
     fontSize: 18,
     fontFamily: 'Nunito_700Bold',
