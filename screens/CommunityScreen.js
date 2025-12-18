@@ -200,18 +200,20 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingTop: 0,
-    gap: 12,
+    gap: 0,
+    marginHorizontal: -SPACING.l,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.borderStrong,
   },
   row: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.card,
+    backgroundColor: 'transparent',
     paddingVertical: SPACING.m,
-    paddingHorizontal: SPACING.m,
+    paddingHorizontal: SPACING.l,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.borderStrong,
   },
   rowLast: {
-    marginBottom: 0,
+    borderBottomWidth: 0,
   },
   rowTop: {
     flexDirection: 'row',
