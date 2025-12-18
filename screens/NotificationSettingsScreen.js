@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const DARK = '#0B0B0F';
 
@@ -43,9 +44,9 @@ export default function NotificationSettingsScreen({ onBack = () => {} }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
+  safeArea: { flex: 1, backgroundColor: COLORS.bg },
   container: { flex: 1 },
-  content: { padding: 20, gap: 14, paddingBottom: 40 },
+  content: { padding: SPACING.l, gap: SPACING.m, paddingBottom: 40 },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -63,24 +64,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { color: DARK, fontSize: 20, fontFamily: 'Nunito_700Bold' },
+  headerTitle: { ...TYPE.title },
   headerSpacer: { width: 40, height: 40 },
   card: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    gap: 10,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
+    padding: SPACING.m,
+    gap: SPACING.s,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
-  rowDivider: { borderBottomWidth: 1, borderBottomColor: '#F1F1F1' },
-  rowLabel: { color: DARK, fontSize: 14, fontFamily: 'Nunito_700Bold' },
-  lead: { color: DARK, fontSize: 16, fontFamily: 'Nunito_700Bold' },
-  body: { color: '#4A4A4A', fontSize: 13, lineHeight: 18, fontFamily: 'Nunito_600SemiBold' },
+  rowDivider: { borderBottomWidth: 1, borderBottomColor: '#F0F1F5' },
+  rowLabel: { ...TYPE.bodyStrong },
+  lead: { ...TYPE.section },
+  body: { ...TYPE.body },
 });

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Linking, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -80,14 +81,14 @@ export default function FeedbackScreen({ onBack = () => {} }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   headerBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: SPACING.l,
+    paddingVertical: SPACING.s,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -95,17 +96,15 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerSpacer: {
     width: 40,
@@ -113,45 +112,40 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
   },
   title: {
-    color: '#0B0B0F',
-    fontSize: 18,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   subtitle: {
-    marginTop: 6,
-    color: '#6A6A6A',
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: 'Nunito_400Regular',
+    marginTop: SPACING.s,
+    ...TYPE.body,
   },
   inputWrap: {
-    marginTop: 14,
+    marginTop: SPACING.m,
     minHeight: 140,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    padding: 12,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
+    padding: SPACING.m,
   },
   input: {
     minHeight: 116,
-    color: '#0B0B0F',
+    color: COLORS.text,
     fontSize: 14,
     lineHeight: 20,
     fontFamily: 'Nunito_400Regular',
     padding: 0,
   },
   footer: {
-    paddingTop: 12,
+    paddingTop: SPACING.s,
   },
   sendBtn: {
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: BRAND_BLUE,
+    height: 44,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -82,7 +83,7 @@ export default function PaymentsScreen({ onBack = () => {} }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
@@ -105,48 +106,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerSpacer: {
     width: 40,
     height: 40,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 14,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
+    paddingBottom: SPACING.l,
+    gap: SPACING.m,
   },
   noticeCard: {
-    borderRadius: 16,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
     borderColor: '#DCE3FF',
     backgroundColor: '#EEF3FF',
-    padding: 16,
-    gap: 10,
+    padding: SPACING.m,
+    gap: SPACING.s,
   },
   noticeTitle: {
-    color: '#0B0B0F',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   noticeText: {
-    color: '#4A4A4A',
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   noticeBtn: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    height: 42,
+    height: 44,
     paddingHorizontal: 14,
     borderRadius: 14,
-    backgroundColor: BRAND_BLUE,
+    backgroundColor: COLORS.brand,
   },
   noticeBtnText: {
     color: '#FFFFFF',
@@ -154,11 +148,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   sectionCard: {
-    borderRadius: 16,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    padding: SPACING.m,
     gap: 8,
   },
   sectionRow: {
@@ -171,14 +165,9 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sectionTitle: {
-    color: '#0B0B0F',
-    fontSize: 15,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   sectionBody: {
-    color: '#6A6A6A',
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
 });

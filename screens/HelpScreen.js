@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#0B0B0F';
@@ -54,9 +55,9 @@ export default function HelpScreen({ onBack = () => {} }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
+  safeArea: { flex: 1, backgroundColor: COLORS.bg },
   container: { flex: 1 },
-  content: { padding: 20, gap: 14, paddingBottom: 40 },
+  content: { padding: SPACING.l, gap: SPACING.m, paddingBottom: 40 },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -74,19 +75,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { color: DARK, fontSize: 20, fontFamily: 'Nunito_700Bold' },
+  headerTitle: { ...TYPE.title },
   headerSpacer: { width: 40, height: 40 },
   card: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    gap: 10,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
+    padding: SPACING.m,
+    gap: SPACING.s,
   },
-  lead: { color: DARK, fontSize: 16, fontFamily: 'Nunito_700Bold' },
+  lead: { ...TYPE.section },
   faqRow: { gap: 6, paddingVertical: 6 },
-  faqDivider: { borderBottomWidth: 1, borderBottomColor: '#F1F1F1', paddingBottom: 10 },
-  question: { color: DARK, fontSize: 14, fontFamily: 'Nunito_700Bold' },
-  answer: { color: '#4A4A4A', fontSize: 13, lineHeight: 18, fontFamily: 'Nunito_600SemiBold' },
+  faqDivider: { borderBottomWidth: 1, borderBottomColor: '#F0F1F5', paddingBottom: 10 },
+  question: { ...TYPE.bodyStrong },
+  answer: { ...TYPE.body },
 });
