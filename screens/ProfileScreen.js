@@ -156,12 +156,14 @@ export default function ProfileScreen({
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>Profile</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>Profile</Text>
 
-        <TouchableOpacity style={styles.streakBadge} activeOpacity={0.85} onPress={onOpenStreak}>
-          <Text style={styles.streakEmoji}>🔥</Text>
-          <Text style={styles.streakBadgeText}>{streak}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.streakBadge} activeOpacity={0.85} onPress={onOpenStreak}>
+            <Text style={styles.streakEmoji}>🔥</Text>
+            <Text style={styles.streakBadgeText}>{streak}</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.profileHeader}>
           <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={() => setShowAvatarModal(true)}>
@@ -313,6 +315,11 @@ const styles = StyleSheet.create({
     color: '#0B0B0F',
     fontFamily: 'Nunito_700Bold',
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 
   profileHeader: {
     alignItems: 'center',
@@ -361,15 +368,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
   },
   streakBadge: {
-    position: 'absolute',
-    top: 18,
-    right: 18,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
   streakEmoji: {
     fontSize: 22,
+    lineHeight: 22,
   },
   streakBadgeText: {
     color: '#0B0B0F',
