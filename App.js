@@ -114,6 +114,7 @@ function AppContent() {
         await Promise.all([
           loadMemberships(session.user.id),
           refreshProfileCache(session.user.id),
+          syncStreakCache(session.user.id),
         ]);
         setProfileLoading(false);
       } else {
@@ -250,10 +251,38 @@ function AppContent() {
         '@profile_bio',
         '@profile_photo_uri',
         '@profile_points',
+        '@profile_streak',
       ]);
     } catch (e) {
       console.warn('Clear profile cache failed', e);
     }
+  };
+
+  const refreshStreakCache = async (uid) => {
+    if (!uid) return;
+    try {
+      const { data, error } = await supabase
+        .from('user_streaks')
+        .select('streak_count')
+        .eq('user_id', uid)
+        .maybeSingle();
+      if (error) return;
+      const count = typeof data?.streak_count === 'number' ? data.streak_count : 0;
+      await AsyncStorage.setItem('@profile_streak', String(count));
+      setProfileVersion((v) => v + 1);
+    } catch (e) {
+      console.warn('Refresh streak cache failed', e);
+    }
+  };
+
+  const syncStreakCache = async (uid) => {
+    if (!uid) return;
+    try {
+      await supabase.rpc('touch_user_streak');
+    } catch (e) {
+      console.warn('Touch streak failed', e);
+    }
+    await refreshStreakCache(uid);
   };
 
   const refreshProfileCache = async (uid) => {
@@ -715,6 +744,7 @@ function AppContent() {
         onOpenSettings={() => setProfileOverlay('settings')}
         onOpenFeedback={() => setProfileOverlay('feedback')}
         onOpenPayments={() => setProfileOverlay('payments')}
+        profileVersion={profileVersion}
         onProfileUpdated={() => {
           refreshProfileCache(userId);
           setPostsByCommunity({});

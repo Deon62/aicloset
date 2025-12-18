@@ -22,11 +22,13 @@ export default function ProfileScreen({
   onOpenSettings = () => {},
   onOpenFeedback = () => {},
   onOpenPayments = () => {},
+  profileVersion = 0,
 }) {
   const [photoUri, setPhotoUri] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
   const [year, setYear] = useState('');
+  const [streak, setStreak] = useState(0);
   const [saving, setSaving] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -38,17 +40,19 @@ export default function ProfileScreen({
         if (storedPhoto) setPhotoUri(storedPhoto);
         else setPhotoUri(PRESET_AVATARS[0]);
 
-        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year']);
+        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_streak']);
         const map = Object.fromEntries(entries);
         setName(map['@profile_name'] || '');
         setCourse(map['@profile_course'] || '');
         setYear(map['@profile_year'] || '');
+        const s = Number(String(map['@profile_streak'] || '').replace(/[^0-9]/g, ''));
+        setStreak(Number.isFinite(s) ? s : 0);
       } catch (e) {
         console.warn('Failed to load profile', e);
       }
     };
     loadProfile();
-  }, []);
+  }, [profileVersion]);
 
   const saveProfile = async ({ nextPhotoUri }) => {
     try {
@@ -152,6 +156,11 @@ export default function ProfileScreen({
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>Profile</Text>
+
+        <View style={styles.streakBadge}>
+          <Text style={styles.streakEmoji}>🔥</Text>
+          <Text style={styles.streakBadgeText}>{streak}</Text>
+        </View>
 
         <View style={styles.profileHeader}>
           <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={() => setShowAvatarModal(true)}>
@@ -349,6 +358,22 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  streakBadge: {
+    position: 'absolute',
+    top: 18,
+    right: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  streakEmoji: {
+    fontSize: 22,
+  },
+  streakBadgeText: {
+    color: '#0B0B0F',
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
   },
   avatarOptions: {
     paddingVertical: 8,
