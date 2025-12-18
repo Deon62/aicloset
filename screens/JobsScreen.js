@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,12 +10,43 @@ const BRAND_BLUE = '#1B56FD';
 const REQUEST_EMAIL = 'eucossake@gmail.com';
 
 export default function JobsScreen({ onBack = () => {} }) {
+  const clubs = useMemo(
+    () => [
+      {
+        id: 'ieee',
+        name: 'IEEE Student Branch',
+        description: 'Engineering community for networking, talks, and hands-on technical activities.',
+        link: 'https://www.ieee.org/',
+      },
+      {
+        id: 'huawei',
+        name: 'Huawei ICT Academy',
+        description: 'Learn industry-ready networking/cloud skills and access Huawei training opportunities.',
+        link: 'https://e.huawei.com/en/talent/#/ict-academy',
+      },
+    ],
+    []
+  );
+
   const openRequestEmail = async () => {
     try {
       const url = `mailto:${REQUEST_EMAIL}`;
       const can = await Linking.canOpenURL(url);
       if (!can) {
         Alert.alert('Email not available', 'No email app found on your device.');
+        return;
+      }
+      await Linking.openURL(url);
+    } catch (e) {
+      Alert.alert('Failed to open', 'Please try again.');
+    }
+  };
+
+  const openLink = async (url) => {
+    try {
+      const can = await Linking.canOpenURL(url);
+      if (!can) {
+        Alert.alert('Link not available', 'Cannot open this link on your device.');
         return;
       }
       await Linking.openURL(url);
@@ -31,15 +62,42 @@ export default function JobsScreen({ onBack = () => {} }) {
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
             <Ionicons name="arrow-back" size={20} color={DARK} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Jobs</Text>
+          <Text style={styles.headerTitle}>Mini Clubs</Text>
           <View style={styles.headerSpacer} />
         </View>
 
-        <View style={styles.emptyWrap}>
-          <JobsIcon width={240} height={180} />
-          <Text style={styles.emptyTitle}>No jobs yet</Text>
-          <Text style={styles.emptyText}>Check back soon for new openings from the club and partners.</Text>
-        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <View style={styles.hero}>
+            <JobsIcon width={220} height={160} />
+            <Text style={styles.heroTitle}>External clubs in EUCOSSA</Text>
+            <Text style={styles.heroText}>Explore partner communities and programs you can join alongside EUCOSSA.</Text>
+          </View>
+
+          <View style={styles.list}>
+            {clubs.map((club) => (
+              <TouchableOpacity
+                key={club.id}
+                style={styles.clubCard}
+                activeOpacity={0.9}
+                onPress={() => openLink(club.link)}
+              >
+                <View style={styles.clubTopRow}>
+                  <Text style={styles.clubName} numberOfLines={1}>
+                    {club.name}
+                  </Text>
+                  <Ionicons name="open-outline" size={18} color="#5A5A5A" />
+                </View>
+                <Text style={styles.clubDesc}>{club.description}</Text>
+                <Text style={styles.clubLink} numberOfLines={1}>
+                  {club.link}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
 
         <TouchableOpacity style={styles.fab} activeOpacity={0.9} onPress={openRequestEmail}>
           <Ionicons name="add" size={26} color="#FFFFFF" />
@@ -56,6 +114,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 110,
   },
   headerBar: {
     paddingHorizontal: 16,
@@ -84,26 +147,63 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  emptyWrap: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 22,
+  hero: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 6,
+    paddingBottom: 14,
   },
-  emptyTitle: {
-    marginTop: 14,
+  heroTitle: {
+    marginTop: 10,
     color: DARK,
     fontSize: 18,
     fontFamily: 'Nunito_700Bold',
   },
-  emptyText: {
+  heroText: {
     marginTop: 8,
+    maxWidth: 340,
     color: '#4A4A4A',
     fontSize: 13,
     lineHeight: 18,
     textAlign: 'center',
     fontFamily: 'Nunito_600SemiBold',
+  },
+  list: {
+    marginTop: 6,
+    gap: 12,
+  },
+  clubCard: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  clubTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  clubName: {
+    flex: 1,
+    color: DARK,
+    fontSize: 15,
+    fontFamily: 'Nunito_700Bold',
+  },
+  clubDesc: {
+    marginTop: 8,
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  clubLink: {
+    marginTop: 8,
+    color: BRAND_BLUE,
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
   },
   fab: {
     position: 'absolute',
