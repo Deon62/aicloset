@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -157,7 +158,14 @@ export default function MarketplaceScreen({
           <View style={styles.headerRow}>
             <Text style={styles.title}>Shop</Text>
             <View style={styles.headerIcons}>
-              <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.85} onPress={onOpenCart}>
+              <TouchableOpacity
+                style={styles.headerIconBtn}
+                activeOpacity={0.85}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onOpenCart();
+                }}
+              >
                 <Ionicons name="cart-outline" size={28} color={DARK} />
                 {cartIds.size > 0 ? (
                   <View style={styles.badge}>

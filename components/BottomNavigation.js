@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -24,7 +25,12 @@ export default function BottomNavigation({ currentTab, onTabChange }) {
           <TouchableOpacity
             key={tab.id}
             style={[styles.tab, isActive && styles.tabActive]}
-            onPress={() => onTabChange(tab.id)}
+            onPress={() => {
+              if (tab.id !== currentTab) {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }
+              onTabChange(tab.id);
+            }}
             activeOpacity={0.85}
           >
             <Ionicons

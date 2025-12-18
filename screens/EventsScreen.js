@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, Animated, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
@@ -68,7 +69,14 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
         <View style={styles.headerRow}>
           <Text style={styles.title}>Events</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.pastEventsBtn} activeOpacity={0.85} onPress={onOpenPastEvents}>
+            <TouchableOpacity
+              style={styles.pastEventsBtn}
+              activeOpacity={0.85}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onOpenPastEvents();
+              }}
+            >
               <Ionicons name="albums-outline" size={20} color="#1D1D1D" />
             </TouchableOpacity>
 

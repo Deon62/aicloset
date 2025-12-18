@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -108,7 +109,14 @@ export default function HomeScreen({
               <Image source={require('../assets/eucossa.jpg')} style={styles.logo} resizeMode="contain" />
             </View>
 
-            <TouchableOpacity style={styles.notBtn} activeOpacity={0.85} onPress={onOpenNotifications}>
+            <TouchableOpacity
+              style={styles.notBtn}
+              activeOpacity={0.85}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onOpenNotifications();
+              }}
+            >
               <Ionicons name="notifications-outline" size={26} color={DARK} />
             </TouchableOpacity>
           </View>
