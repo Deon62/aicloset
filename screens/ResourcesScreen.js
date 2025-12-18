@@ -1,76 +1,75 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const DARK = '#0B0B0F';
 
+export const RESOURCES = [
+  {
+    id: 'res-1',
+    title: 'React Native Docs',
+    description: 'Official documentation for building native apps using React.',
+    link: 'https://reactnative.dev/',
+  },
+  {
+    id: 'res-2',
+    title: 'Expo Documentation',
+    description: 'Guides and APIs for building and shipping Expo apps quickly.',
+    link: 'https://docs.expo.dev/',
+  },
+  {
+    id: 'res-3',
+    title: 'JavaScript Info',
+    description: 'A modern JavaScript tutorial with examples and deep explanations.',
+    link: 'https://javascript.info/',
+  },
+  {
+    id: 'res-4',
+    title: 'Git Handbook',
+    description: 'Learn Git basics and workflows for collaborating on projects.',
+    link: 'https://guides.github.com/introduction/git-handbook/',
+  },
+  {
+    id: 'res-5',
+    title: 'System Design Course (EnjoyAlgorithms)',
+    description: 'Learn scalable system design concepts with structured lessons and examples.',
+    link: 'https://www.enjoyalgorithms.com/system-design-courses/',
+  },
+  {
+    id: 'res-6',
+    title: 'Data Science Course (EnjoyAlgorithms)',
+    description: 'A guided path through data science fundamentals, tools, and real-world workflows.',
+    link: 'https://www.enjoyalgorithms.com/data-science-course/',
+  },
+  {
+    id: 'res-7',
+    title: 'OOPs Course (EnjoyAlgorithms)',
+    description: 'Object-oriented programming concepts explained with practical examples.',
+    link: 'https://www.enjoyalgorithms.com/oops-course/',
+  },
+  {
+    id: 'res-8',
+    title: 'Machine Learning Courses (EnjoyAlgorithms)',
+    description: 'Machine learning learning paths covering core theory and applied practice.',
+    link: 'https://www.enjoyalgorithms.com/machine-learning-courses/',
+  },
+  {
+    id: 'res-9',
+    title: 'Flask YouTube Tutorial (Corey Schafer)',
+    description: 'A practical Flask tutorial series covering fundamentals and building real apps.',
+    link: 'https://youtu.be/MwZwr5Tvyxo?si=DKXYRsR11poFI8PL',
+  },
+  {
+    id: 'res-10',
+    title: 'LangChain Learn (Python)',
+    description: 'Official LangChain learning docs for building LLM apps in Python.',
+    link: 'https://docs.langchain.com/oss/python/learn',
+  },
+];
+
 export default function ResourcesScreen({ onBack = () => {} }) {
-  const resources = useMemo(
-    () => [
-      {
-        id: 'res-1',
-        title: 'React Native Docs',
-        description: 'Official documentation for building native apps using React.',
-        link: 'https://reactnative.dev/',
-      },
-      {
-        id: 'res-2',
-        title: 'Expo Documentation',
-        description: 'Guides and APIs for building and shipping Expo apps quickly.',
-        link: 'https://docs.expo.dev/',
-      },
-      {
-        id: 'res-3',
-        title: 'JavaScript Info',
-        description: 'A modern JavaScript tutorial with examples and deep explanations.',
-        link: 'https://javascript.info/',
-      },
-      {
-        id: 'res-4',
-        title: 'Git Handbook',
-        description: 'Learn Git basics and workflows for collaborating on projects.',
-        link: 'https://guides.github.com/introduction/git-handbook/',
-      },
-      {
-        id: 'res-5',
-        title: 'System Design Course (EnjoyAlgorithms)',
-        description: 'Learn scalable system design concepts with structured lessons and examples.',
-        link: 'https://www.enjoyalgorithms.com/system-design-courses/',
-      },
-      {
-        id: 'res-6',
-        title: 'Data Science Course (EnjoyAlgorithms)',
-        description: 'A guided path through data science fundamentals, tools, and real-world workflows.',
-        link: 'https://www.enjoyalgorithms.com/data-science-course/',
-      },
-      {
-        id: 'res-7',
-        title: 'OOPs Course (EnjoyAlgorithms)',
-        description: 'Object-oriented programming concepts explained with practical examples.',
-        link: 'https://www.enjoyalgorithms.com/oops-course/',
-      },
-      {
-        id: 'res-8',
-        title: 'Machine Learning Courses (EnjoyAlgorithms)',
-        description: 'Machine learning learning paths covering core theory and applied practice.',
-        link: 'https://www.enjoyalgorithms.com/machine-learning-courses/',
-      },
-      {
-        id: 'res-9',
-        title: 'Flask YouTube Tutorial (Corey Schafer)',
-        description: 'A practical Flask tutorial series covering fundamentals and building real apps.',
-        link: 'https://youtu.be/MwZwr5Tvyxo?si=DKXYRsR11poFI8PL',
-      },
-      {
-        id: 'res-10',
-        title: 'LangChain Learn (Python)',
-        description: 'Official LangChain learning docs for building LLM apps in Python.',
-        link: 'https://docs.langchain.com/oss/python/learn',
-      },
-    ],
-    []
-  );
+  const resources = RESOURCES;
 
   const openLink = async (url) => {
     try {

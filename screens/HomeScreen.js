@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 
+import { RESOURCES } from './ResourcesScreen';
+
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 const PRESET_AVATARS = [
@@ -59,6 +61,9 @@ export default function HomeScreen({
   const [showPoints, setShowPoints] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [profileBooted, setProfileBooted] = useState(false);
+
+  const resourcesCount = RESOURCES.length;
+  const resourcesBadgeText = resourcesCount > 99 ? '99+' : String(resourcesCount);
 
   useEffect(() => {
     if (loading) setProfileBooted(false);
@@ -302,7 +307,6 @@ export default function HomeScreen({
               </View>
 
               <TouchableOpacity style={styles.viewEventBtn} activeOpacity={0.9} onPress={onOpenEvents}>
-                <Ionicons name="grid-outline" size={16} color={BRAND_BLUE} />
                 <Text style={styles.viewEventBtnText}>View event</Text>
               </TouchableOpacity>
             </View>
@@ -324,6 +328,11 @@ export default function HomeScreen({
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="book-outline" size={22} color={DARK} />
+              {resourcesCount > 0 ? (
+                <View style={styles.resourcesCountBadge}>
+                  <Text style={styles.resourcesCountBadgeText}>{resourcesBadgeText}</Text>
+                </View>
+              ) : null}
             </View>
             <Text style={styles.extrasLabel}>Resources</Text>
           </TouchableOpacity>
@@ -698,6 +707,7 @@ const styles = StyleSheet.create({
   },
   eventCard: {
     padding: 0,
+    height: 160,
     overflow: 'hidden',
     backgroundColor: '#FFFFFF',
     borderColor: '#E9EEFF',
@@ -711,10 +721,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    height: '100%',
   },
   eventPosterWrap: {
     width: 120,
-    height: 132,
+    height: '100%',
     backgroundColor: 'transparent',
     overflow: 'hidden',
   },
@@ -730,12 +741,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
+    transform: [{ scale: 1.08 }],
   },
   eventMain: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 6,
     paddingRight: 14,
-    gap: 4,
+    gap: 3,
   },
   eventTitleRow: {
     flexDirection: 'row',
@@ -757,7 +769,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   eventMetaList: {
-    marginTop: 4,
+    marginTop: 3,
     gap: 4,
   },
   eventMetaRow: {
@@ -772,16 +784,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
   },
   viewEventBtn: {
-    marginTop: 4,
-    alignSelf: 'flex-start',
+    marginTop: 6,
+    alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingVertical: 3,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#E5E7FF',
   },
   viewEventBtnText: {
-    color: BRAND_BLUE,
-    fontSize: 13,
+    color: '#0B0B0F',
+    fontSize: 12,
     fontFamily: 'Nunito_700Bold',
   },
   extrasCard: {
@@ -803,8 +818,29 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     backgroundColor: 'transparent',
+    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  resourcesCountBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -10,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 5,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: BRAND_BLUE,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  resourcesCountBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    lineHeight: 12,
+    fontFamily: 'Nunito_700Bold',
   },
   extrasLabel: {
     color: DARK,
