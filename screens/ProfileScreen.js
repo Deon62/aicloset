@@ -126,6 +126,8 @@ export default function ProfileScreen({
           if (updateError) {
             console.warn('Failed to update profile avatar_url', updateError);
           }
+          // force refresh locally so other screens (home/posts) pick it up
+          await AsyncStorage.setItem('@profile_photo_uri', uri);
         }
       }
     } catch (e) {
