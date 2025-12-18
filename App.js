@@ -203,6 +203,8 @@ function AppContent() {
         .from('post_votes')
         .upsert({ post_id: postId, user_id: userId, value: nextVote }, { onConflict: 'post_id,user_id' });
     }
+
+    await refreshProfileCache(userId);
   };
 
   const toggleLiked = (id) => {
@@ -247,6 +249,7 @@ function AppContent() {
         '@profile_year',
         '@profile_bio',
         '@profile_photo_uri',
+        '@profile_points',
       ]);
     } catch (e) {
       console.warn('Clear profile cache failed', e);
@@ -258,7 +261,7 @@ function AppContent() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('github_username,name,course,year,avatar_url')
+        .select('github_username,name,course,year,avatar_url,points')
         .eq('id', uid)
         .single();
       if (error) return;
@@ -269,6 +272,7 @@ function AppContent() {
         ['@profile_year', String(data?.year || '').trim()],
         ['@profile_bio', ''],
         ['@profile_photo_uri', String(data?.avatar_url || '').trim()],
+        ['@profile_points', String(typeof data?.points === 'number' ? data.points : 0)],
       ]);
       setProfileVersion((v) => v + 1);
     } catch (e) {
@@ -385,6 +389,7 @@ function AppContent() {
         const { error } = await supabase.from('community_members').upsert({ community_id: id, user_id: userId });
         if (error) console.warn('Join community error', error);
       }
+      await refreshProfileCache(userId);
     } catch (e) {
       console.warn('Toggle join failed', e);
     }
@@ -438,6 +443,7 @@ function AppContent() {
         const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
         return { ...(prev || {}), [communityId]: [newPost, ...existing] };
       });
+      await refreshProfileCache(userId);
     } catch (e) {
       console.warn('Add post failed', e);
       Alert.alert('Post', 'Failed to add post. Try again.');

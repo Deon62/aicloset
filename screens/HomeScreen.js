@@ -42,6 +42,7 @@ export default function HomeScreen({
   const [year, setYear] = useState('');
   const [bio, setBio] = useState('');
   const [showPoints, setShowPoints] = useState(true);
+  const [points, setPoints] = useState(0);
   const [github, setGithub] = useState('');
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function HomeScreen({
         if (!mounted) return;
         setPhotoUri(normalizedPhoto);
 
-        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github']);
+        const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github', '@profile_points']);
         const map = Object.fromEntries(entries);
         if (!mounted) return;
         setName(map['@profile_name'] || '');
@@ -61,6 +62,8 @@ export default function HomeScreen({
         setYear(map['@profile_year'] || '');
         setBio(map['@profile_bio'] || '');
         setGithub(map['@profile_github'] || '');
+        const p = Number(String(map['@profile_points'] || '').replace(/[^0-9-]/g, ''));
+        setPoints(Number.isFinite(p) ? p : 0);
       } catch (e) {
         console.warn('Failed to load profile photo', e);
       }
@@ -73,6 +76,7 @@ export default function HomeScreen({
       setCourse('');
       setYear('');
       setBio('');
+      setPoints(0);
       setGithub('');
     };
   }, [profileVersion]);
@@ -156,7 +160,7 @@ export default function HomeScreen({
                   <Ionicons name={showPoints ? 'eye' : 'eye-off'} size={18} color="#E5E7FF" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.pointsValue}>{showPoints ? '1,450' : '••••'}</Text>
+              <Text style={styles.pointsValue}>{showPoints ? points.toLocaleString() : '••••'}</Text>
             </View>
           </View>
           <Text style={styles.pointsNote}>Use points to redeem tees & event passes</Text>
