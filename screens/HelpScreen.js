@@ -45,8 +45,8 @@ export default function HelpScreen({ onBack = () => {} }) {
 
         <View style={styles.card}>
           <Text style={styles.lead}>Contact</Text>
-          <Text style={styles.answer}>Email: eucossa@egerton.ac.ke</Text>
-          <Text style={styles.answer}>Discord: #helpdesk (if available)</Text>
+          <Text style={styles.answer}>Email: eucossake@gmail.com</Text>
+          <Text style={styles.answer}>website: eucossa.com</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
