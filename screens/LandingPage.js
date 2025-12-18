@@ -50,7 +50,7 @@ export default function LandingPage({ onContinue = () => {} }) {
           ]}
         >
           <Text style={styles.landingName}>Egerton University Computer Science Students Association</Text>
-          <Text style={styles.landingTagline}>Together We Learn, Together We Grow.</Text>
+          <Text style={styles.landingTagline}>Innovation and creativity .</Text>
         </Animated.View>
         <Animated.View
           style={[

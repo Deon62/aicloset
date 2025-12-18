@@ -217,7 +217,7 @@ export default function HomeScreen({
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>Hello {profile.name || MOCK_NAME} 🖐</Text>
-          <Text style={styles.subtitle}>welcome to Your Eucossa Account</Text>
+          {/* <Text style={styles.subtitle}>welcome to Your Eucossa Account</Text> */}
         </View>
 
         {/* <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text> */}
@@ -379,7 +379,8 @@ const styles = StyleSheet.create({
   content: {
     padding: SPACING.l,
     gap: SPACING.m,
-    paddingBottom: 112,
+    paddingBottom: SPACING.m,
+    flexGrow: 1,
   },
   skeletonBlock: {
     backgroundColor: '#EFEFEF',
@@ -805,18 +806,21 @@ const styles = StyleSheet.create({
   },
   extrasCard: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     justifyContent: 'space-between',
     gap: 8,
     paddingVertical: SPACING.m,
     paddingHorizontal: SPACING.m,
+    flex: 1,
+    minHeight: 160,
   },
   extrasItem: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     gap: 8,
-    paddingVertical: 8,
+    paddingVertical: 0,
+    alignSelf: 'stretch',
   },
   extrasIconWrap: {
     width: 34,
