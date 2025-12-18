@@ -78,9 +78,9 @@ export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {
     }
   };
 
-  const renderField = ({ label, value, placeholder, onChangeText, multiline = false, inputProps = {} }) => {
+  const renderFieldRow = ({ label, value, placeholder, onChangeText, multiline = false, inputProps = {}, isLast = false }) => {
     return (
-      <View style={styles.fieldWrap}>
+      <View style={[styles.fieldRow, isLast && styles.fieldRowLast]}>
         <Text style={styles.fieldLabel}>{label}</Text>
         {editing ? (
           <TextInput
@@ -93,7 +93,7 @@ export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {
             {...inputProps}
           />
         ) : (
-          <Text style={styles.valueText}>{value ? value : '-'}</Text>
+          <Text style={[styles.valueText, value ? null : styles.valueEmptyText]}>{value ? value : '—'}</Text>
         )}
       </View>
     );
@@ -129,46 +129,49 @@ export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {renderField({
-            label: 'Name',
-            value: name,
-            placeholder: 'Enter your name',
-            onChangeText: setName,
-            inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
-          })}
+          <View style={styles.detailsCard}>
+            {renderFieldRow({
+              label: 'Name',
+              value: name,
+              placeholder: 'Enter your name',
+              onChangeText: setName,
+              inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
+            })}
 
-          {renderField({
-            label: 'Course',
-            value: course,
-            placeholder: 'Enter your course',
-            onChangeText: setCourse,
-            inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
-          })}
+            {renderFieldRow({
+              label: 'Course',
+              value: course,
+              placeholder: 'Enter your course',
+              onChangeText: setCourse,
+              inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
+            })}
 
-          {renderField({
-            label: 'Year',
-            value: year,
-            placeholder: 'e.g. 2nd year',
-            onChangeText: setYear,
-            inputProps: { returnKeyType: 'next' },
-          })}
+            {renderFieldRow({
+              label: 'Year',
+              value: year,
+              placeholder: 'e.g. 2nd year',
+              onChangeText: setYear,
+              inputProps: { returnKeyType: 'next' },
+            })}
 
-          {renderField({
-            label: 'Bio',
-            value: bio,
-            placeholder: 'Tell us about yourself',
-            onChangeText: setBio,
-            multiline: true,
-            inputProps: { textAlignVertical: 'top' },
-          })}
+            {renderFieldRow({
+              label: 'Bio',
+              value: bio,
+              placeholder: 'Tell us about yourself',
+              onChangeText: setBio,
+              multiline: true,
+              inputProps: { textAlignVertical: 'top' },
+            })}
 
-          {renderField({
-            label: 'GitHub',
-            value: github,
-            placeholder: 'github.com/username',
-            onChangeText: setGithub,
-            inputProps: { autoCapitalize: 'none', autoCorrect: false },
-          })}
+            {renderFieldRow({
+              label: 'GitHub',
+              value: github,
+              placeholder: 'github.com/username',
+              onChangeText: setGithub,
+              inputProps: { autoCapitalize: 'none', autoCorrect: false },
+              isLast: true,
+            })}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -178,7 +181,7 @@ export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F6F7FB',
   },
   container: {
     flex: 1,
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#0B0B0F',
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Nunito_700Bold',
   },
   editBtn: {
@@ -224,32 +227,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 140,
-    gap: 14,
+    gap: 12,
   },
-  fieldWrap: {
+  detailsCard: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  fieldRow: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     gap: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F1F5',
+  },
+  fieldRowLast: {
+    borderBottomWidth: 0,
   },
   fieldLabel: {
-    color: '#0B0B0F',
-    fontSize: 14,
+    color: '#5A5A5A',
+    fontSize: 12,
     fontFamily: 'Nunito_700Bold',
   },
   valueText: {
-    color: '#4A4A4A',
+    color: '#0B0B0F',
     fontSize: 14,
     lineHeight: 20,
     fontFamily: 'Nunito_400Regular',
   },
+  valueEmptyText: {
+    color: '#8A8A8A',
+  },
   input: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
+    borderColor: '#E9ECF5',
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: '#0B0B0F',
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F6F7FB',
   },
   inputMultiline: {
     minHeight: 110,
