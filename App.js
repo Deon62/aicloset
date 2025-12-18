@@ -24,6 +24,9 @@ import CommunityConversationScreen from './screens/CommunityConversationScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ProfileInfoScreen from './screens/ProfileInfoScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import HelpScreen from './screens/HelpScreen';
+import PrivacyScreen from './screens/PrivacyScreen';
+import AboutScreen from './screens/AboutScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import PaymentsScreen from './screens/PaymentsScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -459,7 +462,23 @@ function AppContent() {
       return <ProfileInfoScreen onBack={() => setProfileOverlay(null)} onSaved={() => setProfileVersion((v) => v + 1)} />;
     }
     if (profileOverlay === 'settings') {
-      return <SettingsScreen onBack={() => setProfileOverlay(null)} />;
+      return (
+        <SettingsScreen
+          onBack={() => setProfileOverlay(null)}
+          onOpenHelp={() => setProfileOverlay('help')}
+          onOpenPrivacy={() => setProfileOverlay('privacy')}
+          onOpenAbout={() => setProfileOverlay('about')}
+        />
+      );
+    }
+    if (profileOverlay === 'help') {
+      return <HelpScreen onBack={() => setProfileOverlay('settings')} />;
+    }
+    if (profileOverlay === 'privacy') {
+      return <PrivacyScreen onBack={() => setProfileOverlay('settings')} />;
+    }
+    if (profileOverlay === 'about') {
+      return <AboutScreen onBack={() => setProfileOverlay('settings')} />;
     }
     if (profileOverlay === 'feedback') {
       return <FeedbackScreen onBack={() => setProfileOverlay(null)} />;
@@ -599,6 +618,12 @@ function AppContent() {
           currentTab === 'profile' && profileOverlay === 'info'
         ) || (
           currentTab === 'profile' && profileOverlay === 'settings'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'help'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'privacy'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'about'
         ) || (
           currentTab === 'profile' && profileOverlay === 'feedback'
         ) || (

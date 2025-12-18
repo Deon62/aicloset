@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -139,6 +140,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
   };
 
   const submit = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setAttemptedInfo(true);
     setAttemptedSecurity(true);
     const n = String(name || '').trim();

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -59,6 +60,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
   }, [email, loading, password]);
 
   const login = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setAttempted(true);
     const em = String(email || '').trim().toLowerCase();
     const pwd = String(password || '').trim();

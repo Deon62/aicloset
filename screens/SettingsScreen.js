@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
 
-export default function SettingsScreen({ onBack = () => {} }) {
+export default function SettingsScreen({ onBack = () => {}, onOpenHelp = () => {}, onOpenPrivacy = () => {}, onOpenAbout = () => {} }) {
   const rows = [
     { id: 'account', label: 'Account', icon: 'person-outline' },
     { id: 'notifications', label: 'Notifications', icon: 'notifications-outline' },
@@ -37,6 +37,18 @@ export default function SettingsScreen({ onBack = () => {} }) {
                     style={styles.row}
                     activeOpacity={0.85}
                     onPress={() => {
+                      if (row.id === 'help') {
+                        onOpenHelp();
+                        return;
+                      }
+                      if (row.id === 'privacy') {
+                        onOpenPrivacy();
+                        return;
+                      }
+                      if (row.id === 'about') {
+                        onOpenAbout();
+                        return;
+                      }
                       if (row.url) Linking.openURL(row.url);
                     }}
                   >

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 
@@ -147,6 +148,7 @@ export default function CommunityScreen({
                       activeOpacity={0.9}
                       onPress={(e) => {
                         e?.stopPropagation?.();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         onToggleJoin(c.id);
                       }}
                     >
