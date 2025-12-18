@@ -4,6 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -225,16 +226,16 @@ export default function MarketplaceScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   pageHeader: {
-    paddingHorizontal: 24,
-    paddingTop: 10,
-    paddingBottom: 10,
-    gap: 12,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.m,
+    paddingBottom: SPACING.s,
+    gap: SPACING.m,
   },
   headerRow: {
     flexDirection: 'row',
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#0B0B0F',
+    color: COLORS.text,
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
     padding: 0,
@@ -304,12 +305,10 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   title: {
-    fontSize: 28,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   postCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
     borderBottomColor: '#EDEDED',
     borderRadius: 0,
@@ -330,17 +329,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   productName: {
-    color: '#0B0B0F',
-    fontSize: 18,
-    lineHeight: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
     marginBottom: 6,
   },
   productDescription: {
-    color: '#4A4A4A',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
     marginBottom: 10,
   },
   iconBtn: {
@@ -372,31 +365,26 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   postDescription: {
-    color: '#4A4A4A',
-    fontSize: 15,
-    lineHeight: 21,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   postPrice: {
-    color: '#0B0B0F',
-    fontSize: 22,
+    color: COLORS.text,
+    fontSize: 20,
+    lineHeight: 26,
     fontFamily: 'Nunito_700Bold',
   },
   originalPrice: {
     color: '#8A8A8A',
-    fontSize: 14,
+    fontSize: 12,
+    lineHeight: 16,
     fontFamily: 'Nunito_600SemiBold',
     textDecorationLine: 'line-through',
   },
   scarcityInline: {
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
   },
   sizeText: {
     marginTop: 2,
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
 });

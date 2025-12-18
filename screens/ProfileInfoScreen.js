@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -181,7 +182,7 @@ export default function ProfileInfoScreen({ onBack = () => {}, onSaved = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
@@ -205,9 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 20,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   editBtn: {
     minWidth: 64,
@@ -224,16 +223,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
     paddingBottom: 140,
     gap: 12,
   },
   detailsCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EFEFEF',
-    borderRadius: 16,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
     overflow: 'hidden',
   },
   fieldRow: {
@@ -247,15 +246,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   fieldLabel: {
-    color: '#5A5A5A',
-    fontSize: 12,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
   },
   valueText: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.bodyStrong,
   },
   valueEmptyText: {
     color: '#8A8A8A',
@@ -266,10 +260,10 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#0B0B0F',
+    color: COLORS.text,
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   inputMultiline: {
     minHeight: 110,

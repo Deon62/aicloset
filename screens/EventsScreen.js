@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 
@@ -187,20 +188,18 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   content: {
-    padding: 24,
-    gap: 16,
-    paddingBottom: 70,
+    padding: SPACING.l,
+    gap: SPACING.m,
+    paddingBottom: 80,
   },
   title: {
-    fontSize: 28,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerRow: {
     flexDirection: 'row',
@@ -240,8 +239,8 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.borderStrong,
+    backgroundColor: COLORS.surface,
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
@@ -249,7 +248,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingHorizontal: 12,
-    color: '#0B0B0F',
+    color: COLORS.text,
     fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
   },
@@ -266,17 +265,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#4A4A4A',
-    lineHeight: 22,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 16,
-    padding: 16,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
     gap: 8,
   },
   cardAccent: {
@@ -288,10 +284,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   cardHeadline: {
-    color: '#1D1D1D',
-    fontSize: 16,
-    lineHeight: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   eventCard: {
     padding: 0,
@@ -317,8 +310,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   eventInfo: {
-    padding: 14,
-    gap: 10,
+    padding: SPACING.m,
+    gap: SPACING.s,
   },
   eventMetaList: {
     gap: 8,
@@ -329,8 +322,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   eventMetaText: {
-    color: '#5A5A5A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
 });

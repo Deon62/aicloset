@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase, dbService } from '../lib/supabase';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
@@ -180,35 +181,43 @@ export default function ProfileScreen({
           <Text style={styles.courseText}>{course || MOCK_COURSE}{year ? ` • ${year}` : ''}</Text>
         </View>
 
-        <View style={styles.separator} />
+        <View style={styles.actionsCard}>
+          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenProfileInfo}>
+            <Text style={styles.linkLabel}>Profile info</Text>
+            <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+          </TouchableOpacity>
+          <View style={styles.rowDivider} />
 
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenProfileInfo}>
-          <Text style={styles.linkLabel}>Profile info</Text>
-          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenSettings}>
-          <Text style={styles.linkLabel}>Settings</Text>
-          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenFeedback}>
-          <Text style={styles.linkLabel}>Send us feedback</Text>
-          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenPayments}>
-          <Text style={styles.linkLabel}>Payments</Text>
-          <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.linkRow, styles.logoutRow]}
-          activeOpacity={0.85}
-          onPress={() => {
-            setShowLogoutModal(true);
-          }}
-          disabled={saving}
-        >
-          <Text style={styles.logoutLabel}>{saving ? 'Saving...' : 'Logout'}</Text>
-          <Ionicons name="log-out-outline" size={18} color="#FF2D55" />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenSettings}>
+            <Text style={styles.linkLabel}>Settings</Text>
+            <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+          </TouchableOpacity>
+          <View style={styles.rowDivider} />
+
+          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenFeedback}>
+            <Text style={styles.linkLabel}>Send us feedback</Text>
+            <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+          </TouchableOpacity>
+          <View style={styles.rowDivider} />
+
+          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenPayments}>
+            <Text style={styles.linkLabel}>Payments</Text>
+            <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
+          </TouchableOpacity>
+          <View style={styles.rowDivider} />
+
+          <TouchableOpacity
+            style={[styles.linkRow, styles.logoutRow]}
+            activeOpacity={0.85}
+            onPress={() => {
+              setShowLogoutModal(true);
+            }}
+            disabled={saving}
+          >
+            <Text style={styles.logoutLabel}>{saving ? 'Saving...' : 'Logout'}</Text>
+            <Ionicons name="log-out-outline" size={18} color={COLORS.danger} />
+          </TouchableOpacity>
+        </View>
 
         <Modal
           visible={showLogoutModal}
@@ -303,17 +312,15 @@ export default function ProfileScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
-    padding: 24,
-    gap: 16,
+    padding: SPACING.l,
+    gap: SPACING.m,
   },
   title: {
-    fontSize: 28,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   titleRow: {
     flexDirection: 'row',
@@ -358,14 +365,10 @@ const styles = StyleSheet.create({
 
   nameText: {
     marginTop: 4,
-    color: '#0B0B0F',
-    fontSize: 18,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   courseText: {
-    color: '#4A4A4A',
-    fontSize: 14,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.body,
   },
   streakBadge: {
     flexDirection: 'row',
@@ -414,31 +417,33 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Nunito_700Bold',
   },
-  separator: {
+  actionsCard: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    overflow: 'hidden',
+  },
+  rowDivider: {
     height: 1,
-    backgroundColor: '#E5E5E5',
-    marginTop: 16,
-    marginBottom: 6,
+    backgroundColor: '#F0F1F5',
   },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 12,
-    paddingHorizontal: 0,
+    paddingHorizontal: 14,
   },
   linkLabel: {
-    color: '#0B0B0F',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   logoutRow: {
-    marginTop: 4,
+    marginTop: 0,
   },
   logoutLabel: {
-    color: '#FF2D55',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
+    color: COLORS.danger,
   },
   modalBackdrop: {
     flex: 1,

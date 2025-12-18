@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, 
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 export default function CommunityScreen({
   joinedIds = new Set(),
@@ -175,26 +176,21 @@ export default function CommunityScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   content: {
-    padding: 24,
-    gap: 16,
-    paddingBottom: 70,
+    padding: SPACING.l,
+    gap: SPACING.m,
+    paddingBottom: 80,
   },
   title: {
-    fontSize: 28,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#4A4A4A',
-    lineHeight: 22,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   errorText: {
     color: '#D11A2A',
@@ -203,33 +199,34 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
   },
   list: {
-    paddingTop: 6,
+    paddingTop: 0,
+    gap: 12,
   },
   row: {
-    paddingVertical: 16,
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    paddingVertical: SPACING.m,
+    paddingHorizontal: SPACING.m,
   },
   rowLast: {
-    borderBottomWidth: 0,
     marginBottom: 0,
   },
   rowTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    paddingHorizontal: 2,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: '#F2F4FF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#1D1D1D',
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     overflow: 'hidden',
   },
   avatarImage: {
@@ -247,33 +244,25 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   communityTitle: {
-    color: '#0B0B0F',
-    fontSize: 16,
-    lineHeight: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   communityDescription: {
-    color: '#4A4A4A',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   memberText: {
-    color: '#6A6A6A',
-    fontSize: 13,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
   joinChip: {
     alignSelf: 'flex-start',
-    backgroundColor: '#1D1D1D',
+    backgroundColor: COLORS.brand,
     borderRadius: 999,
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   joinChipJoined: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#1D1D1D',
+    borderColor: COLORS.brand,
   },
   joinChipText: {
     color: '#FFFFFF',
@@ -281,7 +270,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   joinChipTextJoined: {
-    color: '#1D1D1D',
+    color: COLORS.brand,
   },
 
   skeletonBlock: {

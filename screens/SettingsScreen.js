@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -103,7 +104,7 @@ export default function SettingsScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
@@ -126,25 +127,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerSpacer: {
     width: 40,
     height: 40,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 16,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
+    paddingBottom: SPACING.l,
+    gap: SPACING.m,
   },
   sectionCard: {
-    borderRadius: 16,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
     overflow: 'hidden',
   },
   row: {
@@ -160,13 +159,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   rowLabel: {
-    color: '#0B0B0F',
-    fontSize: 15,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   divider: {
     height: 1,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: '#F0F1F5',
     marginLeft: 44,
   },
   footerNote: {
@@ -175,17 +172,14 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   footerText: {
-    color: BRAND_BLUE,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
+    color: COLORS.brand,
   },
   footerSubText: {
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
   footerLink: {
-    color: BRAND_BLUE,
+    color: COLORS.brand,
     textDecorationLine: 'underline',
     fontFamily: 'Nunito_700Bold',
   },

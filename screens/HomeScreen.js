@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { RESOURCES } from './ResourcesScreen';
 import { MINI_CLUBS } from './JobsScreen';
+import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -370,15 +371,15 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   content: {
-    padding: 24,
-    gap: 16,
-    paddingBottom: 110,
+    padding: SPACING.l,
+    gap: SPACING.m,
+    paddingBottom: 112,
   },
   skeletonBlock: {
     backgroundColor: '#EFEFEF',
@@ -414,8 +415,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logo: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: 8,
   },
   logoDivider: {
@@ -424,21 +425,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   title: {
-    fontSize: 20,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
-    lineHeight: 26,
+    ...TYPE.title,
   },
   subtitle: {
-    fontSize: 15,
-    color: '#4A4A4A',
-    lineHeight: 21,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   sectionTitle: {
     marginTop: 4,
-    color: '#0B0B0F',
-    fontSize: 13,
+    color: COLORS.text,
+    fontSize: 12,
     letterSpacing: 0.2,
     fontFamily: 'Nunito_700Bold',
   },
@@ -446,8 +441,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#0B0B0F',
     borderWidth: 1,
     borderColor: '#1F1F23',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
     gap: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
@@ -528,7 +523,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     paddingVertical: 10,
-    borderRadius: 999,
+    borderRadius: RADIUS.pill,
     backgroundColor: '#E5E7FF',
   },
   redeemBtnText: {
@@ -576,17 +571,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 18,
-    padding: 16,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
     gap: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
   },
   cardAccent: {
     borderColor: '#DCE3FF',
@@ -718,13 +713,13 @@ const styles = StyleSheet.create({
     padding: 0,
     height: 160,
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderColor: '#E9EEFF',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 5,
   },
   eventRow: {
     flexDirection: 'row',
@@ -812,16 +807,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 10,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
+    gap: 8,
+    paddingVertical: SPACING.m,
+    paddingHorizontal: SPACING.m,
   },
   extrasItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
     gap: 8,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   extrasIconWrap: {
     width: 34,
@@ -853,7 +848,7 @@ const styles = StyleSheet.create({
   },
   extrasLabel: {
     color: DARK,
-    fontSize: 13,
+    fontSize: 12,
     textAlign: 'center',
     fontFamily: 'Nunito_700Bold',
   },
