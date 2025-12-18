@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import CartSvg from '../assets/icons/cart.svg';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -140,7 +141,7 @@ export default function CartScreen({
                   })
                 }
               >
-                <Ionicons name="remove" size={18} color={DARK} />
+                <Ionicons name="remove" size={18} color={COLORS.text} />
               </TouchableOpacity>
             ) : (
               <View style={styles.qtyBtnSpacer} />
@@ -160,7 +161,7 @@ export default function CartScreen({
                 })
               }
             >
-              <Ionicons name="add" size={18} color={DARK} />
+              <Ionicons name="add" size={18} color={COLORS.text} />
             </TouchableOpacity>
           </View>
         </View>
@@ -182,7 +183,7 @@ export default function CartScreen({
       <View style={styles.container}>
         <View style={styles.headerBar}>
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
+            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Cart</Text>
@@ -244,14 +245,14 @@ export default function CartScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   headerBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: SPACING.l,
+    paddingVertical: SPACING.s,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -261,9 +262,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -272,59 +273,52 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   headerTitle: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerSpacer: {
     width: 40,
     height: 40,
   },
   listContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
   },
   cardDivider: {
-    height: 12,
+    height: SPACING.s,
   },
   emptyWrap: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    gap: 10,
+    paddingHorizontal: SPACING.l,
+    gap: SPACING.s,
   },
   emptyTitle: {
-    color: '#0B0B0F',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   emptyText: {
-    color: '#6A6A6A',
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
     textAlign: 'center',
   },
   cartCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: COLORS.border,
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
     height: 102,
     shadowColor: '#000000',
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
+    elevation: 3,
   },
   mediaLeft: {
     width: 96,
     alignSelf: 'stretch',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -335,25 +329,21 @@ const styles = StyleSheet.create({
   },
   cardMid: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.s + SPACING.xs,
+    paddingVertical: SPACING.s + SPACING.xs,
   },
   itemName: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   itemPrice: {
     marginTop: 2,
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   qtyRow: {
-    marginTop: 10,
+    marginTop: SPACING.m,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: SPACING.s,
   },
   qtyBtnSpacer: {
     width: 30,
@@ -363,27 +353,24 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   detailsLinkText: {
-    color: DARK,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
+    color: COLORS.brand,
     textDecorationLine: 'underline',
   },
   qtyBtn: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: COLORS.bg,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#E7E7E7',
+    borderColor: COLORS.border,
   },
   qtyText: {
     minWidth: 18,
     textAlign: 'center',
-    color: '#0B0B0F',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   cardRight: {
     alignSelf: 'stretch',
@@ -405,17 +392,21 @@ const styles = StyleSheet.create({
     right: 16,
     bottom: 0,
     height: 230,
-    backgroundColor: CART_BRIGHT,
-    borderRadius: 16,
-    borderWidth: 0,
-    paddingTop: 14,
-    paddingHorizontal: 14,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingTop: SPACING.m,
+    paddingHorizontal: SPACING.m,
+    shadowColor: '#000000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
   },
   priceCardTitle: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontFamily: 'Nunito_700Bold',
-    marginBottom: 10,
+    ...TYPE.section,
+    marginBottom: SPACING.s,
   },
   priceRowLine: {
     flexDirection: 'row',
@@ -424,42 +415,33 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   priceLabel: {
-    color: 'rgba(255,255,255,0.92)',
-    fontSize: 13,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.body,
   },
   priceValue: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   priceDivider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    marginTop: 10,
-    marginBottom: 6,
+    backgroundColor: COLORS.border,
+    marginTop: SPACING.s,
+    marginBottom: SPACING.xs,
   },
   totalLabel: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   totalValue: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   orderBtn: {
     marginTop: 14,
     height: 46,
-    borderRadius: 999,
-    backgroundColor: '#FFFFFF',
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
   orderBtnText: {
-    color: DARK,
-    fontSize: 15,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
+    color: '#FFFFFF',
   },
 });

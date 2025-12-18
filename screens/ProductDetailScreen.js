@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, 
 import { StatusBar } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -54,7 +55,7 @@ export default function ProductDetailScreen({
           activeOpacity={0.85}
           onPress={onBack}
         >
-          <Ionicons name="arrow-back" size={20} color={DARK} />
+          <Ionicons name="arrow-back" size={20} color={COLORS.text} />
         </TouchableOpacity>
 
         <ScrollView
@@ -150,7 +151,7 @@ export default function ProductDetailScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.96)',
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -189,17 +190,17 @@ const styles = StyleSheet.create({
   },
   carouselWrap: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
   },
   heroSlide: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     overflow: 'hidden',
   },
   heroImage: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
   },
   dotsRow: {
     position: 'absolute',
@@ -217,59 +218,49 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
   dotActive: {
-    backgroundColor: BRAND_BLUE,
+    backgroundColor: COLORS.brand,
   },
   body: {
-    paddingHorizontal: 18,
-    paddingTop: 18,
-    gap: 10,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.l,
+    gap: SPACING.s,
   },
   productName: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   price: {
-    color: '#0B0B0F',
-    fontSize: 18,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   description: {
-    color: '#4A4A4A',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   section: {
-    marginTop: 6,
+    marginTop: SPACING.s,
   },
   sectionTitle: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
-    marginBottom: 10,
+    ...TYPE.section,
+    marginBottom: SPACING.s,
   },
   pillsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: SPACING.s,
   },
   pill: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 999,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.s + SPACING.xs,
+    borderRadius: RADIUS.pill,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.borderStrong,
+    backgroundColor: COLORS.surface,
   },
   pillSelected: {
-    borderColor: DARK,
-    backgroundColor: DARK,
+    borderColor: COLORS.text,
+    backgroundColor: COLORS.text,
   },
   pillText: {
-    color: '#0B0B0F',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
+    color: COLORS.text,
   },
   pillTextSelected: {
     color: '#FFFFFF',
@@ -279,23 +270,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    paddingTop: 12,
-    paddingHorizontal: 16,
+    paddingTop: SPACING.s + SPACING.xs,
+    paddingHorizontal: SPACING.l,
     backgroundColor: 'rgba(255,255,255,0.96)',
     borderTopWidth: 1,
-    borderTopColor: '#EFEFEF',
+    borderTopColor: COLORS.border,
   },
   updateBtn: {
     height: 50,
-    borderRadius: 16,
-    backgroundColor: BRAND_BLUE,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
   updateBtnText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 15,
-    fontFamily: 'Nunito_700Bold',
   },
   
 });

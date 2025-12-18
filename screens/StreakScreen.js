@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
@@ -54,7 +55,7 @@ export default function StreakScreen({ onBack = () => {} }) {
       <View style={styles.container}>
         <View style={styles.headerBar}>
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
+            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Streak</Text>
           <View style={styles.headerSpacer} />
@@ -90,8 +91,8 @@ export default function StreakScreen({ onBack = () => {} }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
-  container: { flex: 1, padding: 20, gap: 16 },
+  safeArea: { flex: 1, backgroundColor: COLORS.bg },
+  container: { flex: 1, padding: SPACING.l, gap: SPACING.m },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -102,38 +103,38 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
   },
-  headerTitle: { color: DARK, fontSize: 20, fontFamily: 'Nunito_700Bold' },
+  headerTitle: { ...TYPE.title },
   headerSpacer: { width: 40, height: 40 },
 
-  hero: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
+  hero: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: SPACING.s },
   flame: { fontSize: 70, lineHeight: 78 },
   bigNumber: { marginTop: 4, color: ORANGE, fontSize: 64, fontFamily: 'Nunito_700Bold', lineHeight: 72 },
   bigLabel: { color: ORANGE, fontSize: 18, fontFamily: 'Nunito_700Bold' },
 
   weekCard: {
-    marginTop: 16,
+    marginTop: SPACING.l,
     width: '100%',
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
-    padding: 14,
+    borderColor: COLORS.border,
+    padding: SPACING.m,
   },
   weekRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  weekCol: { alignItems: 'center', gap: 8, flex: 1 },
-  weekDay: { color: '#6A6A6A', fontSize: 12, fontFamily: 'Nunito_700Bold' },
+  weekCol: { alignItems: 'center', gap: SPACING.s, flex: 1 },
+  weekDay: { ...TYPE.caption },
   weekDot: {
     width: 26,
     height: 26,
     borderRadius: 13,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.borderStrong,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -142,9 +143,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFEDD5',
   },
   weekCheck: { color: ORANGE, fontSize: 14, fontFamily: 'Nunito_700Bold' },
-  weekDivider: { marginTop: 12, height: 1, backgroundColor: '#F1F1F1' },
-  weekMessage: { marginTop: 12, textAlign: 'center', color: DARK, fontSize: 16, fontFamily: 'Nunito_700Bold' },
+  weekDivider: { marginTop: SPACING.m, height: 1, backgroundColor: COLORS.border },
+  weekMessage: { marginTop: SPACING.m, textAlign: 'center', ...TYPE.section },
   weekMessageEmoji: { color: ORANGE },
 
-  hint: { textAlign: 'center', color: '#6A6A6A', fontSize: 12, fontFamily: 'Nunito_600SemiBold' },
+  hint: { textAlign: 'center', ...TYPE.caption },
 });

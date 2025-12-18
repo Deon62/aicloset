@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
@@ -13,7 +14,7 @@ export default function OrdersScreen({ onBack = () => {} }) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerBar}>
         <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-          <Ionicons name="arrow-back" size={20} color={DARK} />
+          <Ionicons name="arrow-back" size={20} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Orders</Text>
         <View style={styles.headerSpacer} />
@@ -42,55 +43,56 @@ export default function OrdersScreen({ onBack = () => {} }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
+  safeArea: { flex: 1, backgroundColor: COLORS.bg },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.l,
+    paddingVertical: SPACING.s,
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: COLORS.surface,
   },
-  headerTitle: { color: DARK, fontSize: 20, fontFamily: 'Nunito_700Bold' },
+  headerTitle: { ...TYPE.title },
   headerSpacer: { width: 40, height: 40 },
-  content: { padding: 20, gap: 12 },
+  content: { padding: SPACING.l, gap: SPACING.s },
   emptyCard: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 14,
-    padding: 16,
-    gap: 6,
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
+    gap: SPACING.xs,
+    backgroundColor: COLORS.surface,
   },
-  emptyTitle: { color: DARK, fontSize: 16, fontFamily: 'Nunito_700Bold' },
-  emptyText: { color: '#4A4A4A', fontSize: 13, lineHeight: 18, fontFamily: 'Nunito_600SemiBold' },
+  emptyTitle: { ...TYPE.section },
+  emptyText: { ...TYPE.body },
   orderCard: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 14,
-    padding: 14,
-    gap: 8,
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
+    gap: SPACING.s,
+    backgroundColor: COLORS.surface,
   },
   rowTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  orderTitle: { color: DARK, fontSize: 15, fontFamily: 'Nunito_700Bold' },
-  orderMeta: { color: '#4A4A4A', fontSize: 13, fontFamily: 'Nunito_600SemiBold' },
+  orderTitle: { ...TYPE.bodyStrong },
+  orderMeta: { ...TYPE.body },
   statusPill: {
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 999,
+    borderRadius: RADIUS.pill,
     color: '#FFFFFF',
     fontSize: 12,
     fontFamily: 'Nunito_700Bold',

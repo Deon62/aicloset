@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Nimo",
+    "name": "eucossa",
     "slug": "nimo-loans",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/profile.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/profile.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/profile.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.nimo.app",
@@ -44,7 +44,7 @@
       "backgroundColor": "#0D0D0D"
     },
     "web": {
-      "favicon": "./assets/profile.png"
+      "favicon": "./assets/logo.png"
     },
     "sdkVersion": "54.0.0",
     "plugins": [

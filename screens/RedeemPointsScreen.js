@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
@@ -119,7 +120,7 @@ export default function RedeemPointsScreen({ onBack = () => {} }) {
       <View style={styles.container}>
         <View style={styles.headerBar}>
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
-            <Ionicons name="arrow-back" size={20} color={DARK} />
+            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Redeem Points</Text>
           <View style={styles.headerSpacer} />
@@ -144,7 +145,7 @@ export default function RedeemPointsScreen({ onBack = () => {} }) {
               value={phone}
               onChangeText={setPhone}
               placeholder="07XXXXXXXX"
-              placeholderTextColor="#8A8A8A"
+              placeholderTextColor={COLORS.subtle}
               keyboardType="phone-pad"
               style={styles.input}
             />
@@ -191,7 +192,7 @@ export default function RedeemPointsScreen({ onBack = () => {} }) {
                     </View>
                     <View style={styles.swapRowRight}>
                       {selected ? (
-                        <Ionicons name="checkmark-circle" size={20} color={BRAND_BLUE} />
+                        <Ionicons name="checkmark-circle" size={20} color={COLORS.brand} />
                       ) : (
                         <Ionicons name="ellipse-outline" size={20} color="#BDBDBD" />
                       )}
@@ -229,14 +230,14 @@ export default function RedeemPointsScreen({ onBack = () => {} }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   headerBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: SPACING.l,
+    paddingVertical: SPACING.s,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -246,25 +247,23 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    color: DARK,
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
   },
   headerSpacer: {
     width: 40,
     height: 40,
   },
   content: {
-    padding: 18,
-    gap: 14,
-    paddingBottom: 28,
+    padding: SPACING.l,
+    gap: SPACING.m,
+    paddingBottom: SPACING.xl,
   },
   illustrationWrap: {
     alignItems: 'center',
@@ -275,56 +274,43 @@ const styles = StyleSheet.create({
     height: 120,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 18,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    elevation: 6,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACING.m,
+    gap: SPACING.s,
   },
   cardTitle: {
-    color: DARK,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
   },
   pointsValue: {
     marginTop: 8,
-    color: DARK,
+    color: COLORS.text,
     fontSize: 28,
+    lineHeight: 34,
     fontFamily: 'Nunito_700Bold',
   },
   note: {
-    marginTop: 6,
-    color: '#5A5A5A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+    marginTop: 0,
+    ...TYPE.caption,
   },
   fieldLabel: {
-    color: DARK,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
   },
   input: {
     marginTop: 10,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
-    color: DARK,
-    fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.s + SPACING.xs,
+    backgroundColor: COLORS.surface,
+    ...TYPE.bodyStrong,
   },
   helperText: {
     marginTop: 8,
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_400Regular',
+    ...TYPE.body,
   },
   warningBox: {
     marginTop: 12,
@@ -347,9 +333,9 @@ const styles = StyleSheet.create({
   },
   redeemBtn: {
     marginTop: 14,
-    backgroundColor: BRAND_BLUE,
-    paddingVertical: 12,
-    borderRadius: 999,
+    backgroundColor: COLORS.brand,
+    paddingVertical: SPACING.s + SPACING.xs,
+    borderRadius: RADIUS.pill,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -359,28 +345,27 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   redeemBtnText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
   },
   swapList: {
-    marginTop: 12,
-    gap: 10,
+    marginTop: SPACING.s,
+    gap: SPACING.s,
   },
   swapRow: {
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    paddingVertical: SPACING.s + SPACING.xs,
+    paddingHorizontal: SPACING.m,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
   },
   swapRowSelected: {
     borderColor: '#C9D6FF',
-    backgroundColor: '#F6F8FF',
+    backgroundColor: COLORS.bg,
   },
   swapRowLeft: {
     flex: 1,
@@ -391,32 +376,27 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   swapTitle: {
-    color: DARK,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   swapMeta: {
     marginTop: 4,
-    color: '#6A6A6A',
-    fontSize: 12,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
   swapMetaWarn: {
     color: '#B42318',
   },
   swapBtn: {
     marginTop: 14,
-    backgroundColor: DARK,
-    paddingVertical: 12,
-    borderRadius: 999,
+    backgroundColor: COLORS.text,
+    paddingVertical: SPACING.s + SPACING.xs,
+    borderRadius: RADIUS.pill,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
   },
   swapBtnText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
   },
 });
