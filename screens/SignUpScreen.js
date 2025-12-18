@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SignUpSvg from '../assets/icons/signup.svg';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
@@ -287,9 +286,6 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
           keyboardShouldPersistTaps="handled"
         >
           <Text style={styles.pageTitle}>Create account</Text>
-          <View style={styles.illustrationWrap}>
-            <SignUpSvg width={240} height={240} />
-          </View>
 
           {renderStepIndicator()}
 
