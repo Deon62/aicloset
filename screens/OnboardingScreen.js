@@ -13,26 +13,27 @@ const BRAND_BLUE = '#1B56FD';
 export default function OnboardingScreen({ onDone = () => {} }) {
   const steps = useMemo(
     () => [
-      {
-        Icon: WelcomeIcon,
-        title: 'Welcome to EUCOSSA',
-        body: 'Your school Computer Science Club events, community, and opportunities.',
-      },
-      {
-        Icon: EventsIcon,
-        title: 'Events & Workshops',
-        body: 'Stay updated on meetups, workshops, and competitions happening this term.',
-      },
-      {
-        Icon: MarketIcon,
-        title: 'Marketplace',
-        body: 'Buy, sell, or swap tech gear with club members at school-friendly prices.',
-      },
-      {
-        Icon: CommunityIcon,
-        title: 'Community',
-        body: 'Connect with members, find teammates, and share resources and project ideas.',
-      },
+    {
+      Icon: WelcomeIcon,
+      title: 'Welcome to EUCOSSA',
+      body: 'Your CS hub for events, opportunities, and people who actually build.',
+    },
+    {
+      Icon: EventsIcon,
+      title: 'Events that Matter',
+      body: 'Hackathons, workshops, talks  know what’s happening before everyone else.',
+    },
+    {
+      Icon: MarketIcon,
+      title: 'Student Marketplace',
+      body: 'Get your tech gear at student friendly prices. No middlemen.',
+    },
+    {
+      Icon: CommunityIcon,
+      title: 'Build with Others',
+      body: 'Find teammates, share ideas, and turn side projects into real things.',
+    },
+
     ],
     []
   );

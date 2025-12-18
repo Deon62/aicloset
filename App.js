@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Alert, Platform, View, BackHandler, Animated, Dimensions, Easing } from 'react-native';
+import { Alert, Platform, View, BackHandler, Animated, Dimensions, Easing, AppState } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -229,6 +229,58 @@ function AppContent() {
       sub?.subscription?.unsubscribe?.();
     };
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    let refreshTimer = null;
+    const refreshNow = async () => {
+      try {
+        await refreshProfileCache(userId);
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    const channel = supabase
+      .channel(`profile-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${userId}`,
+        },
+        async (payload) => {
+          try {
+            const nextPoints = typeof payload?.new?.points === 'number' ? payload.new.points : null;
+            if (nextPoints === null) return;
+            await AsyncStorage.setItem('@profile_points', String(nextPoints));
+            setProfileVersion((v) => v + 1);
+          } catch (e) {
+            console.warn('Profile realtime update failed', e);
+          }
+        }
+      )
+      .subscribe();
+
+    const appStateSub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        refreshNow();
+      }
+    });
+
+    refreshTimer = setInterval(() => {
+      refreshNow();
+    }, 45000);
+
+    return () => {
+      appStateSub?.remove?.();
+      if (refreshTimer) clearInterval(refreshTimer);
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
   const addToCalendar = async (event) => {
     try {
