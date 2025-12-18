@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import PostsSvg from '../assets/icons/posts.svg';
@@ -10,6 +10,7 @@ const BRAND_BLUE = '#1B56FD';
 export default function CommunityConversationScreen({
   community,
   posts = [],
+  loading = false,
   isJoined = false,
   onBack = () => {},
   onAddPost = () => {},
@@ -71,6 +72,13 @@ export default function CommunityConversationScreen({
     );
   };
 
+  const renderSkeleton = () => (
+    <View style={styles.spinnerWrap}>
+      <ActivityIndicator size="large" color={BRAND_BLUE} />
+      <Text style={styles.spinnerText}>Fetching posts…</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -98,7 +106,9 @@ export default function CommunityConversationScreen({
           )}
         </View>
 
-        {data.length === 0 ? (
+        {loading ? (
+          renderSkeleton()
+        ) : data.length === 0 ? (
           <View style={styles.emptyWrap}>
             <PostsSvg width={120} height={120} />
             <Text style={styles.emptyTitle}>No posts yet</Text>
@@ -161,6 +171,18 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  spinnerWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+    paddingTop: 14,
+  },
+  spinnerText: {
+    color: BRAND_BLUE,
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
   },
   container: {
     flex: 1,

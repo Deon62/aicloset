@@ -58,6 +58,8 @@ function AppContent() {
   const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
   const [activeCommunity, setActiveCommunity] = useState(null);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [loadedCommunityIds, setLoadedCommunityIds] = useState(() => new Set());
   const [profileOverlay, setProfileOverlay] = useState(null); // null | 'info' | 'settings' | 'feedback' | 'payments'
   const [joinedCommunityIds, setJoinedCommunityIds] = useState(() => new Set());
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
@@ -97,6 +99,7 @@ function AppContent() {
       // reset cached membership/posts on any auth change
       setJoinedCommunityIds(new Set());
       setPostsByCommunity({});
+      setLoadedCommunityIds(new Set());
       await clearProfileCache();
       if (session?.user?.id) {
         setProfileLoading(true);
@@ -228,6 +231,7 @@ function AppContent() {
   const fetchCommunityPosts = async (communityId) => {
     if (!communityId) return;
     try {
+      setPostsLoading(true);
       const { data, error } = await supabase
         .from('posts')
         .select('id, body, created_at, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
@@ -246,8 +250,15 @@ function AppContent() {
         authorAvatar: row.author?.avatar_url || DEFAULT_AVATAR,
       }));
       setPostsByCommunity((prev) => ({ ...(prev || {}), [communityId]: mapped }));
+      setLoadedCommunityIds((prev) => {
+        const next = new Set(prev);
+        next.add(communityId);
+        return next;
+      });
     } catch (e) {
       console.warn('Fetch posts failed', e);
+    } finally {
+      setPostsLoading(false);
     }
   };
 
@@ -417,6 +428,7 @@ function AppContent() {
         <CommunityConversationScreen
           community={activeCommunity}
           posts={postsByCommunity?.[communityId] || []}
+          loading={postsLoading || !loadedCommunityIds.has(communityId)}
           isJoined={joinedCommunityIds.has(communityId)}
           onJoin={() => toggleJoinCommunity(communityId)}
           onBack={() => {
@@ -434,6 +446,7 @@ function AppContent() {
         onToggleJoin={toggleJoinCommunity}
         postCounts={postCountsByCommunity}
         onOpenCommunity={(community) => {
+          setPostsLoading(true);
           setActiveCommunity(community);
           setCommunityOverlay('conversation');
         }}

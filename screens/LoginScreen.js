@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -92,8 +92,16 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.content}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={styles.pageTitle}>Login</Text>
           <View style={styles.illustrationWrap}>
             <LoginSvg width={260} height={260} />
@@ -147,7 +155,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
           <TouchableOpacity style={styles.secondaryBtn} activeOpacity={0.9} onPress={onNeedSignUp} disabled={loading}>
             <Text style={styles.secondaryBtnText}>Create a new account</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -162,9 +170,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 16,
     paddingTop: 8,
+    paddingBottom: 32,
     gap: 14,
   },
   pageTitle: {
