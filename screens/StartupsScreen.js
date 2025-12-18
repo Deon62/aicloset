@@ -1,13 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import StartupsIcon from '../assets/icons/startups.svg';
 
 const DARK = '#0B0B0F';
+const BRAND_BLUE = '#1B56FD';
+const REQUEST_EMAIL = 'eucossake@gmail.com';
 
 export default function StartupsScreen({ onBack = () => {} }) {
+  const openRequestEmail = async () => {
+    try {
+      const url = `mailto:${REQUEST_EMAIL}`;
+      const can = await Linking.canOpenURL(url);
+      if (!can) {
+        Alert.alert('Email not available', 'No email app found on your device.');
+        return;
+      }
+      await Linking.openURL(url);
+    } catch (e) {
+      Alert.alert('Failed to open', 'Please try again.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -24,6 +40,10 @@ export default function StartupsScreen({ onBack = () => {} }) {
           <Text style={styles.emptyTitle}>No startups yet</Text>
           <Text style={styles.emptyText}>Startups will show up here once they are shared by members.</Text>
         </View>
+
+        <TouchableOpacity style={styles.fab} activeOpacity={0.9} onPress={openRequestEmail}>
+          <Ionicons name="add" size={26} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -84,5 +104,21 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: 'center',
     fontFamily: 'Nunito_600SemiBold',
+  },
+  fab: {
+    position: 'absolute',
+    right: 18,
+    bottom: 18,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: BRAND_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 10,
   },
 });
