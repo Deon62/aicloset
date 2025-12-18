@@ -15,6 +15,13 @@ export const MINI_CLUBS = [
     link: 'https://www.ieee.org/',
   },
   {
+    id: 'egerton-ihub',
+    name: 'Egerton iHub Club',
+    description:
+      'Egerton University has established an Innovation Hub (ihub/E-ihub) and Business Incubation Center (EUBIC) as part of its Technology and Innovation Support Center (TISC).',
+    link: 'https://www.egerton.ac.ke/tags/the-innovation-hub',
+  },
+  {
     id: 'huawei',
     name: 'Huawei ICT Academy',
     description: 'Learn industry-ready networking/cloud skills and access Huawei training opportunities.',
