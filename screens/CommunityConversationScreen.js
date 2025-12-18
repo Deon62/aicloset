@@ -16,11 +16,13 @@ export default function CommunityConversationScreen({
   onAddPost = () => {},
   onJoin = () => {},
   onVote = () => {},
+  onRefresh = async () => {},
 }) {
   const insets = useSafeAreaInsets();
   const [composerOpen, setComposerOpen] = useState(false);
   const [text, setText] = useState('');
   const [replyTo, setReplyTo] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const title = community?.title ?? 'Community';
   const memberCount = typeof community?.members === 'number' ? community.members : null;
@@ -164,6 +166,15 @@ export default function CommunityConversationScreen({
             data={data}
             keyExtractor={(item) => String(item.id)}
             renderItem={renderItem}
+            refreshing={refreshing}
+            onRefresh={async () => {
+              try {
+                setRefreshing(true);
+                await onRefresh();
+              } finally {
+                setRefreshing(false);
+              }
+            }}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 18, paddingTop: 14, paddingBottom: (insets.bottom || 0) + 120 }}
             ItemSeparatorComponent={() => <View style={styles.divider} />}

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share, RefreshControl } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ export default function MarketplaceScreen({
   const insets = useSafeAreaInsets();
   const [headerHeight, setHeaderHeight] = useState(120);
   const [query, setQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
 
@@ -202,6 +203,19 @@ export default function MarketplaceScreen({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           getItemLayout={(_, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={async () => {
+                try {
+                  setRefreshing(true);
+                } finally {
+                  setTimeout(() => setRefreshing(false), 350);
+                }
+              }}
+              tintColor={BRAND_BLUE}
+            />
+          }
         />
       </View>
     </SafeAreaView>

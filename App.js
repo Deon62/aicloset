@@ -647,6 +647,7 @@ function AppContent() {
           loading={postsLoading || !loadedCommunityIds.has(communityId)}
           isJoined={joinedCommunityIds.has(communityId)}
           onVote={(postId, value) => togglePostVote(communityId, postId, value)}
+          onRefresh={() => fetchCommunityPosts(communityId)}
           onJoin={() => toggleJoinCommunity(communityId)}
           onBack={() => {
             setCommunityOverlay(null);
