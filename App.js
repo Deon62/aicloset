@@ -27,6 +27,8 @@ import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import PrivacyScreen from './screens/PrivacyScreen';
 import AboutScreen from './screens/AboutScreen';
+import AccountSettingsScreen from './screens/AccountSettingsScreen';
+import NotificationSettingsScreen from './screens/NotificationSettingsScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import PaymentsScreen from './screens/PaymentsScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -468,6 +470,8 @@ function AppContent() {
           onOpenHelp={() => setProfileOverlay('help')}
           onOpenPrivacy={() => setProfileOverlay('privacy')}
           onOpenAbout={() => setProfileOverlay('about')}
+          onOpenAccount={() => setProfileOverlay('accountSettings')}
+          onOpenNotifications={() => setProfileOverlay('notificationSettings')}
         />
       );
     }
@@ -479,6 +483,12 @@ function AppContent() {
     }
     if (profileOverlay === 'about') {
       return <AboutScreen onBack={() => setProfileOverlay('settings')} />;
+    }
+    if (profileOverlay === 'accountSettings') {
+      return <AccountSettingsScreen onBack={() => setProfileOverlay('settings')} />;
+    }
+    if (profileOverlay === 'notificationSettings') {
+      return <NotificationSettingsScreen onBack={() => setProfileOverlay('settings')} />;
     }
     if (profileOverlay === 'feedback') {
       return <FeedbackScreen onBack={() => setProfileOverlay(null)} />;
@@ -624,6 +634,10 @@ function AppContent() {
           currentTab === 'profile' && profileOverlay === 'privacy'
         ) || (
           currentTab === 'profile' && profileOverlay === 'about'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'accountSettings'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'notificationSettings'
         ) || (
           currentTab === 'profile' && profileOverlay === 'feedback'
         ) || (
