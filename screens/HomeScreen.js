@@ -6,6 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
+const PRESET_AVATARS = [
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female1.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male.jpg',
+  'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/male1.jpg',
+];
 
 const MOCK_NAME = 'Deon Student';
 const MOCK_COURSE = 'Computer Science';
@@ -37,8 +43,9 @@ export default function HomeScreen({
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const storedPhoto = await AsyncStorage.getItem('@profile_photo_uri');
-        if (storedPhoto) setPhotoUri(storedPhoto);
+        const storedPhoto = (await AsyncStorage.getItem('@profile_photo_uri')) || '';
+        const normalizedPhoto = storedPhoto.trim() || PRESET_AVATARS[0];
+        setPhotoUri(normalizedPhoto);
 
         const entries = await AsyncStorage.multiGet(['@profile_name', '@profile_course', '@profile_year', '@profile_bio', '@profile_github']);
         const map = Object.fromEntries(entries);
