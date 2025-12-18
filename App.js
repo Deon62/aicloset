@@ -7,6 +7,7 @@ import { Alert, Platform, View, BackHandler, Animated, Dimensions, Easing } from
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { supabase } from './lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LandingPage from './screens/LandingPage';
@@ -41,6 +42,7 @@ import FeedbackScreen from './screens/FeedbackScreen';
 import PaymentsScreen from './screens/PaymentsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
+import OfflineScreen from './screens/OfflineScreen';
 import BottomNavigation from './components/BottomNavigation';
 
 const DEFAULT_AVATAR = 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female.jpg';
@@ -60,6 +62,7 @@ function AppContent() {
   const [showLanding, setShowLanding] = useState(false);
   const [authScreen, setAuthScreen] = useState(null); // null | 'signup' | 'login'
   const [authBooting, setAuthBooting] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
   const [profileVersion, setProfileVersion] = useState(0);
   const [profileLoading, setProfileLoading] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -81,6 +84,30 @@ function AppContent() {
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
+
+  useEffect(() => {
+    let mounted = true;
+    const computeOffline = (state) => {
+      const isConnected = state?.isConnected;
+      const reachable = state?.isInternetReachable;
+      return isConnected === false || reachable === false;
+    };
+
+    NetInfo.fetch().then((state) => {
+      if (!mounted) return;
+      setIsOffline(computeOffline(state));
+    });
+
+    const unsub = NetInfo.addEventListener((state) => {
+      if (!mounted) return;
+      setIsOffline(computeOffline(state));
+    });
+
+    return () => {
+      mounted = false;
+      unsub?.();
+    };
+  }, []);
 
   const openHomeOverlay = useCallback(
     (key) => {
@@ -839,6 +866,24 @@ function AppContent() {
       />
     );
   };
+
+  if (isOffline) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <OfflineScreen
+            onRetry={async () => {
+              const state = await NetInfo.fetch();
+              const isConnected = state?.isConnected;
+              const reachable = state?.isInternetReachable;
+              setIsOffline(isConnected === false || reachable === false);
+            }}
+          />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
 
   if (showOnboarding) {
     return (
