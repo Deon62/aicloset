@@ -505,7 +505,7 @@ function AppContent() {
           <LandingPage
             onContinue={async () => {
               setShowLanding(false);
-              setAuthScreen('signup');
+              setAuthScreen('login');
             }}
           />
           <StatusBar style="dark" />
