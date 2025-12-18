@@ -216,7 +216,9 @@ export default function HomeScreen({
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>Hello {profile.name || MOCK_NAME} 🖐</Text>
+          <Text style={styles.headerSubtitle}>Welcome back</Text>
           {/* <Text style={styles.subtitle}>welcome to Your Eucossa Account</Text> */}
+          <View style={styles.headerDivider} />
         </View>
 
         {/* <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text> */}
@@ -405,7 +407,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   header: {
-    gap: 8,
+    gap: 10,
   },
   headerTopRow: {
     flexDirection: 'row',
@@ -413,10 +415,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   notBtn: {
-    paddingHorizontal: 6,
-    paddingVertical: 6,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(11, 11, 15, 0.04)',
+    borderWidth: 1,
+    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -430,6 +434,16 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
   },
+  headerSubtitle: {
+    ...TYPE.caption,
+    color: COLORS.subtle,
+    marginTop: -4,
+  },
+  headerDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: COLORS.borderStrong,
+    marginTop: SPACING.s,
+  },
   logoDivider: {
     width: 1,
     height: 32,
@@ -437,6 +451,8 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPE.title,
+    fontSize: 22,
+    lineHeight: 28,
   },
   subtitle: {
     ...TYPE.body,
