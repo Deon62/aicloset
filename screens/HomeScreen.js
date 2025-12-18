@@ -33,6 +33,7 @@ export default function HomeScreen({
   loading = false,
   onOpenNotifications = () => {},
   onOpenProfile = () => {},
+  onOpenCards = () => {},
   profileVersion = 0,
 }) {
   const [photoUri, setPhotoUri] = useState('');
@@ -40,6 +41,7 @@ export default function HomeScreen({
   const [course, setCourse] = useState('');
   const [year, setYear] = useState('');
   const [bio, setBio] = useState('');
+  const [showPoints, setShowPoints] = useState(true);
   const [github, setGithub] = useState('');
 
   useEffect(() => {
@@ -124,33 +126,48 @@ export default function HomeScreen({
           <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
         </View>
 
-        <TouchableOpacity style={[styles.card, styles.profileCard]} activeOpacity={0.85} onPress={onOpenProfile}>
-          <View style={styles.profileRow}>
-            <View style={styles.avatarWrap}>
-              {photoUri ? (
-                <Image source={{ uri: photoUri }} style={styles.avatar} />
-              ) : (
-                <View style={styles.avatarEmpty} />
-              )}
-            </View>
+        <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text>
 
-            <View style={styles.profileMain}>
-              <Text style={styles.profileName}>{name || MOCK_NAME}</Text>
-              <Text style={styles.profileCourse}>{course || MOCK_COURSE}</Text>
-              <Text style={styles.profileYear}>{year || MOCK_YEAR}</Text>
-              {bio ? <Text style={styles.profileBio}>{bio}</Text> : null}
-
-              <View style={styles.githubRow}>
-                <Ionicons name="logo-github" size={16} color={DARK} />
-                <Text style={styles.githubText}>{github || MOCK_GITHUB}</Text>
+        <View style={styles.premiumCard}>
+          <View style={styles.premiumTopRow}>
+            <View style={styles.premiumLeft}>
+              <Text style={styles.premiumLabel}>EUCOSSA Premium</Text>
+              <View style={styles.infoRow}>
+                <Ionicons name="person-outline" size={16} color="#E5E7FF" />
+                <Text style={styles.premiumName}>{name || MOCK_NAME}</Text>
+              </View>
+              <View style={styles.premiumGithubRow}>
+                <Ionicons name="logo-github" size={16} color="#E5E7FF" />
+                <Text style={styles.premiumGithubText}>{github || 'EUCOSSA'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Ionicons name="school-outline" size={16} color="#E5E7FF" />
+                <Text style={styles.premiumMeta}>{course || MOCK_COURSE}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Ionicons name="calendar-outline" size={16} color="#E5E7FF" />
+                <Text style={styles.premiumMeta}>{year || MOCK_YEAR}</Text>
               </View>
             </View>
+            <View style={styles.premiumRight}>
+              <View style={styles.pointsRow}>
+                <Text style={styles.pointsLabel}>Points</Text>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => setShowPoints((v) => !v)}>
+                  <Ionicons name={showPoints ? 'eye' : 'eye-off'} size={18} color="#E5E7FF" />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.pointsValue}>{showPoints ? '1,450' : '••••'}</Text>
+            </View>
           </View>
+          <Text style={styles.pointsNote}>Use points to redeem tees & event passes</Text>
+        </View>
 
-          <View style={[styles.roleTag, styles.metaPillDark]}>
-            <Text style={[styles.roleTagText, styles.metaPillTextDark]}>{MOCK_ROLE}</Text>
-          </View>
+        <TouchableOpacity style={styles.cardLinkOutsideBtn} activeOpacity={0.85} onPress={onOpenCards}>
+          <Ionicons name="information-circle-outline" size={16} color="#6A6A6A" />
+          <Text style={styles.cardLinkOutsideText}>How card works</Text>
         </TouchableOpacity>
+
+        <Text style={styles.sectionTitle}>Featured event</Text>
 
         <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
           <View style={styles.eventRow}>
@@ -245,6 +262,131 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     lineHeight: 21,
     fontFamily: 'Nunito_400Regular',
+  },
+  sectionTitle: {
+    marginTop: 4,
+    color: '#0B0B0F',
+    fontSize: 13,
+    letterSpacing: 0.2,
+    fontFamily: 'Nunito_700Bold',
+  },
+  premiumCard: {
+    backgroundColor: '#0B0B0F',
+    borderWidth: 1,
+    borderColor: '#1F1F23',
+    borderRadius: 18,
+    padding: 16,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    elevation: 10,
+  },
+  premiumTopRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  premiumLeft: {
+    flex: 1,
+    gap: 6,
+  },
+  premiumRight: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+  premiumLabel: {
+    color: '#B3B3FF',
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+    letterSpacing: 0.2,
+  },
+  premiumName: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: 'Nunito_700Bold',
+  },
+  premiumMeta: {
+    color: '#B8B8B8',
+    fontSize: 13,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  premiumGithubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  premiumGithubText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+  },
+  pointsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  pointsLabel: {
+    color: '#E5E7FF',
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  pointsValue: {
+    color: '#FFFFFF',
+    fontSize: 26,
+    fontFamily: 'Nunito_700Bold',
+    letterSpacing: 0.5,
+  },
+  pointsNote: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    textAlign: 'center',
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  cardLinkOutsideBtn: {
+    marginTop: -6,
+    marginBottom: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+  },
+  cardLinkOutsideText: {
+    color: '#6A6A6A',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  premiumFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  premiumTag: {
+    color: '#C9CCFF',
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  premiumBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#E5E7FF',
+  },
+  premiumBtnText: {
+    color: '#0B0B0F',
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
   },
   card: {
     backgroundColor: '#FFFFFF',

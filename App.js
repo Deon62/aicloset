@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
+import CardsScreen from './screens/CardsScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
 import EventDetailsScreen from './screens/EventDetailsScreen';
@@ -459,10 +460,14 @@ function AppContent() {
     if (homeOverlay === 'notifications') {
       return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
     }
+    if (homeOverlay === 'cards') {
+      return <CardsScreen onBack={() => setHomeOverlay(null)} />;
+    }
     return (
       <HomeScreen
         loading={profileLoading}
         onOpenNotifications={() => setHomeOverlay('notifications')}
+        onOpenCards={() => setHomeOverlay('cards')}
         profileVersion={profileVersion}
         onOpenProfile={() => {
           setCurrentTab('profile');
@@ -742,6 +747,8 @@ function AppContent() {
           currentTab === 'community' && communityOverlay === 'conversation'
         ) || (
           currentTab === 'home' && homeOverlay === 'notifications'
+        ) || (
+          currentTab === 'home' && homeOverlay === 'cards'
         ) || (
           currentTab === 'events' && showPastEvents
         ) || (
