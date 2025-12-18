@@ -233,7 +233,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Jobs', 'Coming soon.')}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+              <Ionicons name="briefcase-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Jobs</Text>
           </TouchableOpacity>
@@ -241,7 +241,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Resources', 'Coming soon.')}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+              <Ionicons name="book-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Resources</Text>
           </TouchableOpacity>
@@ -249,15 +249,15 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Projects', 'Coming soon.')}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+              <Ionicons name="code-slash-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Projects</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('More', 'Coming soon.')}
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Startups', 'Coming soon.')}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+              <Ionicons name="bulb-outline" size={22} color={DARK} />
             </View>
             <Text style={styles.extrasLabel}>Startups</Text>
           </TouchableOpacity>
