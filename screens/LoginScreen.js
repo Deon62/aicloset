@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import LoginSvg from '../assets/icons/login.svg';
 import { supabase } from '../lib/supabase';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -115,7 +116,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
               value={email}
               onChangeText={setEmail}
               placeholder="you@example.com"
-              placeholderTextColor="#8A8A8A"
+              placeholderTextColor={COLORS.subtle}
               style={styles.input}
               autoCapitalize="none"
               autoCorrect={false}
@@ -132,7 +133,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Enter password"
-                placeholderTextColor="#8A8A8A"
+                placeholderTextColor={COLORS.subtle}
                 style={[styles.input, styles.passwordInput]}
                 autoCapitalize="none"
                 secureTextEntry={!showPassword}
@@ -144,7 +145,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
                 onPress={() => setShowPassword((v) => !v)}
                 disabled={loading}
               >
-                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={COLORS.subtle} />
               </TouchableOpacity>
             </View>
             {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
@@ -166,22 +167,20 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   content: {
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 32,
-    gap: 14,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
+    paddingBottom: SPACING.xl,
+    gap: SPACING.m,
   },
   pageTitle: {
-    color: '#0B0B0F',
-    fontSize: 24,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
     textAlign: 'center',
     marginTop: 6,
   },
@@ -195,9 +194,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   fieldLabel: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
   },
   passwordRow: {
     position: 'relative',
@@ -216,27 +213,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorText: {
-    color: '#D11A2A',
+    color: COLORS.danger,
     fontSize: 12,
     lineHeight: 16,
     fontFamily: 'Nunito_600SemiBold',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.s + SPACING.xs,
+    backgroundColor: COLORS.surface,
+    ...TYPE.bodyStrong,
   },
   primaryBtn: {
     marginTop: 4,
     height: 50,
-    borderRadius: 16,
-    backgroundColor: BRAND_BLUE,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -244,22 +239,20 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   primaryBtnText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
   },
   secondaryBtn: {
     height: 48,
-    borderRadius: 16,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
-    borderColor: '#DCE3FF',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryBtnText: {
-    color: BRAND_BLUE,
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
+    color: COLORS.brand,
   },
 });

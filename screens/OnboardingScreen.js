@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 import WelcomeIcon from '../assets/icons/welcome.svg';
 import EventsIcon from '../assets/icons/events.svg';
@@ -80,7 +81,7 @@ export default function OnboardingScreen({ onDone = () => {} }) {
                 activeOpacity={0.85}
                 onPress={() => setStepIndex((v) => Math.max(0, v - 1))}
               >
-                <Ionicons name="arrow-back" size={18} color="#0B0B0F" />
+                <Ionicons name="arrow-back" size={18} color={COLORS.text} />
               </TouchableOpacity>
             ) : (
               <View style={styles.bottomBackSpacer} />
@@ -109,11 +110,11 @@ export default function OnboardingScreen({ onDone = () => {} }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
-    padding: 24,
+    padding: SPACING.l,
   },
   topRow: {
     flexDirection: 'row',
@@ -126,27 +127,27 @@ const styles = StyleSheet.create({
   },
   progressRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: SPACING.s,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 8,
+    paddingTop: SPACING.s,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#D8DDEA',
+    backgroundColor: COLORS.borderStrong,
   },
   dotActive: {
     width: 18,
-    backgroundColor: BRAND_BLUE,
+    backgroundColor: COLORS.brand,
   },
   hero: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    gap: 12,
-    paddingTop: 16,
+    gap: SPACING.s,
+    paddingTop: SPACING.m,
     maxWidth: Math.min(Dimensions.get('window').width - 48, 520),
     alignSelf: 'center',
   },
@@ -155,18 +156,17 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   title: {
-    fontSize: 30,
-    color: '#0B0B0F',
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
+    fontSize: 28,
+    lineHeight: 34,
   },
   body: {
-    fontSize: 16,
-    color: '#4A4A4A',
+    ...TYPE.body,
+    fontSize: 15,
     lineHeight: 22,
-    fontFamily: 'Nunito_400Regular',
   },
   footer: {
-    paddingBottom: 12,
+    paddingBottom: SPACING.s,
     alignItems: 'stretch',
   },
   footerRow: {
@@ -182,17 +182,17 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: COLORS.border,
   },
   nextButton: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: BRAND_BLUE,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -203,21 +203,14 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   skipButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 999,
-    backgroundColor: '#FFFFFF',
+    paddingVertical: SPACING.s,
+    paddingHorizontal: SPACING.m,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 4,
+    borderColor: COLORS.border,
   },
   skipText: {
-    color: '#5A5A5A',
-    fontSize: 14,
-    fontFamily: 'Nunito_600SemiBold',
+    ...TYPE.caption,
   },
 });

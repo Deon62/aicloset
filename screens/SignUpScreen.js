@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -262,7 +263,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#8A8A8A"
+          placeholderTextColor={COLORS.subtle}
           style={[styles.input, multiline && styles.inputMultiline]}
           multiline={multiline}
           {...inputProps}
@@ -362,14 +363,14 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
                     value={password}
                     onChangeText={setPassword}
                     placeholder="Enter password"
-                    placeholderTextColor="#8A8A8A"
+                    placeholderTextColor={COLORS.subtle}
                     style={[styles.input, styles.passwordInput]}
                     autoCapitalize="none"
                     secureTextEntry={!showPassword}
                     editable={!saving}
                   />
                   <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowPassword((v) => !v)} disabled={saving}>
-                    <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+                    <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={COLORS.subtle} />
                   </TouchableOpacity>
                 </View>
                 {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
@@ -382,14 +383,14 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     placeholder="Confirm password"
-                    placeholderTextColor="#8A8A8A"
+                    placeholderTextColor={COLORS.subtle}
                     style={[styles.input, styles.passwordInput]}
                     autoCapitalize="none"
                     secureTextEntry={!showConfirmPassword}
                     editable={!saving}
                   />
                   <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowConfirmPassword((v) => !v)} disabled={saving}>
-                    <Ionicons name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+                    <Ionicons name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={COLORS.subtle} />
                   </TouchableOpacity>
                 </View>
                 {confirmError ? <Text style={styles.errorText}>{confirmError}</Text> : null}
@@ -429,21 +430,19 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.s,
     paddingBottom: 140,
-    gap: 14,
+    gap: SPACING.m,
   },
   pageTitle: {
-    color: '#0B0B0F',
-    fontSize: 24,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.title,
     textAlign: 'center',
     marginTop: 6,
   },
@@ -457,27 +456,23 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   fieldLabel: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_600SemiBold',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.s + SPACING.xs,
+    backgroundColor: COLORS.surface,
+    ...TYPE.bodyStrong,
   },
   inputMultiline: {
     minHeight: 110,
   },
   errorText: {
     marginTop: -8,
-    color: '#D11A2A',
+    color: COLORS.danger,
     fontSize: 12,
     lineHeight: 16,
     fontFamily: 'Nunito_600SemiBold',
@@ -485,8 +480,8 @@ const styles = StyleSheet.create({
   primaryBtn: {
     marginTop: 6,
     height: 50,
-    borderRadius: 16,
-    backgroundColor: BRAND_BLUE,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -494,9 +489,8 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   primaryBtnText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
   },
   primaryBtnElevated: {
     shadowColor: '#000000',
@@ -507,18 +501,16 @@ const styles = StyleSheet.create({
   },
   secondaryBtn: {
     height: 50,
-    borderRadius: 16,
+    borderRadius: RADIUS.card,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
-    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
   secondaryBtnText: {
-    color: '#0B0B0F',
-    fontSize: 14,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.bodyStrong,
   },
   secondaryBtnGhost: {
     backgroundColor: 'transparent',
@@ -526,7 +518,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   secondaryBtnGhostText: {
-    color: '#4A4A4A',
+    color: COLORS.muted,
   },
   actionsRow: {
     flexDirection: 'row',
@@ -543,9 +535,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   loginLinkText: {
-    color: BRAND_BLUE,
-    fontSize: 13,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.caption,
+    color: COLORS.brand,
   },
   passwordRow: {
     position: 'relative',
@@ -583,28 +574,28 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: 17,
     borderWidth: 2,
-    borderColor: '#E6E6E6',
+    borderColor: COLORS.border,
     textAlign: 'center',
     textAlignVertical: 'center',
-    color: '#6A6A6A',
+    color: COLORS.subtle,
     fontFamily: 'Nunito_700Bold',
     fontSize: 14,
   },
   stepNumberActive: {
-    borderColor: BRAND_BLUE,
-    color: BRAND_BLUE,
+    borderColor: COLORS.brand,
+    color: COLORS.brand,
   },
   stepLabel: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 12,
-    color: '#6A6A6A',
+    color: COLORS.subtle,
   },
   stepLabelActive: {
-    color: '#0B0B0F',
+    color: COLORS.text,
   },
   stepDivider: {
     width: 36,
     height: 2,
-    backgroundColor: '#E6E6E6',
+    backgroundColor: COLORS.border,
   },
 });

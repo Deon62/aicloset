@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LandingSvg from '../assets/icons/landing.svg';
-
-const BRAND_BLUE = '#1B56FD';
+import { COLORS, SPACING, RADIUS, TYPE } from '../ui/tokens';
 
 export default function LandingPage({ onContinue = () => {} }) {
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -51,7 +50,7 @@ export default function LandingPage({ onContinue = () => {} }) {
           ]}
         >
           <Text style={styles.landingName}>Egerton University Computer Science Students Association</Text>
-          <Text style={styles.landingTagline}>Where dreaming girnomous is the only rule to success.</Text>
+          <Text style={styles.landingTagline}>Together We Learn, Together We Grow.</Text>
         </Animated.View>
         <Animated.View
           style={[
@@ -88,7 +87,7 @@ export default function LandingPage({ onContinue = () => {} }) {
           ]}
         >
           <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9} onPress={onContinue}>
-            <Text style={styles.primaryButtonText}>Join EUCOSSA</Text>
+            <Text style={styles.primaryButtonText}>Get Started</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -99,13 +98,13 @@ export default function LandingPage({ onContinue = () => {} }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.bg,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 32,
+    paddingHorizontal: SPACING.l,
+    paddingTop: SPACING.l,
+    paddingBottom: SPACING.xl,
     justifyContent: 'space-between',
   },
   hero: {
@@ -119,42 +118,40 @@ const styles = StyleSheet.create({
   },
   landingHeader: {
     alignItems: 'center',
-    gap: 6,
-    paddingTop: 34,
+    gap: SPACING.xs,
+    paddingTop: SPACING.xl,
   },
   landingName: {
-    color: '#0B0B0F',
-    fontSize: 22,
-    lineHeight: 30,
-    fontFamily: 'Nunito_700Bold',
+    ...TYPE.section,
+    color: COLORS.text,
+    fontSize: 18,
+    lineHeight: 24,
     textAlign: 'center',
   },
   landingTagline: {
-    color: '#1D1D1D',
+    ...TYPE.body,
+    color: COLORS.muted,
     fontSize: 13,
     lineHeight: 18,
-    fontFamily: 'Nunito_700Bold',
     textAlign: 'center',
   },
   primaryButton: {
-    backgroundColor: BRAND_BLUE,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 24,
+    height: 52,
+    backgroundColor: COLORS.brand,
+    borderRadius: RADIUS.card,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
     width: '100%',
-    shadowColor: '#1B56FD',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 5,
   },
   primaryButtonText: {
+    ...TYPE.bodyStrong,
     color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
   },
   secondaryButton: {
     backgroundColor: 'transparent',
