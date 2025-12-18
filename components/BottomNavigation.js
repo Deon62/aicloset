@@ -49,7 +49,7 @@ export default function BottomNavigation({ currentTab, onTabChange }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F6F7FB',
     paddingHorizontal: 12,
     paddingTop: 0,
     paddingBottom: 2,

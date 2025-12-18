@@ -1066,7 +1066,7 @@ function AppContent() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <View style={{ flex: 1, backgroundColor: '#F6F7FB' }}>
           <View style={[styles.scene, currentTab === 'home' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'home' ? 'auto' : 'none'}>
             <View style={{ flex: 1 }} pointerEvents={homeOverlayMounted ? 'none' : 'auto'}>
               {renderHomeBase()}

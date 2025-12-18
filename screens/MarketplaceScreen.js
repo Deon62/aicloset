@@ -225,7 +225,7 @@ export default function MarketplaceScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F6F7FB',
   },
   container: {
     flex: 1,

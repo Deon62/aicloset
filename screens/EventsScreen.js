@@ -187,7 +187,7 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F6F7FB',
   },
   container: {
     flex: 1,
