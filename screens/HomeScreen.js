@@ -34,6 +34,7 @@ export default function HomeScreen({
   onOpenNotifications = () => {},
   onOpenProfile = () => {},
   onOpenCards = () => {},
+  onOpenJobs = () => {},
   onRefresh = async () => {},
   profileVersion = 0,
 }) {
@@ -230,7 +231,7 @@ export default function HomeScreen({
         {/* <Text style={styles.sectionTitle}>Extras</Text> */}
 
         <View style={[styles.card, styles.extrasCard]}>
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Jobs', 'Coming soon.')}
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenJobs}
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="briefcase-outline" size={22} color={DARK} />
