@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -191,7 +191,7 @@ export default function HomeScreen({
           <Text style={styles.cardLinkOutsideText}>How card works</Text>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Featured event</Text>
+        {/* <Text style={styles.sectionTitle}>Featured event</Text> */}
 
         <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
           <View style={styles.eventRow}>
@@ -226,6 +226,42 @@ export default function HomeScreen({
             </View>
           </View>
         </View>
+
+        {/* <Text style={styles.sectionTitle}>Extras</Text> */}
+
+        <View style={[styles.card, styles.extrasCard]}>
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Jobs', 'Coming soon.')}
+          >
+            <View style={styles.extrasIconWrap}>
+              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+            </View>
+            <Text style={styles.extrasLabel}>Jobs</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Resources', 'Coming soon.')}
+          >
+            <View style={styles.extrasIconWrap}>
+              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+            </View>
+            <Text style={styles.extrasLabel}>Resources</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Projects', 'Coming soon.')}
+          >
+            <View style={styles.extrasIconWrap}>
+              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+            </View>
+            <Text style={styles.extrasLabel}>Projects</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('More', 'Coming soon.')}
+          >
+            <View style={styles.extrasIconWrap}>
+              <Ionicons name="link-outline" size={20} color={BRAND_BLUE} />
+            </View>
+            <Text style={styles.extrasLabel}>Startups</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -242,7 +278,7 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     gap: 16,
-    paddingBottom: 70,
+    paddingBottom: 110,
   },
   header: {
     gap: 8,
@@ -374,13 +410,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_600SemiBold',
   },
   cardLinkOutsideBtn: {
-    marginTop: -6,
-    marginBottom: 4,
+    marginTop: -4,
+    marginBottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 10,
+    paddingVertical: 4,
   },
   cardLinkOutsideText: {
     color: '#6A6A6A',
@@ -415,10 +451,15 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 16,
+    borderColor: '#EAEAEA',
+    borderRadius: 18,
     padding: 16,
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 6,
   },
   cardAccent: {
     borderColor: '#DCE3FF',
@@ -601,5 +642,33 @@ const styles = StyleSheet.create({
     color: '#5A5A5A',
     fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
+  },
+  extrasCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  extrasItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 6,
+    paddingVertical: 6,
+  },
+  extrasIconWrap: {
+    width: 24,
+    height: 24,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  extrasLabel: {
+    color: DARK,
+    fontSize: 12,
+    textAlign: 'center',
+    fontFamily: 'Nunito_700Bold',
   },
 });
