@@ -63,6 +63,7 @@ export default function CartScreen({
   onToggleCart = () => {},
   onBack = () => {},
   onViewDetails = () => {},
+  onMakeOrder = () => {},
 }) {
   const insets = useSafeAreaInsets();
   const [quantities, setQuantities] = useState(() => ({}));
@@ -229,7 +230,7 @@ export default function CartScreen({
                 <Text style={styles.totalValue}>{total}</Text>
               </View>
 
-              <TouchableOpacity style={styles.orderBtn} activeOpacity={0.9}>
+              <TouchableOpacity style={styles.orderBtn} activeOpacity={0.9} onPress={onMakeOrder}>
                 <Text style={styles.orderBtnText}>Make order</Text>
               </TouchableOpacity>
             </View>

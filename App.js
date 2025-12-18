@@ -19,6 +19,8 @@ import MarketplaceScreen from './screens/MarketplaceScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import CartScreen from './screens/CartScreen';
 import ProductDetailScreen from './screens/ProductDetailScreen';
+import PaymentScreen from './screens/PaymentScreen';
+import OrdersScreen from './screens/OrdersScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import CommunityConversationScreen from './screens/CommunityConversationScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -502,6 +504,7 @@ function AppContent() {
             setActiveProduct(product);
             setShopOverlay('product');
           }}
+          onMakeOrder={() => setShopOverlay('payment')}
         />
       );
     }
@@ -514,7 +517,7 @@ function AppContent() {
             setActiveProduct(null);
           }}
           onCheckout={() => {
-            setShopOverlay('cart');
+            setShopOverlay('payment');
             setActiveProduct(null);
           }}
           onUpdate={() => {
@@ -523,6 +526,17 @@ function AppContent() {
           }}
         />
       );
+    }
+    if (shopOverlay === 'payment') {
+      return (
+        <PaymentScreen
+          onBack={() => setShopOverlay('cart')}
+          onPaid={() => setShopOverlay('orders')}
+        />
+      );
+    }
+    if (shopOverlay === 'orders') {
+      return <OrdersScreen onBack={() => setShopOverlay(null)} />;
     }
     return (
       <MarketplaceScreen
@@ -734,6 +748,8 @@ function AppContent() {
           currentTab === 'events' && activeEvent?.id
         ) || (
           currentTab === 'shop' && (shopOverlay === 'notifications' || shopOverlay === 'cart' || shopOverlay === 'product')
+        ) || (
+          currentTab === 'shop' && (shopOverlay === 'payment' || shopOverlay === 'orders')
         ) || (
           currentTab === 'profile' && profileOverlay === 'info'
         ) || (
