@@ -221,6 +221,8 @@ export default function HomeScreen({
           <View style={styles.headerDivider} />
         </View>
 
+        <Text style={styles.sectionLabel}>Premium</Text>
+
         {/* <Text style={styles.sectionTitle}>EUCOSSA Premium Members Card</Text> */}
 
         <View style={styles.premiumCard}>
@@ -268,10 +270,17 @@ export default function HomeScreen({
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.cardLinkOutsideBtn} activeOpacity={0.85} onPress={onOpenCards}>
-          <Ionicons name="information-circle-outline" size={16} color="#6A6A6A" />
-          <Text style={styles.cardLinkOutsideText}>How card works</Text>
-        </TouchableOpacity>
+        <View style={styles.linkRowWrap}>
+          <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenCards}>
+            <View style={styles.linkRowLeft}>
+              <Ionicons name="information-circle-outline" size={16} color={COLORS.subtle} />
+              <Text style={styles.linkRowText}>How card works</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.sectionLabel}>Featured event</Text>
 
         {/* <Text style={styles.sectionTitle}>Featured event</Text> */}
 
@@ -280,6 +289,7 @@ export default function HomeScreen({
             <View style={styles.eventPosterWrap}>
               <Image source={{ uri: EVENT_POSTER }} style={styles.eventPosterBlur} resizeMode="cover" blurRadius={14} />
               <Image source={{ uri: EVENT_POSTER }} style={styles.eventPoster} resizeMode="contain" />
+              <View pointerEvents="none" style={styles.eventPosterOverlay} />
             </View>
             <View style={styles.eventMain}>
               <View style={styles.eventTitleRow}>
@@ -319,62 +329,66 @@ export default function HomeScreen({
           </View>
         </View>
 
-        {/* <Text style={styles.sectionTitle}>Extras</Text> */}
+        <View style={styles.extrasSection}>
+          <Text style={styles.sectionLabel}>Extras</Text>
 
-        <LinearGradient
-          colors={[
-            'rgba(27,86,253,0.18)',
-            'rgba(27,86,253,0.10)',
-            'rgba(120,179,255,0.06)',
-            'rgba(233,242,255,0.02)',
-          ]}
-          locations={[0, 0.52, 0.82, 1]}
-          start={{ x: 0.1, y: 0.12 }}
-          end={{ x: 0.95, y: 0.9 }}
-          style={[styles.card, styles.extrasCard, styles.extrasGradient]}
-        >
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenJobs}
-          >
-            <View style={styles.extrasIconWrap}>
-              <Ionicons name="people-outline" size={22} color={DARK} />
-              {miniClubsCount > 0 ? (
-                <View style={styles.resourcesCountBadge}>
-                  <Text style={styles.resourcesCountBadgeText}>{miniClubsBadgeText}</Text>
-                </View>
-              ) : null}
-            </View>
-            <Text style={styles.extrasLabel}>Mini Clubs</Text>
-          </TouchableOpacity>
+          {/* <Text style={styles.sectionTitle}>Extras</Text> */}
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenResources}
+          <LinearGradient
+            colors={[
+              'rgba(27,86,253,0.14)',
+              'rgba(27,86,253,0.08)',
+              'rgba(120,179,255,0.05)',
+              'rgba(233,242,255,0.02)',
+            ]}
+            locations={[0, 0.54, 0.84, 1]}
+            start={{ x: 0.12, y: 0.14 }}
+            end={{ x: 0.95, y: 0.9 }}
+            style={[styles.card, styles.extrasCard, styles.extrasGradient]}
           >
-            <View style={styles.extrasIconWrap}>
-              <Ionicons name="book-outline" size={22} color={DARK} />
-              {resourcesCount > 0 ? (
-                <View style={styles.resourcesCountBadge}>
-                  <Text style={styles.resourcesCountBadgeText}>{resourcesBadgeText}</Text>
-                </View>
-              ) : null}
-            </View>
-            <Text style={styles.extrasLabel}>Resources</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenJobs}
+            >
+              <View style={styles.extrasIconWrap}>
+                <Ionicons name="people-outline" size={22} color={DARK} />
+                {miniClubsCount > 0 ? (
+                  <View style={styles.resourcesCountBadge}>
+                    <Text style={styles.resourcesCountBadgeText}>{miniClubsBadgeText}</Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text style={styles.extrasLabel}>Mini Clubs</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
-          >
-            <View style={styles.extrasIconWrap}>
-              <Ionicons name="code-slash-outline" size={22} color={DARK} />
-            </View>
-            <Text style={styles.extrasLabel}>Projects</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenResources}
+            >
+              <View style={styles.extrasIconWrap}>
+                <Ionicons name="book-outline" size={22} color={DARK} />
+                {resourcesCount > 0 ? (
+                  <View style={styles.resourcesCountBadge}>
+                    <Text style={styles.resourcesCountBadgeText}>{resourcesBadgeText}</Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text style={styles.extrasLabel}>Resources</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}
-          >
-            <View style={styles.extrasIconWrap}>
-              <Ionicons name="bulb-outline" size={22} color={DARK} />
-            </View>
-            <Text style={styles.extrasLabel}>Startups</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+            <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
+            >
+              <View style={styles.extrasIconWrap}>
+                <Ionicons name="code-slash-outline" size={22} color={DARK} />
+              </View>
+              <Text style={styles.extrasLabel}>Projects</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}
+            >
+              <View style={styles.extrasIconWrap}>
+                <Ionicons name="bulb-outline" size={22} color={DARK} />
+              </View>
+              <Text style={styles.extrasLabel}>Startups</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -463,6 +477,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 0.2,
     fontFamily: 'Nunito_700Bold',
+  },
+  sectionLabel: {
+    ...TYPE.caption,
+    color: COLORS.subtle,
+    letterSpacing: 0.2,
+    marginTop: 2,
+    marginBottom: 6,
+  },
+  linkRowWrap: {
+    marginTop: -2,
+    marginBottom: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.borderStrong,
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  linkRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  linkRowText: {
+    ...TYPE.bodyStrong,
+    color: COLORS.subtle,
   },
   premiumCard: {
     backgroundColor: '#0B0B0F',
@@ -743,10 +785,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderColor: '#E9EEFF',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
   },
   eventRow: {
     flexDirection: 'row',
@@ -759,6 +801,14 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'transparent',
     overflow: 'hidden',
+  },
+  eventPosterOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.14)',
   },
   eventPosterBlur: {
     position: 'absolute',
@@ -835,15 +885,23 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'space-between',
     gap: 8,
+    marginTop: 2,
     paddingVertical: SPACING.m,
     paddingHorizontal: SPACING.m,
-    flex: 1,
     minHeight: 160,
+  },
+  extrasSection: {
+    marginTop: 'auto',
   },
   extrasGradient: {
     borderWidth: 0,
     borderColor: 'transparent',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 2,
   },
   extrasItem: {
     flex: 1,

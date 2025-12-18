@@ -168,6 +168,7 @@ function AppContent() {
     }
     if (homeOverlayClosingRef.current) return;
     homeOverlayClosingRef.current = true;
+    setHomeOverlay(null);
     Animated.timing(homeOverlayAnim, {
       toValue: 0,
       duration: 220,
@@ -1113,7 +1114,7 @@ function AppContent() {
         {!((
           currentTab === 'community' && communityOverlay === 'conversation'
         ) || (
-          currentTab === 'home' && homeOverlayMounted
+          currentTab === 'home' && homeOverlay
         ) || (
           currentTab === 'events' && showPastEvents
         ) || (
