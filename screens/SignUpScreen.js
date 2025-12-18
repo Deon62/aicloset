@@ -46,6 +46,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
         ['@profile_course', String(profile?.course || '').trim()],
         ['@profile_year', String(profile?.year || '').trim()],
         ['@profile_bio', ''],
+        ['@profile_photo_uri', String(profile?.avatar_url || '').trim()],
       ]);
     } catch (e) {
       console.warn('Failed to sync profile', e);
@@ -200,7 +201,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
 
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('github_username,name,course,year')
+          .select('github_username,name,course,year,avatar_url')
           .eq('id', userId)
           .single();
 

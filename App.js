@@ -55,33 +55,7 @@ function AppContent() {
   const [activeCommunity, setActiveCommunity] = useState(null);
   const [profileOverlay, setProfileOverlay] = useState(null); // null | 'info' | 'settings' | 'feedback' | 'payments'
   const [joinedCommunityIds, setJoinedCommunityIds] = useState(() => new Set());
-  const [postsByCommunity, setPostsByCommunity] = useState(() => ({
-    'data-science-ai': [
-      {
-        id: 'ds-1',
-        authorName: 'Aisha K.',
-        meta: 'Moderator',
-        text: 'Welcome! Share your current ML project and what you are learning.',
-        createdAt: Date.now() - 1000 * 60 * 60 * 10,
-      },
-      {
-        id: 'ds-2',
-        authorName: 'Brian M.',
-        meta: 'Member',
-        text: 'Anyone working with TensorFlow Lite? I am trying to deploy on mobile.',
-        createdAt: Date.now() - 1000 * 60 * 60 * 6,
-      },
-    ],
-    'web-development': [
-      {
-        id: 'web-1',
-        authorName: 'Njeri',
-        meta: 'Member',
-        text: 'Let’s build a portfolio challenge this weekend. Who is in?',
-        createdAt: Date.now() - 1000 * 60 * 60 * 8,
-      },
-    ],
-  }));
+  const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '../lib/supabase';
 
 export default function CommunityScreen({
   joinedIds = new Set(),
@@ -10,72 +11,58 @@ export default function CommunityScreen({
 }) {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 450);
-    return () => clearTimeout(t);
-  }, []);
+  const [communities, setCommunities] = useState([]);
+  const [loadError, setLoadError] = useState('');
 
-  const communities = useMemo(
-    () => [
-      {
-        id: 'data-science-ai',
-        title: 'Data Science & AI',
-        description: 'Learn machine learning, data analysis, and AI projects together.',
-        members: 128,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/datascience.jpg',
-      },
-      {
-        id: 'web-development',
-        title: 'Web Development',
-        description: 'Build modern websites and web apps with HTML, CSS, JS, and frameworks.',
-        members: 214,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/web.jpg',
-      },
-      {
-        id: 'mobile',
-        title: 'Mobile',
-        description: 'Create Android/iOS apps and learn UI, APIs, and deployment.',
-        members: 96,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/mobile.jpg',
-      },
-      {
-        id: 'devops',
-        title: 'DevOps',
-        description: 'CI/CD, Docker, Linux, and cloud basics for shipping software.',
-        members: 74,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/devops.jpg',
-      },
-      {
-        id: 'iot',
-        title: 'IoT',
-        description: 'Sensors, microcontrollers, and smart systems with real devices.',
-        members: 61,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/iot.jpg',
-      },
-      {
-        id: 'graphics-design',
-        title: 'Graphics Design',
-        description: 'Design posters, brand assets, and UI visuals for club projects.',
-        members: 83,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/desighn.jpg',
-      },
-      {
-        id: 'cybersecurity',
-        title: 'Cybersecurity',
-        description: 'Learn security basics, CTF practice, and safe hacking fundamentals.',
-        members: 102,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/android.jpg',
-      },
-      {
-        id: 'blockchain',
-        title: 'Blockchain',
-        description: 'Explore Web3 concepts, smart contracts, and decentralized apps.',
-        members: 49,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/community/blockchain.jpg',
-      },
-    ],
-    []
-  );
+  useEffect(() => {
+    let mounted = true;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+        setLoadError('');
+
+        const { data, error } = await supabase
+          .from('communities')
+          .select('id,label,title,description,image_url,members_count,posts_count')
+          .order('title', { ascending: true });
+
+        if (error) {
+          console.warn('Failed to load communities', error);
+          if (!mounted) return;
+          setLoadError(error.message || 'Failed to load communities');
+          setCommunities([]);
+          return;
+        }
+
+        const mapped = (Array.isArray(data) ? data : []).map((row) => ({
+          id: row.id,
+          label: row.label,
+          title: row.title,
+          description: row.description,
+          members: typeof row.members_count === 'number' ? row.members_count : 0,
+          postsCount: typeof row.posts_count === 'number' ? row.posts_count : 0,
+          imageUrl: row.image_url,
+        }));
+
+        if (!mounted) return;
+        setCommunities(mapped);
+      } catch (e) {
+        console.warn('Failed to load communities', e);
+        if (!mounted) return;
+        setLoadError('Failed to load communities');
+        setCommunities([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    load();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ id: `skeleton-${i}` })), []);
 
@@ -84,6 +71,8 @@ export default function CommunityScreen({
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Community</Text>
         <Text style={styles.subtitle}>Choose a track and join the discussion.</Text>
+
+        {loadError ? <Text style={styles.errorText}>{loadError}</Text> : null}
 
         <View style={styles.list}>
           {loading
@@ -106,7 +95,8 @@ export default function CommunityScreen({
             : communities.map((c, idx) => {
             const isJoined = joinedIds.has(c.id);
             const isLast = idx === communities.length - 1;
-            const postCount = Number.isFinite(postCounts?.[c.id]) ? postCounts[c.id] : 0;
+            const localPostCount = Number.isFinite(postCounts?.[c.id]) ? postCounts[c.id] : null;
+            const postCount = localPostCount !== null ? localPostCount : (Number.isFinite(c.postsCount) ? c.postsCount : 0);
 
             return (
               <TouchableOpacity
@@ -173,6 +163,12 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     lineHeight: 22,
     fontFamily: 'Nunito_400Regular',
+  },
+  errorText: {
+    color: '#D11A2A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_600SemiBold',
   },
   list: {
     paddingTop: 6,

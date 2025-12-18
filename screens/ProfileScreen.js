@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { supabase } from '../lib/supabase';
 
 const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
@@ -41,6 +42,57 @@ export default function ProfileScreen({
     loadProfile();
   }, []);
 
+  const uploadProfilePhoto = async (localUri) => {
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.warn('Failed to get user', authError);
+        Alert.alert('Profile photo', 'Failed to upload. Please login again.');
+        return null;
+      }
+
+      const userId = authData?.user?.id;
+      if (!userId) {
+        Alert.alert('Profile photo', 'Failed to upload. Please login again.');
+        return null;
+      }
+
+      const ext = (String(localUri || '').split('.').pop() || 'jpg').toLowerCase();
+      const path = `avatars/${userId}-${Date.now()}.${ext}`;
+
+      const res = await fetch(localUri);
+      const blob = await res.blob();
+      const contentType = blob?.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`;
+
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(path, blob, {
+        contentType,
+        upsert: true,
+      });
+
+      if (uploadError) {
+        console.warn('Upload error', uploadError);
+        Alert.alert('Profile photo', uploadError.message || 'Upload failed.');
+        return null;
+      }
+
+      const { data: publicData } = supabase.storage.from('avatars').getPublicUrl(path);
+      const publicUrl = publicData?.publicUrl || '';
+      if (!publicUrl) return null;
+
+      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', userId);
+      if (updateError) {
+        console.warn('Failed to update profile avatar_url', updateError);
+      }
+
+      await AsyncStorage.setItem('@profile_photo_uri', publicUrl);
+      return publicUrl;
+    } catch (e) {
+      console.warn('Failed to upload profile photo', e);
+      Alert.alert('Profile photo', 'Upload failed. Please try again.');
+      return null;
+    }
+  };
+
   const saveProfile = async ({ nextPhotoUri }) => {
     try {
       setSaving(true);
@@ -76,6 +128,7 @@ export default function ProfileScreen({
 
       setPhotoUri(uri);
       saveProfile({ nextPhotoUri: uri });
+      await uploadProfilePhoto(uri);
     } catch (e) {
       console.warn('Failed to pick image', e);
     }

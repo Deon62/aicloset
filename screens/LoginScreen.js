@@ -23,7 +23,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
 
   const syncProfileToLocal = async (userId) => {
     try {
-      const { data, error } = await supabase.from('profiles').select('github_username,name,course,year').eq('id', userId).single();
+      const { data, error } = await supabase.from('profiles').select('github_username,name,course,year,avatar_url').eq('id', userId).single();
       if (error) return;
 
       await AsyncStorage.multiSet([
@@ -32,6 +32,7 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
         ['@profile_course', String(data?.course || '').trim()],
         ['@profile_year', String(data?.year || '').trim()],
         ['@profile_bio', ''],
+        ['@profile_photo_uri', String(data?.avatar_url || '').trim()],
       ]);
     } catch (e) {
       console.warn('Failed to sync profile', e);
