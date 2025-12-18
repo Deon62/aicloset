@@ -419,6 +419,7 @@ function AppContent() {
               setShowLanding(true);
               setAuthScreen(null);
             }}
+            onNeedLogin={() => setAuthScreen('login')}
             onDone={() => {
               setAuthScreen(null);
               setCurrentTab('home');

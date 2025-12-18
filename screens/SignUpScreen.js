@@ -27,7 +27,7 @@ const STORAGE_KEYS = {
   github: '@profile_github',
 };
 
-export default function SignUpScreen({ onDone = () => {}, onBack = () => {} }) {
+export default function SignUpScreen({ onDone = () => {}, onBack = () => {}, onNeedLogin = () => {} }) {
   const [saving, setSaving] = useState(false);
 
   const [name, setName] = useState('');
@@ -137,6 +137,10 @@ export default function SignUpScreen({ onDone = () => {}, onBack = () => {} }) {
           <TouchableOpacity style={styles.primaryBtn} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
             <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.loginLink} activeOpacity={0.85} onPress={onNeedLogin} disabled={saving}>
+            <Text style={styles.loginLinkText}>Already have an account? Login</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -222,6 +226,16 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+  },
+  loginLink: {
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  loginLinkText: {
+    color: BRAND_BLUE,
+    fontSize: 13,
     fontFamily: 'Nunito_700Bold',
   },
 });
