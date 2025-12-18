@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Alert, Platform, View, BackHandler } from 'react-native';
+import { Alert, Platform, View, BackHandler, Animated, Dimensions, Easing } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -66,7 +66,10 @@ function AppContent() {
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
-  const [homeOverlay, setHomeOverlay] = useState(null); // null | 'notifications'
+  const [homeOverlay, setHomeOverlay] = useState(null); // null | 'notifications' | 'cards' | 'jobs' | 'resources' | 'projects' | 'startups'
+  const [homeOverlayMounted, setHomeOverlayMounted] = useState(null);
+  const homeOverlayAnim = useRef(new Animated.Value(0)).current;
+  const homeOverlayClosingRef = useRef(false);
   const [shopOverlay, setShopOverlay] = useState(null); // null | 'notifications' | 'cart' | 'product'
   const [activeProduct, setActiveProduct] = useState(null);
   const [communityOverlay, setCommunityOverlay] = useState(null); // null | 'conversation'
@@ -78,6 +81,43 @@ function AppContent() {
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
+
+  const openHomeOverlay = useCallback(
+    (key) => {
+      homeOverlayClosingRef.current = false;
+      setHomeOverlay(key);
+      setHomeOverlayMounted(key);
+      homeOverlayAnim.setValue(0);
+      Animated.timing(homeOverlayAnim, {
+        toValue: 1,
+        duration: 240,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    },
+    [homeOverlayAnim]
+  );
+
+  const closeHomeOverlay = useCallback(() => {
+    if (!homeOverlayMounted) {
+      setHomeOverlay(null);
+      setHomeOverlayMounted(null);
+      return;
+    }
+    if (homeOverlayClosingRef.current) return;
+    homeOverlayClosingRef.current = true;
+    Animated.timing(homeOverlayAnim, {
+      toValue: 0,
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      homeOverlayClosingRef.current = false;
+      if (!finished) return;
+      setHomeOverlay(null);
+      setHomeOverlayMounted(null);
+    });
+  }, [homeOverlayAnim, homeOverlayMounted]);
 
   useEffect(() => {
     let mounted = true;
@@ -524,8 +564,8 @@ function AppContent() {
         return true;
       }
 
-      if (homeOverlay) {
-        setHomeOverlay(null);
+      if (homeOverlayMounted) {
+        closeHomeOverlay();
         return true;
       }
 
@@ -562,7 +602,8 @@ function AppContent() {
     authScreen,
     communityOverlay,
     currentTab,
-    homeOverlay,
+    homeOverlayMounted,
+    closeHomeOverlay,
     profileOverlay,
     shopOverlay,
     showLanding,
@@ -570,34 +611,16 @@ function AppContent() {
     showPastEvents,
   ]);
 
-  const renderHomeStack = () => {
-    if (homeOverlay === 'notifications') {
-      return <NotificationsScreen onBack={() => setHomeOverlay(null)} />;
-    }
-    if (homeOverlay === 'cards') {
-      return <CardsScreen onBack={() => setHomeOverlay(null)} />;
-    }
-    if (homeOverlay === 'jobs') {
-      return <JobsScreen onBack={() => setHomeOverlay(null)} />;
-    }
-    if (homeOverlay === 'resources') {
-      return <ResourcesScreen onBack={() => setHomeOverlay(null)} />;
-    }
-    if (homeOverlay === 'projects') {
-      return <ProjectsScreen onBack={() => setHomeOverlay(null)} />;
-    }
-    if (homeOverlay === 'startups') {
-      return <StartupsScreen onBack={() => setHomeOverlay(null)} />;
-    }
+  const renderHomeBase = () => {
     return (
       <HomeScreen
         loading={profileLoading}
-        onOpenNotifications={() => setHomeOverlay('notifications')}
-        onOpenCards={() => setHomeOverlay('cards')}
-        onOpenJobs={() => setHomeOverlay('jobs')}
-        onOpenResources={() => setHomeOverlay('resources')}
-        onOpenProjects={() => setHomeOverlay('projects')}
-        onOpenStartups={() => setHomeOverlay('startups')}
+        onOpenNotifications={() => openHomeOverlay('notifications')}
+        onOpenCards={() => openHomeOverlay('cards')}
+        onOpenJobs={() => openHomeOverlay('jobs')}
+        onOpenResources={() => openHomeOverlay('resources')}
+        onOpenProjects={() => openHomeOverlay('projects')}
+        onOpenStartups={() => openHomeOverlay('startups')}
         onRefresh={async () => {
           await refreshProfileCache(userId);
         }}
@@ -607,6 +630,29 @@ function AppContent() {
         }}
       />
     );
+  };
+
+  const renderHomeOverlay = () => {
+    if (!homeOverlayMounted) return null;
+    if (homeOverlayMounted === 'notifications') {
+      return <NotificationsScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'cards') {
+      return <CardsScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'jobs') {
+      return <JobsScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'resources') {
+      return <ResourcesScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'projects') {
+      return <ProjectsScreen onBack={closeHomeOverlay} />;
+    }
+    if (homeOverlayMounted === 'startups') {
+      return <StartupsScreen onBack={closeHomeOverlay} />;
+    }
+    return null;
   };
 
   const renderEventsStack = () => {
@@ -781,6 +827,8 @@ function AppContent() {
           setShowPastEvents(false);
           setActiveEvent(null);
           setHomeOverlay(null);
+          setHomeOverlayMounted(null);
+          homeOverlayAnim.setValue(0);
           setShopOverlay(null);
           setActiveProduct(null);
           setCommunityOverlay(null);
@@ -867,7 +915,32 @@ function AppContent() {
       <SafeAreaProvider>
         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
           <View style={[styles.scene, currentTab === 'home' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'home' ? 'auto' : 'none'}>
-            {renderHomeStack()}
+            <View style={{ flex: 1 }} pointerEvents={homeOverlayMounted ? 'none' : 'auto'}>
+              {renderHomeBase()}
+            </View>
+            {homeOverlayMounted ? (
+              <Animated.View
+                pointerEvents="auto"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: '#FFFFFF',
+                  transform: [
+                    {
+                      translateX: homeOverlayAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [Dimensions.get('window').width, 0],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                {renderHomeOverlay()}
+              </Animated.View>
+            ) : null}
           </View>
           <View style={[styles.scene, currentTab === 'events' ? styles.sceneActive : styles.sceneHidden]} pointerEvents={currentTab === 'events' ? 'auto' : 'none'}>
             {renderEventsStack()}
@@ -885,17 +958,7 @@ function AppContent() {
         {!((
           currentTab === 'community' && communityOverlay === 'conversation'
         ) || (
-          currentTab === 'home' && homeOverlay === 'notifications'
-        ) || (
-          currentTab === 'home' && homeOverlay === 'cards'
-        ) || (
-          currentTab === 'home' && homeOverlay === 'jobs'
-        ) || (
-          currentTab === 'home' && homeOverlay === 'resources'
-        ) || (
-          currentTab === 'home' && homeOverlay === 'projects'
-        ) || (
-          currentTab === 'home' && homeOverlay === 'startups'
+          currentTab === 'home' && homeOverlayMounted
         ) || (
           currentTab === 'events' && showPastEvents
         ) || (

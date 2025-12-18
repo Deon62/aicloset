@@ -17,7 +17,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "11.4.1",
     "@supabase/supabase-js": "^2.88.0",
-    "expo": "~54.0.29",
+    "expo": "~54.0.30",
     "expo-av": "~16.0.8",
     "expo-calendar": "~15.0.8",
     "expo-clipboard": "^8.0.8",
@@ -27,7 +27,7 @@
     "expo-linear-gradient": "~15.0.8",
     "expo-local-authentication": "^17.0.8",
     "expo-secure-store": "^15.0.8",
-    "expo-splash-screen": "~31.0.12",
+    "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
     "react-native": "0.81.5",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "babel-preset-expo": "^54.0.7",
+    "babel-preset-expo": "~54.0.9",
     "metro-react-native-babel-transformer": "^0.77.0"
   },
   "private": true
