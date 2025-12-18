@@ -25,6 +25,63 @@ export default function CardsScreen({ onBack = () => {} }) {
         </View>
 
         <View style={styles.card}>
+          <Text style={styles.lead}>How you earn points</Text>
+
+          <View style={styles.pointsRow}>
+            <View style={styles.pointsLeft}>
+              <Ionicons name="person-add-outline" size={18} color={BRAND_BLUE} />
+              <Text style={styles.pointsLabel}>Create an account</Text>
+            </View>
+            <View style={styles.pointsPill}>
+              <Text style={styles.pointsPillText}>+50</Text>
+            </View>
+          </View>
+
+          <View style={styles.pointsRow}>
+            <View style={styles.pointsLeft}>
+              <Ionicons name="people-outline" size={18} color={BRAND_BLUE} />
+              <Text style={styles.pointsLabel}>Join a community</Text>
+            </View>
+            <View style={styles.pointsPill}>
+              <Text style={styles.pointsPillText}>+10</Text>
+            </View>
+          </View>
+
+          <View style={styles.pointsRow}>
+            <View style={styles.pointsLeft}>
+              <Ionicons name="create-outline" size={18} color={BRAND_BLUE} />
+              <Text style={styles.pointsLabel}>Create a post</Text>
+            </View>
+            <View style={styles.pointsPill}>
+              <Text style={styles.pointsPillText}>+15</Text>
+            </View>
+          </View>
+
+          <View style={styles.pointsRow}>
+            <View style={styles.pointsLeft}>
+              <Ionicons name="arrow-up-circle-outline" size={18} color={BRAND_BLUE} />
+              <Text style={styles.pointsLabel}>Get an upvote</Text>
+            </View>
+            <View style={styles.pointsPill}>
+              <Text style={styles.pointsPillText}>+11</Text>
+            </View>
+          </View>
+
+          <View style={[styles.pointsRow, { marginBottom: 0 }]}
+          >
+            <View style={styles.pointsLeft}>
+              <Ionicons name="arrow-down-circle-outline" size={18} color={BRAND_BLUE} />
+              <Text style={styles.pointsLabel}>Get a downvote</Text>
+            </View>
+            <View style={[styles.pointsPill, styles.pointsPillNegative]}>
+              <Text style={styles.pointsPillText}>-29</Text>
+            </View>
+          </View>
+
+          <Text style={styles.smallNote}>Points update automatically after posts and votes.</Text>
+        </View>
+
+        <View style={styles.card}>
           <Text style={styles.lead}>How redemption will work</Text>
           <View style={styles.stepRow}>
             <Text style={styles.stepNum}>1</Text>
@@ -95,6 +152,51 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   stepText: { flex: 1, color: '#4A4A4A', fontSize: 13, lineHeight: 18, fontFamily: 'Nunito_600SemiBold' },
+  pointsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F1F1',
+  },
+  pointsLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+  },
+  pointsLabel: {
+    color: DARK,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  pointsPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#EEF3FF',
+    borderWidth: 1,
+    borderColor: '#DCE3FF',
+    minWidth: 54,
+    alignItems: 'center',
+  },
+  pointsPillNegative: {
+    backgroundColor: '#FFF1F2',
+    borderColor: '#FFE4E6',
+  },
+  pointsPillText: {
+    color: BRAND_BLUE,
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  smallNote: {
+    marginTop: 8,
+    color: '#6A6A6A',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Nunito_600SemiBold',
+  },
   noteBox: {
     flexDirection: 'row',
     gap: 10,
