@@ -27,7 +27,9 @@ const PRESET_AVATARS = [
 
 export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {} }) {
   const [saving, setSaving] = useState(false);
-  const [attempted, setAttempted] = useState(false);
+  const [attemptedInfo, setAttemptedInfo] = useState(false);
+  const [attemptedSecurity, setAttemptedSecurity] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0); // 0 = info, 1 = security
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,72 +62,86 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
     }
   };
 
+  const infoTouched = attemptedInfo || currentStep > 0;
+
   const nameError = useMemo(() => {
-    if (!attempted) return '';
+    if (!infoTouched) return '';
     if (!String(name || '').trim()) return 'Name is required.';
     return '';
-  }, [attempted, name]);
+  }, [infoTouched, name]);
 
   const courseError = useMemo(() => {
-    if (!attempted) return '';
+    if (!infoTouched) return '';
     if (!String(course || '').trim()) return 'Course is required.';
     return '';
-  }, [attempted, course]);
+  }, [infoTouched, course]);
 
   const emailError = useMemo(() => {
-    if (!attempted) return '';
+    if (!infoTouched) return '';
     const v = String(email || '').trim();
     if (!v) return 'Email is required.';
     if (!isValidEmail(v)) return 'Enter a valid email address.';
     return '';
-  }, [attempted, email]);
+  }, [infoTouched, email]);
 
   const yearError = useMemo(() => {
-    if (!attempted) return '';
+    if (!infoTouched) return '';
     if (!String(year || '').trim()) return 'Year is required.';
     return '';
-  }, [attempted, year]);
+  }, [infoTouched, year]);
 
-  const canSubmit = useMemo(() => {
-    if (saving) return false;
+  const infoValid = useMemo(() => {
     const n = String(name || '').trim();
     const em = String(email || '').trim();
     const c = String(course || '').trim();
     const y = String(year || '').trim();
     const gh = String(github || '').trim();
+    if (!n || !em || !isValidEmail(em) || !c || !y || !gh) return false;
+    return true;
+  }, [course, email, github, name, year]);
+
+  const canSubmit = useMemo(() => {
+    if (saving) return false;
     const pwd = String(password || '');
     const confirm = String(confirmPassword || '');
-    if (!n || !em || !isValidEmail(em) || !c || !y || !gh) return false;
+    if (!infoValid) return false;
     if (pwd.length < 6) return false;
     if (pwd !== confirm) return false;
     return true;
-  }, [confirmPassword, course, email, github, name, password, saving, year]);
+  }, [confirmPassword, infoValid, password, saving]);
 
   const githubError = useMemo(() => {
-    if (!attempted) return '';
+    if (!infoTouched) return '';
     if (!String(github || '').trim()) return 'GitHub username is required.';
     return '';
-  }, [attempted, github]);
+  }, [infoTouched, github]);
 
   const passwordError = useMemo(() => {
-    if (!attempted) return '';
+    if (!attemptedSecurity) return '';
     const pwd = String(password || '');
     if (!pwd) return 'Password is required.';
     if (pwd.length < 6) return 'Password must be at least 6 characters.';
     return '';
-  }, [attempted, password]);
+  }, [attemptedSecurity, password]);
 
   const confirmError = useMemo(() => {
-    if (!attempted) return '';
+    if (!attemptedSecurity) return '';
     const pwd = String(password || '');
     const confirm = String(confirmPassword || '');
     if (!confirm) return 'Please confirm your password.';
     if (pwd !== confirm) return 'Passwords do not match.';
     return '';
-  }, [attempted, confirmPassword, password]);
+  }, [attemptedSecurity, confirmPassword, password]);
+
+  const goNext = () => {
+    setAttemptedInfo(true);
+    if (!infoValid) return;
+    setCurrentStep(1);
+  };
 
   const submit = async () => {
-    setAttempted(true);
+    setAttemptedInfo(true);
+    setAttemptedSecurity(true);
     const n = String(name || '').trim();
     const em = String(email || '').trim().toLowerCase();
     const c = String(course || '').trim();
@@ -245,6 +261,20 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
     );
   };
 
+  const renderStepIndicator = () => (
+    <View style={styles.stepper}>
+      <View style={[styles.stepItem, currentStep === 0 && styles.stepItemActive]}>
+        <Text style={[styles.stepNumber, currentStep === 0 && styles.stepNumberActive]}>1</Text>
+        <Text style={[styles.stepLabel, currentStep === 0 && styles.stepLabelActive]}>Profile</Text>
+      </View>
+      <View style={styles.stepDivider} />
+      <View style={[styles.stepItem, currentStep === 1 && styles.stepItemActive]}>
+        <Text style={[styles.stepNumber, currentStep === 1 && styles.stepNumberActive]}>2</Text>
+        <Text style={[styles.stepLabel, currentStep === 1 && styles.stepLabelActive]}>Security</Text>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -257,94 +287,123 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
           <View style={styles.illustrationWrap}>
             <SignUpSvg width={240} height={240} />
           </View>
-          {renderField({
-            label: 'Name',
-            value: name,
-            placeholder: 'Enter your name',
-            onChangeText: setName,
-            inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
-          })}
-          {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
 
-          {renderField({
-            label: 'Email',
-            value: email,
-            placeholder: 'you@example.com',
-            onChangeText: setEmail,
-            inputProps: { autoCapitalize: 'none', autoCorrect: false, keyboardType: 'email-address', returnKeyType: 'next' },
-          })}
-          {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+          {renderStepIndicator()}
 
-          {renderField({
-            label: 'Course',
-            value: course,
-            placeholder: 'Enter your course',
-            onChangeText: setCourse,
-            inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
-          })}
-          {courseError ? <Text style={styles.errorText}>{courseError}</Text> : null}
+          {currentStep === 0 ? (
+            <>
+              {renderField({
+                label: 'Name',
+                value: name,
+                placeholder: 'Enter your name',
+                onChangeText: setName,
+                inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
+              })}
+              {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
 
-          {renderField({
-            label: 'Year',
-            value: year,
-            placeholder: 'e.g. 2nd year',
-            onChangeText: setYear,
-            inputProps: { returnKeyType: 'next' },
-          })}
-          {yearError ? <Text style={styles.errorText}>{yearError}</Text> : null}
+              {renderField({
+                label: 'Email',
+                value: email,
+                placeholder: 'you@example.com',
+                onChangeText: setEmail,
+                inputProps: { autoCapitalize: 'none', autoCorrect: false, keyboardType: 'email-address', returnKeyType: 'next' },
+              })}
+              {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-          {renderField({
-            label: 'GitHub',
-            value: github,
-            placeholder: 'username',
-            onChangeText: setGithub,
-            inputProps: { autoCapitalize: 'none', autoCorrect: false },
-          })}
-          {githubError ? <Text style={styles.errorText}>{githubError}</Text> : null}
+              {renderField({
+                label: 'Course',
+                value: course,
+                placeholder: 'Enter your course',
+                onChangeText: setCourse,
+                inputProps: { autoCapitalize: 'words', returnKeyType: 'next' },
+              })}
+              {courseError ? <Text style={styles.errorText}>{courseError}</Text> : null}
 
-          <View style={styles.fieldWrap}>
-            <Text style={styles.fieldLabel}>Password</Text>
-            <View style={styles.passwordRow}>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Enter password"
-                placeholderTextColor="#8A8A8A"
-                style={[styles.input, styles.passwordInput]}
-                autoCapitalize="none"
-                secureTextEntry={!showPassword}
-                editable={!saving}
-              />
-              <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowPassword((v) => !v)} disabled={saving}>
-                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+              {renderField({
+                label: 'Year',
+                value: year,
+                placeholder: 'e.g. 2nd year',
+                onChangeText: setYear,
+                inputProps: { returnKeyType: 'next' },
+              })}
+              {yearError ? <Text style={styles.errorText}>{yearError}</Text> : null}
+
+              {renderField({
+                label: 'GitHub',
+                value: github,
+                placeholder: 'username',
+                onChangeText: setGithub,
+                inputProps: { autoCapitalize: 'none', autoCorrect: false },
+              })}
+              {githubError ? <Text style={styles.errorText}>{githubError}</Text> : null}
+
+              <TouchableOpacity
+                style={[styles.primaryBtn, (!infoValid || saving) && styles.primaryBtnDisabled]}
+                activeOpacity={0.9}
+                onPress={goNext}
+                disabled={!infoValid || saving}
+              >
+                <Text style={styles.primaryBtnText}>{saving ? 'Please wait...' : 'Next'}</Text>
               </TouchableOpacity>
-            </View>
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-          </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.fieldWrap}>
+                <Text style={styles.fieldLabel}>Password</Text>
+                <View style={styles.passwordRow}>
+                  <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="Enter password"
+                    placeholderTextColor="#8A8A8A"
+                    style={[styles.input, styles.passwordInput]}
+                    autoCapitalize="none"
+                    secureTextEntry={!showPassword}
+                    editable={!saving}
+                  />
+                  <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowPassword((v) => !v)} disabled={saving}>
+                    <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+                  </TouchableOpacity>
+                </View>
+                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+              </View>
 
-          <View style={styles.fieldWrap}>
-            <Text style={styles.fieldLabel}>Confirm password</Text>
-            <View style={styles.passwordRow}>
-              <TextInput
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Confirm password"
-                placeholderTextColor="#8A8A8A"
-                style={[styles.input, styles.passwordInput]}
-                autoCapitalize="none"
-                secureTextEntry={!showConfirmPassword}
-                editable={!saving}
-              />
-              <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowConfirmPassword((v) => !v)} disabled={saving}>
-                <Ionicons name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
-              </TouchableOpacity>
-            </View>
-            {confirmError ? <Text style={styles.errorText}>{confirmError}</Text> : null}
-          </View>
+              <View style={styles.fieldWrap}>
+                <Text style={styles.fieldLabel}>Confirm password</Text>
+                <View style={styles.passwordRow}>
+                  <TextInput
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    placeholder="Confirm password"
+                    placeholderTextColor="#8A8A8A"
+                    style={[styles.input, styles.passwordInput]}
+                    autoCapitalize="none"
+                    secureTextEntry={!showConfirmPassword}
+                    editable={!saving}
+                  />
+                  <TouchableOpacity style={styles.eyeBtn} activeOpacity={0.8} onPress={() => setShowConfirmPassword((v) => !v)} disabled={saving}>
+                    <Ionicons name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#5A5A5A" />
+                  </TouchableOpacity>
+                </View>
+                {confirmError ? <Text style={styles.errorText}>{confirmError}</Text> : null}
+              </View>
 
-          <TouchableOpacity style={[styles.primaryBtn, !canSubmit && styles.primaryBtnDisabled]} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
-            <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
-          </TouchableOpacity>
+              <View style={styles.actionsRow}>
+                <TouchableOpacity
+                  style={[styles.secondaryBtn]}
+                  activeOpacity={0.85}
+                  onPress={() => setCurrentStep(0)}
+                  disabled={saving}
+                >
+                  <Text style={styles.secondaryBtnText}>Back</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.primaryBtn, !canSubmit && styles.primaryBtnDisabled]} activeOpacity={0.9} onPress={submit} disabled={!canSubmit}>
+                  <Text style={styles.primaryBtnText}>{saving ? 'Creating…' : 'Create account'}</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
 
           <TouchableOpacity style={styles.loginLink} activeOpacity={0.85} onPress={onNeedLogin} disabled={saving}>
             <Text style={styles.loginLinkText}>Already have an account? Login</Text>
@@ -427,6 +486,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
   },
+  secondaryBtn: {
+    height: 50,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  secondaryBtnText: {
+    color: '#0B0B0F',
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 6,
+  },
   loginLink: {
     alignSelf: 'center',
     paddingVertical: 8,
@@ -452,5 +531,49 @@ const styles = StyleSheet.create({
     width: 34,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 6,
+  },
+  stepItem: {
+    alignItems: 'center',
+    gap: 4,
+    opacity: 0.5,
+  },
+  stepItemActive: {
+    opacity: 1,
+  },
+  stepNumber: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 2,
+    borderColor: '#E6E6E6',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#6A6A6A',
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 14,
+  },
+  stepNumberActive: {
+    borderColor: BRAND_BLUE,
+    color: BRAND_BLUE,
+  },
+  stepLabel: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 12,
+    color: '#6A6A6A',
+  },
+  stepLabelActive: {
+    color: '#0B0B0F',
+  },
+  stepDivider: {
+    width: 36,
+    height: 2,
+    backgroundColor: '#E6E6E6',
   },
 });
