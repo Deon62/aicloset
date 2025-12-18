@@ -19,7 +19,7 @@ export default function SettingsScreen({
     { id: 'account', label: 'Account', icon: 'person-outline' },
     { id: 'notifications', label: 'Notifications', icon: 'notifications-outline' },
     { id: 'privacy', label: 'Privacy', icon: 'hand-left-outline' },
-    { id: 'eucossa', label: 'EUCOSSA official website', icon: 'globe-outline', url: 'https://eucossa.com' },
+    { id: 'eucossa', label: 'official website', icon: 'globe-outline', url: 'https://eucossa.com' },
     { id: 'help', label: 'Help', icon: 'help-circle-outline' },
     { id: 'about', label: 'About', icon: 'information-circle-outline' },
   ];
