@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -320,11 +321,17 @@ export default function HomeScreen({
 
         {/* <Text style={styles.sectionTitle}>Extras</Text> */}
 
-        <View style={[styles.card, styles.extrasCard]}>
+        <LinearGradient
+          colors={['#2F6BFF', '#1B56FD', '#78B3FF', '#E9F2FF']}
+          locations={[0, 0.45, 0.8, 1]}
+          start={{ x: 0.14, y: 0.14 }}
+          end={{ x: 0.95, y: 0.92 }}
+          style={[styles.card, styles.extrasCard, styles.extrasGradient]}
+        >
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenJobs}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="people-outline" size={22} color={DARK} />
+              <Ionicons name="people-outline" size={22} color="#FFFFFF" />
               {miniClubsCount > 0 ? (
                 <View style={styles.resourcesCountBadge}>
                   <Text style={styles.resourcesCountBadgeText}>{miniClubsBadgeText}</Text>
@@ -337,7 +344,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenResources}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="book-outline" size={22} color={DARK} />
+              <Ionicons name="book-outline" size={22} color="#FFFFFF" />
               {resourcesCount > 0 ? (
                 <View style={styles.resourcesCountBadge}>
                   <Text style={styles.resourcesCountBadgeText}>{resourcesBadgeText}</Text>
@@ -350,7 +357,7 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="code-slash-outline" size={22} color={DARK} />
+              <Ionicons name="code-slash-outline" size={22} color="#FFFFFF" />
             </View>
             <Text style={styles.extrasLabel}>Projects</Text>
           </TouchableOpacity>
@@ -358,11 +365,11 @@ export default function HomeScreen({
           <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}
           >
             <View style={styles.extrasIconWrap}>
-              <Ionicons name="bulb-outline" size={22} color={DARK} />
+              <Ionicons name="bulb-outline" size={22} color="#FFFFFF" />
             </View>
             <Text style={styles.extrasLabel}>Startups</Text>
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
       </ScrollView>
     </SafeAreaView>
   );
@@ -814,6 +821,11 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 160,
   },
+  extrasGradient: {
+    borderWidth: 0,
+    borderColor: 'transparent',
+    overflow: 'hidden',
+  },
   extrasItem: {
     flex: 1,
     alignItems: 'center',
@@ -826,6 +838,8 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderColor: 'transparent',
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
@@ -840,18 +854,18 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: BRAND_BLUE,
+    backgroundColor: 'rgba(255,255,255,0.95)',
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.55)',
   },
   resourcesCountBadgeText: {
-    color: '#FFFFFF',
+    color: BRAND_BLUE,
     fontSize: 10,
     lineHeight: 12,
     fontFamily: 'Nunito_700Bold',
   },
   extrasLabel: {
-    color: DARK,
+    color: 'rgba(255,255,255,0.92)',
     fontSize: 12,
     textAlign: 'center',
     fontFamily: 'Nunito_700Bold',
