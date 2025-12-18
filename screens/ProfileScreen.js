@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Modal, Pressabl
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import * as ImagePicker from 'expo-image-picker';
+import { supabase, dbService } from '../lib/supabase';
 
 const BRAND_BLUE = '#1B56FD';
 const MOCK_NAME = 'Deon Student';
@@ -62,6 +63,53 @@ export default function ProfileScreen({
     }
   };
 
+  const capturePhoto = async () => {
+    try {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission?.granted) {
+        Alert.alert('Camera permission', 'Please allow camera access to take a profile photo.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (result.canceled) return;
+
+      const uri = result.assets?.[0]?.uri;
+      if (!uri) return;
+
+      setSaving(true);
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData?.user?.id) {
+        Alert.alert('Profile photo', 'Please login again to set your photo.');
+        return;
+      }
+
+      const userId = authData.user.id;
+      const uploadResult = await dbService.uploadProfileImage(userId, uri);
+      if (!uploadResult?.success || !uploadResult?.url) {
+        Alert.alert('Profile photo', 'Failed to save photo. Please try again.');
+        return;
+      }
+
+      setPhotoUri(uploadResult.url);
+      await AsyncStorage.setItem('@profile_photo_uri', uploadResult.url);
+      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: uploadResult.url }).eq('id', userId);
+      if (updateError) console.warn('Failed to update profile avatar_url', updateError);
+    } catch (e) {
+      console.warn('Failed to capture photo', e);
+      Alert.alert('Profile photo', 'Failed to capture photo. Please try again.');
+    } finally {
+      setSaving(false);
+      setShowAvatarModal(false);
+    }
+  };
+
   const setPresetAvatar = async (uri) => {
     try {
       setSaving(true);
@@ -114,15 +162,6 @@ export default function ProfileScreen({
               <Ionicons name="camera" size={16} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.changeAvatarBtn}
-            activeOpacity={0.85}
-            onPress={() => setShowAvatarModal(true)}
-            disabled={saving}
-          >
-            <Text style={styles.changeAvatarText}>{saving ? 'Saving...' : 'Choose avatar'}</Text>
-          </TouchableOpacity>
-
           <Text style={styles.nameText}>{name || MOCK_NAME}</Text>
           <Text style={styles.courseText}>{course || MOCK_COURSE}{year ? ` • ${year}` : ''}</Text>
         </View>
@@ -206,6 +245,15 @@ export default function ProfileScreen({
             <Pressable style={styles.modalCard} onPress={() => {}}>
               <Text style={styles.modalTitle}>Choose an avatar</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarOptions}>
+                <TouchableOpacity
+                  style={[styles.avatarOption, styles.avatarOptionCamera]}
+                  onPress={capturePhoto}
+                  disabled={saving}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="camera" size={28} color={BRAND_BLUE} />
+                  <Text style={styles.avatarOptionCameraText}>Take photo</Text>
+                </TouchableOpacity>
                 {PRESET_AVATARS.map((uri) => (
                   <TouchableOpacity
                     key={uri}
@@ -318,6 +366,20 @@ const styles = StyleSheet.create({
   avatarOptionImage: {
     width: '100%',
     height: '100%',
+  },
+  avatarOptionCamera: {
+    width: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F4F7FF',
+    borderColor: BRAND_BLUE,
+    paddingVertical: 12,
+    gap: 6,
+  },
+  avatarOptionCameraText: {
+    color: BRAND_BLUE,
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
   },
   separator: {
     height: 1,
