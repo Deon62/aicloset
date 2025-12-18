@@ -20,6 +20,7 @@ export default function CommunityConversationScreen({
   const insets = useSafeAreaInsets();
   const [composerOpen, setComposerOpen] = useState(false);
   const [text, setText] = useState('');
+  const [replyTo, setReplyTo] = useState(null);
 
   const title = community?.title ?? 'Community';
   const memberCount = typeof community?.members === 'number' ? community.members : null;
@@ -34,11 +35,12 @@ export default function CommunityConversationScreen({
     });
   }, [posts]);
 
-  const submit = () => {
+  const submit = (parentId = null) => {
     const body = text.trim();
     if (!body) return;
-    onAddPost(body);
+    onAddPost(body, parentId);
     setText('');
+    setReplyTo(null);
     setComposerOpen(false);
   };
 
@@ -70,10 +72,23 @@ export default function CommunityConversationScreen({
 
         <Text style={styles.postBody}>{item?.text ?? ''}</Text>
 
+        {item?.quote ? (
+          <View style={styles.quoteCard}>
+            <Text style={styles.quoteLabel}>Quoted</Text>
+            <Text style={styles.quoteAuthor}>
+              {item.quote.authorName}
+              {item.quote.authorGithub ? ` (@${item.quote.authorGithub})` : ''}
+            </Text>
+            <Text style={styles.quoteText} numberOfLines={3}>
+              {item.quote.text}
+            </Text>
+          </View>
+        ) : null}
+
         <View style={styles.voteRow}>
           <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, 1)}>
             <Ionicons
-              name={item.userVote === 1 ? 'caret-up' : 'caret-up-outline'}
+              name={item.userVote === 1 ? 'arrow-up' : 'arrow-up-outline'}
               size={22}
               color={item.userVote === 1 ? BRAND_BLUE : DARK}
             />
@@ -81,10 +96,14 @@ export default function CommunityConversationScreen({
           <Text style={styles.voteScore}>{item.voteScore ?? 0}</Text>
           <TouchableOpacity style={styles.voteBtn} activeOpacity={0.75} onPress={() => onVote(item.id, -1)}>
             <Ionicons
-              name={item.userVote === -1 ? 'caret-down' : 'caret-down-outline'}
+              name={item.userVote === -1 ? 'arrow-down' : 'arrow-down-outline'}
               size={22}
               color={item.userVote === -1 ? '#D11A2A' : DARK}
             />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.replyBtn} activeOpacity={0.8} onPress={() => setReplyTo(item)}>
+            <Ionicons name="arrow-redo-outline" size={20} color={DARK} />
+            <Text style={styles.replyText}>Quote</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -165,6 +184,24 @@ export default function CommunityConversationScreen({
                   </TouchableOpacity>
                 </View>
 
+                {replyTo ? (
+                  <View style={styles.replyBanner}>
+                    <View style={styles.replyBannerHeader}>
+                      <Text style={styles.replyLabel}>Quoting</Text>
+                      <TouchableOpacity onPress={() => setReplyTo(null)} activeOpacity={0.8}>
+                        <Ionicons name="close" size={18} color="#6A6A6A" />
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.replyAuthor}>
+                      {replyTo.authorName}
+                      {replyTo.authorGithub ? ` (@${replyTo.authorGithub})` : ''}
+                    </Text>
+                    <Text style={styles.replyPreview} numberOfLines={2}>
+                      {replyTo.text}
+                    </Text>
+                  </View>
+                ) : null}
+
                 <TextInput
                   value={text}
                   onChangeText={setText}
@@ -174,7 +211,7 @@ export default function CommunityConversationScreen({
                   style={styles.input}
                 />
 
-                <TouchableOpacity style={styles.submitBtn} activeOpacity={0.9} onPress={submit}>
+                <TouchableOpacity style={styles.submitBtn} activeOpacity={0.9} onPress={() => submit(replyTo?.id || null)}>
                   <Text style={styles.submitText}>Post</Text>
                 </TouchableOpacity>
               </View>
@@ -221,6 +258,73 @@ const styles = StyleSheet.create({
     color: DARK,
     fontSize: 14,
     fontFamily: 'Nunito_700Bold',
+  },
+  replyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  replyText: {
+    color: BRAND_BLUE,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  quoteCard: {
+    marginTop: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: BRAND_BLUE,
+    backgroundColor: '#F7F9FF',
+    borderRadius: 10,
+    padding: 10,
+    gap: 4,
+  },
+  quoteLabel: {
+    color: BRAND_BLUE,
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  quoteAuthor: {
+    color: DARK,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  quoteText: {
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  replyBanner: {
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#F9FBFF',
+    gap: 4,
+  },
+  replyBannerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  replyLabel: {
+    color: BRAND_BLUE,
+    fontSize: 12,
+    fontFamily: 'Nunito_700Bold',
+  },
+  replyAuthor: {
+    color: DARK,
+    fontSize: 13,
+    fontFamily: 'Nunito_700Bold',
+  },
+  replyPreview: {
+    color: '#4A4A4A',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Nunito_600SemiBold',
   },
   container: {
     flex: 1,

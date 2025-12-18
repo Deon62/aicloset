@@ -279,7 +279,7 @@ function AppContent() {
       setPostsLoading(true);
       const { data, error } = await supabase
         .from('posts')
-        .select('id, body, created_at, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
+        .select('id, body, created_at, parent_post_id, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
         .eq('community_id', communityId)
         .order('created_at', { ascending: false });
       if (error) {
@@ -308,6 +308,29 @@ function AppContent() {
         }
       }
 
+      // fetch parent posts for quotes
+      const parentIds = (data || []).map((row) => row.parent_post_id).filter(Boolean);
+      let parentMap = {};
+      if (parentIds.length > 0) {
+        const { data: parentRows, error: parentError } = await supabase
+          .from('posts')
+          .select('id, body, author:profiles!posts_author_id_fkey(name, github_username)')
+          .in('id', parentIds);
+        if (parentError) {
+          console.warn('Fetch parent posts error', parentError);
+        } else {
+          parentMap = (parentRows || []).reduce((acc, row) => {
+            acc[row.id] = {
+              id: row.id,
+              text: row.body,
+              authorName: row.author?.name || 'Member',
+              authorGithub: row.author?.github_username || '',
+            };
+            return acc;
+          }, {});
+        }
+      }
+
       const mapped = (data || []).map((row) => {
         const vote = votesMap[row.id] || { score: 0, userVote: 0 };
         return {
@@ -319,6 +342,7 @@ function AppContent() {
           authorAvatar: row.author?.avatar_url || DEFAULT_AVATAR,
           voteScore: vote.score,
           userVote: vote.userVote,
+          quote: row.parent_post_id ? parentMap[row.parent_post_id] || null : null,
         };
       });
       setPostsByCommunity((prev) => ({ ...(prev || {}), [communityId]: mapped }));
@@ -363,7 +387,7 @@ function AppContent() {
     }
   };
 
-  const addCommunityPost = async (communityId, text) => {
+  const addCommunityPost = async (communityId, text, parentPostId = null) => {
     const body = String(text || '').trim();
     if (!body) return;
     if (!userId) {
@@ -373,8 +397,8 @@ function AppContent() {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .insert({ community_id: communityId, body, author_id: userId })
-        .select('id, body, created_at, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
+        .insert({ community_id: communityId, body, author_id: userId, parent_post_id: parentPostId || null })
+        .select('id, body, created_at, parent_post_id, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
         .single();
       if (error) {
         console.warn('Add post error', error);
@@ -388,7 +412,25 @@ function AppContent() {
         authorName: data.author?.name || 'Member',
         authorGithub: data.author?.github_username || '',
         authorAvatar: data.author?.avatar_url || DEFAULT_AVATAR,
+        voteScore: 0,
+        userVote: 0,
+        quote: null,
       };
+      if (data.parent_post_id) {
+        const { data: parentRow } = await supabase
+          .from('posts')
+          .select('id, body, author:profiles!posts_author_id_fkey(name, github_username)')
+          .eq('id', data.parent_post_id)
+          .maybeSingle();
+        if (parentRow) {
+          newPost.quote = {
+            id: parentRow.id,
+            text: parentRow.body,
+            authorName: parentRow.author?.name || 'Member',
+            authorGithub: parentRow.author?.github_username || '',
+          };
+        }
+      }
       setPostsByCommunity((prev) => {
         const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
         return { ...(prev || {}), [communityId]: [newPost, ...existing] };
@@ -508,7 +550,7 @@ function AppContent() {
             setCommunityOverlay(null);
             setActiveCommunity(null);
           }}
-          onAddPost={(text) => addCommunityPost(communityId, text)}
+          onAddPost={(text, parentId) => addCommunityPost(communityId, text, parentId)}
         />
       );
     }
