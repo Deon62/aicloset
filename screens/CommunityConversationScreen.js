@@ -47,16 +47,22 @@ export default function CommunityConversationScreen({
       .slice(0, 2)
       .map((w) => w[0]?.toUpperCase())
       .join('');
+    const avatar = String(item?.authorAvatar || '').trim();
+    const github = String(item?.authorGithub || '').trim();
 
     return (
       <View style={styles.postRow}>
         <View style={styles.postHeader}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
+            {avatar ? (
+              <Image source={{ uri: avatar }} style={styles.avatarImage} />
+            ) : (
+              <Text style={styles.avatarText}>{initials}</Text>
+            )}
           </View>
           <View style={styles.postHeaderText}>
             <Text style={styles.author}>{item?.authorName ?? 'Anonymous'}</Text>
-            <Text style={styles.meta}>{item?.meta ?? 'Member'}</Text>
+            <Text style={styles.meta}>{github ? `@${github}` : 'Member'}</Text>
           </View>
         </View>
 

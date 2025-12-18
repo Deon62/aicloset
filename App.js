@@ -45,6 +45,7 @@ function AppContent() {
   const [authScreen, setAuthScreen] = useState(null); // null | 'signup' | 'login'
   const [authBooting, setAuthBooting] = useState(true);
   const [profileVersion, setProfileVersion] = useState(0);
+  const [userId, setUserId] = useState(null);
   const [currentTab, setCurrentTab] = useState('home');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
@@ -72,10 +73,12 @@ function AppContent() {
         const session = data?.session;
         if (!mounted) return;
         setAuthScreen(session ? null : 'login');
+        setUserId(session?.user?.id || null);
       } catch (e) {
         console.warn('Failed to load auth session', e);
         if (!mounted) return;
         setAuthScreen('login');
+        setUserId(null);
       } finally {
         if (mounted) setAuthBooting(false);
       }
@@ -86,6 +89,13 @@ function AppContent() {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
       setAuthScreen(session ? null : 'login');
+      setUserId(session?.user?.id || null);
+      if (!session?.user?.id) {
+        setJoinedCommunityIds(new Set());
+        setPostsByCommunity({});
+      } else {
+        loadMemberships(session.user.id);
+      }
     });
 
     return () => {
@@ -150,32 +160,106 @@ function AppContent() {
     });
   };
 
-  const toggleJoinCommunity = (id) => {
+  const loadMemberships = async (uid) => {
+    if (!uid) return;
+    try {
+      const { data, error } = await supabase.from('community_members').select('community_id').eq('user_id', uid);
+      if (error) {
+        console.warn('Load memberships error', error);
+        return;
+      }
+      const next = new Set((data || []).map((row) => row.community_id));
+      setJoinedCommunityIds(next);
+    } catch (e) {
+      console.warn('Load memberships failed', e);
+    }
+  };
+
+  const fetchCommunityPosts = async (communityId) => {
+    if (!communityId) return;
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('id, body, created_at, author:profiles(name, github_username, avatar_url)')
+        .eq('community_id', communityId)
+        .order('created_at', { ascending: false });
+      if (error) {
+        console.warn('Fetch posts error', error);
+        return;
+      }
+      const mapped = (data || []).map((row) => ({
+        id: row.id,
+        text: row.body,
+        createdAt: new Date(row.created_at).getTime(),
+        authorName: row.author?.name || 'Member',
+        authorGithub: row.author?.github_username || '',
+        authorAvatar: row.author?.avatar_url || '',
+      }));
+      setPostsByCommunity((prev) => ({ ...(prev || {}), [communityId]: mapped }));
+    } catch (e) {
+      console.warn('Fetch posts failed', e);
+    }
+  };
+
+  const toggleJoinCommunity = async (id) => {
+    if (!userId) {
+      Alert.alert('Join community', 'Please login to join communities.');
+      return;
+    }
+    const wasJoined = joinedCommunityIds.has(id);
     setJoinedCommunityIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
+      if (wasJoined) next.delete(id);
       else next.add(id);
       return next;
     });
+    try {
+      if (wasJoined) {
+        const { error } = await supabase.from('community_members').delete().eq('community_id', id).eq('user_id', userId);
+        if (error) console.warn('Leave community error', error);
+      } else {
+        const { error } = await supabase.from('community_members').upsert({ community_id: id, user_id: userId });
+        if (error) console.warn('Join community error', error);
+      }
+    } catch (e) {
+      console.warn('Toggle join failed', e);
+    }
   };
 
-  const addCommunityPost = (communityId, text) => {
+  const addCommunityPost = async (communityId, text) => {
     const body = String(text || '').trim();
     if (!body) return;
-    setPostsByCommunity((prev) => {
-      const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
-      const nextPost = {
-        id: `${communityId}-${Date.now()}`,
-        authorName: 'You',
-        meta: 'Member',
-        text: body,
-        createdAt: Date.now(),
+    if (!userId) {
+      Alert.alert('Add post', 'Please login to post.');
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .insert({ community_id: communityId, body, author_id: userId })
+        .select('id, body, created_at, author:profiles(name, github_username, avatar_url)')
+        .single();
+      if (error) {
+        console.warn('Add post error', error);
+        Alert.alert('Post', 'Failed to add post. Try again.');
+        return;
+      }
+      const newPost = {
+        id: data.id,
+        text: data.body,
+        createdAt: new Date(data.created_at).getTime(),
+        authorName: data.author?.name || 'Member',
+        authorGithub: data.author?.github_username || '',
+        authorAvatar: data.author?.avatar_url || '',
       };
-      return {
-        ...(prev || {}),
-        [communityId]: [nextPost, ...existing],
-      };
-    });
+      setPostsByCommunity((prev) => {
+        const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
+        return { ...(prev || {}), [communityId]: [newPost, ...existing] };
+      });
+    } catch (e) {
+      console.warn('Add post failed', e);
+      Alert.alert('Post', 'Failed to add post. Try again.');
+    }
   };
 
   const postCountsByCommunity = Object.keys(postsByCommunity || {}).reduce((acc, key) => {
@@ -183,6 +267,12 @@ function AppContent() {
     acc[key] = count;
     return acc;
   }, {});
+
+  useEffect(() => {
+    if (communityOverlay === 'conversation' && activeCommunity?.id) {
+      fetchCommunityPosts(activeCommunity.id);
+    }
+  }, [communityOverlay, activeCommunity?.id]);
 
   const renderHomeStack = () => {
     if (homeOverlay === 'notifications') {
