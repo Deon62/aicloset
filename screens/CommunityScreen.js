@@ -24,7 +24,7 @@ export default function CommunityScreen({
 
         const { data, error } = await supabase
           .from('communities')
-          .select('id,label,title,description,image_url,members_count,posts_count')
+          .select('id,label,title,description,image_url,members_count,posts_count,community_members(count),posts(count)')
           .order('title', { ascending: true });
 
         if (error) {
@@ -40,8 +40,12 @@ export default function CommunityScreen({
           label: row.label,
           title: row.title,
           description: row.description,
-          members: typeof row.members_count === 'number' ? row.members_count : 0,
-          postsCount: typeof row.posts_count === 'number' ? row.posts_count : 0,
+          members:
+            row?.community_members?.[0]?.count ??
+            (typeof row.members_count === 'number' ? row.members_count : 0),
+          postsCount:
+            row?.posts?.[0]?.count ??
+            (typeof row.posts_count === 'number' ? row.posts_count : 0),
           imageUrl: row.image_url,
         }));
 
