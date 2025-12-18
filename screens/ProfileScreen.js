@@ -22,6 +22,7 @@ export default function ProfileScreen({
   onOpenSettings = () => {},
   onOpenFeedback = () => {},
   onOpenPayments = () => {},
+  onOpenStreak = () => {},
   profileVersion = 0,
 }) {
   const [photoUri, setPhotoUri] = useState('');
@@ -157,10 +158,10 @@ export default function ProfileScreen({
       <View style={styles.container}>
         <Text style={styles.title}>Profile</Text>
 
-        <View style={styles.streakBadge}>
+        <TouchableOpacity style={styles.streakBadge} activeOpacity={0.85} onPress={onOpenStreak}>
           <Text style={styles.streakEmoji}>🔥</Text>
           <Text style={styles.streakBadgeText}>{streak}</Text>
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.profileHeader}>
           <TouchableOpacity style={styles.avatarWrap} activeOpacity={0.9} onPress={() => setShowAvatarModal(true)}>

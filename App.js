@@ -32,6 +32,7 @@ import PrivacyScreen from './screens/PrivacyScreen';
 import AboutScreen from './screens/AboutScreen';
 import AccountSettingsScreen from './screens/AccountSettingsScreen';
 import NotificationSettingsScreen from './screens/NotificationSettingsScreen';
+import StreakScreen from './screens/StreakScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import PaymentsScreen from './screens/PaymentsScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -732,6 +733,9 @@ function AppContent() {
     if (profileOverlay === 'notificationSettings') {
       return <NotificationSettingsScreen onBack={() => setProfileOverlay('settings')} />;
     }
+    if (profileOverlay === 'streak') {
+      return <StreakScreen onBack={() => setProfileOverlay(null)} />;
+    }
     if (profileOverlay === 'feedback') {
       return <FeedbackScreen onBack={() => setProfileOverlay(null)} />;
     }
@@ -744,6 +748,7 @@ function AppContent() {
         onOpenSettings={() => setProfileOverlay('settings')}
         onOpenFeedback={() => setProfileOverlay('feedback')}
         onOpenPayments={() => setProfileOverlay('payments')}
+        onOpenStreak={() => setProfileOverlay('streak')}
         profileVersion={profileVersion}
         onProfileUpdated={() => {
           refreshProfileCache(userId);
@@ -885,6 +890,8 @@ function AppContent() {
           currentTab === 'profile' && profileOverlay === 'accountSettings'
         ) || (
           currentTab === 'profile' && profileOverlay === 'notificationSettings'
+        ) || (
+          currentTab === 'profile' && profileOverlay === 'streak'
         ) || (
           currentTab === 'profile' && profileOverlay === 'feedback'
         ) || (
