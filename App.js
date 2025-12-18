@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { supabase } from './lib/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -28,6 +29,8 @@ import PaymentsScreen from './screens/PaymentsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
 import BottomNavigation from './components/BottomNavigation';
+
+const DEFAULT_AVATAR = 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/avatars/female.jpg';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -90,11 +93,12 @@ function AppContent() {
       if (!mounted) return;
       setAuthScreen(session ? null : 'login');
       setUserId(session?.user?.id || null);
-      if (!session?.user?.id) {
-        setJoinedCommunityIds(new Set());
-        setPostsByCommunity({});
-      } else {
+      // reset cached membership/posts on any auth change
+      setJoinedCommunityIds(new Set());
+      setPostsByCommunity({});
+      if (session?.user?.id) {
         loadMemberships(session.user.id);
+        refreshProfileCache(session.user.id);
       }
     });
 
@@ -175,12 +179,35 @@ function AppContent() {
     }
   };
 
+  const refreshProfileCache = async (uid) => {
+    if (!uid) return;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('github_username,name,course,year,avatar_url')
+        .eq('id', uid)
+        .single();
+      if (error) return;
+      await AsyncStorage.multiSet([
+        ['@profile_github', String(data?.github_username || '').trim()],
+        ['@profile_name', String(data?.name || '').trim()],
+        ['@profile_course', String(data?.course || '').trim()],
+        ['@profile_year', String(data?.year || '').trim()],
+        ['@profile_bio', ''],
+        ['@profile_photo_uri', String(data?.avatar_url || '').trim()],
+      ]);
+      setProfileVersion((v) => v + 1);
+    } catch (e) {
+      console.warn('Refresh profile cache failed', e);
+    }
+  };
+
   const fetchCommunityPosts = async (communityId) => {
     if (!communityId) return;
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, body, created_at, author:profiles(name, github_username, avatar_url)')
+        .select('id, body, created_at, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
         .eq('community_id', communityId)
         .order('created_at', { ascending: false });
       if (error) {
@@ -193,7 +220,7 @@ function AppContent() {
         createdAt: new Date(row.created_at).getTime(),
         authorName: row.author?.name || 'Member',
         authorGithub: row.author?.github_username || '',
-        authorAvatar: row.author?.avatar_url || '',
+        authorAvatar: row.author?.avatar_url || DEFAULT_AVATAR,
       }));
       setPostsByCommunity((prev) => ({ ...(prev || {}), [communityId]: mapped }));
     } catch (e) {
@@ -237,7 +264,7 @@ function AppContent() {
       const { data, error } = await supabase
         .from('posts')
         .insert({ community_id: communityId, body, author_id: userId })
-        .select('id, body, created_at, author:profiles(name, github_username, avatar_url)')
+        .select('id, body, created_at, author:profiles!posts_author_id_fkey(name, github_username, avatar_url)')
         .single();
       if (error) {
         console.warn('Add post error', error);
@@ -250,7 +277,7 @@ function AppContent() {
         createdAt: new Date(data.created_at).getTime(),
         authorName: data.author?.name || 'Member',
         authorGithub: data.author?.github_username || '',
-        authorAvatar: data.author?.avatar_url || '',
+        authorAvatar: data.author?.avatar_url || DEFAULT_AVATAR,
       };
       setPostsByCommunity((prev) => {
         const existing = Array.isArray(prev?.[communityId]) ? prev[communityId] : [];
@@ -405,6 +432,10 @@ function AppContent() {
         onOpenSettings={() => setProfileOverlay('settings')}
         onOpenFeedback={() => setProfileOverlay('feedback')}
         onOpenPayments={() => setProfileOverlay('payments')}
+        onProfileUpdated={() => {
+          refreshProfileCache(userId);
+          setPostsByCommunity({});
+        }}
         onLogout={() => {
           setCurrentTab('home');
           setShowLanding(false);

@@ -76,7 +76,7 @@ export default function HomeScreen({
               <Ionicons name="notifications-outline" size={26} color={DARK} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Hello {name || MOCK_NAME}</Text>
+          <Text style={styles.title}>Hello {name || MOCK_NAME} 🖐</Text>
           <Text style={styles.subtitle}>welcome to Egerton University Computer Science Student Association Club</Text>
         </View>
 

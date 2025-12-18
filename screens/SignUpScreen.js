@@ -208,6 +208,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
       }
 
       if (userId) {
+        const defaultAvatar = PRESET_AVATARS[0];
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
@@ -215,6 +216,7 @@ export default function SignUpScreen({ onDone = () => {}, onNeedLogin = () => {}
             name: n,
             course: c,
             year: y,
+            avatar_url: defaultAvatar,
           })
           .eq('id', userId);
 
