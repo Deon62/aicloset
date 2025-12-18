@@ -935,20 +935,31 @@ function AppContent() {
           setPostsByCommunity({});
         }}
         onLogout={() => {
-          setCurrentTab('home');
-          setShowLanding(false);
-          setShowOnboarding(false);
-          setShowPastEvents(false);
-          setActiveEvent(null);
-          setHomeOverlay(null);
-          setHomeOverlayMounted(null);
-          homeOverlayAnim.setValue(0);
-          setShopOverlay(null);
-          setActiveProduct(null);
-          setCommunityOverlay(null);
-          setActiveCommunity(null);
-          setProfileOverlay(null);
-          supabase.auth.signOut();
+          (async () => {
+            // Immediately move to login so we don't briefly render the Home UI while signOut completes.
+            setAuthScreen('login');
+            setUserId(null);
+
+            setCurrentTab('home');
+            setShowLanding(false);
+            setShowOnboarding(false);
+            setShowPastEvents(false);
+            setActiveEvent(null);
+            setHomeOverlay(null);
+            setHomeOverlayMounted(null);
+            homeOverlayAnim.setValue(0);
+            setShopOverlay(null);
+            setActiveProduct(null);
+            setCommunityOverlay(null);
+            setActiveCommunity(null);
+            setProfileOverlay(null);
+
+            try {
+              await supabase.auth.signOut();
+            } catch (e) {
+              console.warn('Failed to sign out', e);
+            }
+          })();
         }}
       />
     );

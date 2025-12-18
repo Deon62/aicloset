@@ -207,7 +207,7 @@ export default function ProfileScreen({
           disabled={saving}
         >
           <Text style={styles.logoutLabel}>{saving ? 'Saving...' : 'Logout'}</Text>
-          <Ionicons name="log-out-outline" size={18} color="#D11A2A" />
+          <Ionicons name="log-out-outline" size={18} color="#FF2D55" />
         </TouchableOpacity>
 
         <Modal
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   logoutLabel: {
-    color: '#D11A2A',
+    color: '#FF2D55',
     fontSize: 16,
     fontFamily: 'Nunito_700Bold',
   },
@@ -489,10 +489,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   modalBtnDanger: {
-    backgroundColor: '#F9E5E7',
+    backgroundColor: '#FF2D55',
+    borderColor: '#FF2D55',
   },
   modalBtnDangerText: {
-    color: '#0B0B0F',
+    color: '#FFFFFF',
   },
   modalBtnClose: {
     marginTop: 12,
