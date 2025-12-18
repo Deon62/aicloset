@@ -4,21 +4,39 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import LoginSvg from '../assets/icons/login.svg';
+import { supabase } from '../lib/supabase';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
 
-const STORAGE_KEYS = {
-  hasAccount: '@auth_has_account',
-  loggedIn: '@auth_logged_in',
-  password: '@auth_password',
-};
-
 export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {} }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [attempted, setAttempted] = useState(false);
+
+  const isValidEmail = (value) => {
+    const v = String(value || '').trim().toLowerCase();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  };
+
+  const syncProfileToLocal = async (userId) => {
+    try {
+      const { data, error } = await supabase.from('profiles').select('github_username,name,course,year').eq('id', userId).single();
+      if (error) return;
+
+      await AsyncStorage.multiSet([
+        ['@profile_github', String(data?.github_username || '').trim()],
+        ['@profile_name', String(data?.name || '').trim()],
+        ['@profile_course', String(data?.course || '').trim()],
+        ['@profile_year', String(data?.year || '').trim()],
+        ['@profile_bio', ''],
+      ]);
+    } catch (e) {
+      console.warn('Failed to sync profile', e);
+    }
+  };
 
   const passwordError = useMemo(() => {
     if (!attempted) return '';
@@ -26,40 +44,42 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
     return '';
   }, [attempted, password]);
 
+  const usernameError = useMemo(() => {
+    if (!attempted) return '';
+    const v = String(email || '').trim();
+    if (!v) return 'Email is required.';
+    if (!isValidEmail(v)) return 'Enter a valid email address.';
+    return '';
+  }, [attempted, email]);
+
   const canSubmit = useMemo(() => {
     if (loading) return false;
-    return Boolean(String(password || '').trim());
-  }, [loading, password]);
+    return Boolean(isValidEmail(email) && String(password || '').trim());
+  }, [email, loading, password]);
 
   const login = async () => {
     setAttempted(true);
+    const em = String(email || '').trim().toLowerCase();
     const pwd = String(password || '').trim();
-    if (!pwd) return;
+    if (!em || !isValidEmail(em) || !pwd) return;
 
     try {
       setLoading(true);
-      const entries = await AsyncStorage.multiGet([STORAGE_KEYS.hasAccount, STORAGE_KEYS.password]);
-      const map = Object.fromEntries(entries);
-      const hasAccount = map[STORAGE_KEYS.hasAccount] === '1';
-      const savedPassword = String(map[STORAGE_KEYS.password] || '');
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: em,
+        password: pwd,
+      });
 
-      if (!hasAccount) {
-        Alert.alert('Login', 'No account found on this device. Please sign up.');
-        onNeedSignUp();
+      if (error) {
+        Alert.alert('Login failed', 'Invalid username or password.');
         return;
       }
 
-      if (!savedPassword) {
-        Alert.alert('Login', 'No password is set for this account yet. Please sign up again or set a password before logging out.');
-        return;
+      const userId = data?.user?.id;
+      if (userId) {
+        await syncProfileToLocal(userId);
       }
 
-      if (savedPassword !== pwd) {
-        Alert.alert('Login failed', 'Incorrect password.');
-        return;
-      }
-
-      await AsyncStorage.setItem(STORAGE_KEYS.loggedIn, '1');
       onDone();
     } catch (e) {
       console.warn('Failed to login', e);
@@ -76,6 +96,22 @@ export default function LoginScreen({ onDone = () => {}, onNeedSignUp = () => {}
           <Text style={styles.pageTitle}>Login</Text>
           <View style={styles.illustrationWrap}>
             <LoginSvg width={260} height={260} />
+          </View>
+
+          <View style={styles.fieldWrap}>
+            <Text style={styles.fieldLabel}>Email</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="you@example.com"
+              placeholderTextColor="#8A8A8A"
+              style={styles.input}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              editable={!loading}
+            />
+            {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
           </View>
 
           <View style={styles.fieldWrap}>

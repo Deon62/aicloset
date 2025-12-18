@@ -86,7 +86,7 @@ export default function HomeScreen({
               <Text style={styles.profileName}>{name || MOCK_NAME}</Text>
               <Text style={styles.profileCourse}>{course || MOCK_COURSE}</Text>
               <Text style={styles.profileYear}>{year || MOCK_YEAR}</Text>
-              <Text style={styles.profileBio}>{bio || MOCK_BIO}</Text>
+              {bio ? <Text style={styles.profileBio}>{bio}</Text> : null}
 
               <View style={styles.githubRow}>
                 <Ionicons name="logo-github" size={16} color={DARK} />
