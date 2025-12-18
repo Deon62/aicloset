@@ -15,6 +15,8 @@ import HomeScreen from './screens/HomeScreen';
 import CardsScreen from './screens/CardsScreen';
 import JobsScreen from './screens/JobsScreen';
 import ResourcesScreen from './screens/ResourcesScreen';
+import ProjectsScreen from './screens/ProjectsScreen';
+import StartupsScreen from './screens/StartupsScreen';
 import EventsScreen from './screens/EventsScreen';
 import PastEventsScreen from './screens/PastEventsScreen';
 import EventDetailsScreen from './screens/EventDetailsScreen';
@@ -581,6 +583,12 @@ function AppContent() {
     if (homeOverlay === 'resources') {
       return <ResourcesScreen onBack={() => setHomeOverlay(null)} />;
     }
+    if (homeOverlay === 'projects') {
+      return <ProjectsScreen onBack={() => setHomeOverlay(null)} />;
+    }
+    if (homeOverlay === 'startups') {
+      return <StartupsScreen onBack={() => setHomeOverlay(null)} />;
+    }
     return (
       <HomeScreen
         loading={profileLoading}
@@ -588,6 +596,8 @@ function AppContent() {
         onOpenCards={() => setHomeOverlay('cards')}
         onOpenJobs={() => setHomeOverlay('jobs')}
         onOpenResources={() => setHomeOverlay('resources')}
+        onOpenProjects={() => setHomeOverlay('projects')}
+        onOpenStartups={() => setHomeOverlay('startups')}
         onRefresh={async () => {
           await refreshProfileCache(userId);
         }}
@@ -882,6 +892,10 @@ function AppContent() {
           currentTab === 'home' && homeOverlay === 'jobs'
         ) || (
           currentTab === 'home' && homeOverlay === 'resources'
+        ) || (
+          currentTab === 'home' && homeOverlay === 'projects'
+        ) || (
+          currentTab === 'home' && homeOverlay === 'startups'
         ) || (
           currentTab === 'events' && showPastEvents
         ) || (

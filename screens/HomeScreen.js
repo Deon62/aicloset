@@ -36,6 +36,8 @@ export default function HomeScreen({
   onOpenCards = () => {},
   onOpenJobs = () => {},
   onOpenResources = () => {},
+  onOpenProjects = () => {},
+  onOpenStartups = () => {},
   onRefresh = async () => {},
   profileVersion = 0,
 }) {
@@ -248,7 +250,7 @@ export default function HomeScreen({
             <Text style={styles.extrasLabel}>Resources</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Projects', 'Coming soon.')}
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="code-slash-outline" size={22} color={DARK} />
@@ -256,7 +258,7 @@ export default function HomeScreen({
             <Text style={styles.extrasLabel}>Projects</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={() => Alert.alert('Startups', 'Coming soon.')}
+          <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}
           >
             <View style={styles.extrasIconWrap}>
               <Ionicons name="bulb-outline" size={22} color={DARK} />
