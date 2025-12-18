@@ -1,90 +1,13 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+
+import StartupsIcon from '../assets/icons/startups.svg';
 
 const DARK = '#0B0B0F';
 
 export default function StartupsScreen({ onBack = () => {} }) {
-  const startups = useMemo(
-    () => [
-      {
-        id: 'startup-1',
-        name: 'CampusPay',
-        category: 'FinTech',
-        founder: 'Amina K.',
-        link: 'https://example.com',
-      },
-      {
-        id: 'startup-2',
-        name: 'FoodLoop',
-        category: 'Food & Delivery',
-        founder: 'Brian M.',
-        link: 'https://example.com',
-      },
-      {
-        id: 'startup-3',
-        name: 'StudyBuddy',
-        category: 'EdTech',
-        founder: 'Faith N.',
-        link: 'https://example.com',
-      },
-      {
-        id: 'startup-4',
-        name: 'HostelHub',
-        category: 'PropTech',
-        founder: 'Kevin O.',
-        link: 'https://example.com',
-      },
-    ],
-    []
-  );
-
-  const openLink = async (url) => {
-    try {
-      if (!url) {
-        Alert.alert('Missing link', 'This startup does not have a link yet.');
-        return;
-      }
-      const can = await Linking.canOpenURL(url);
-      if (!can) {
-        Alert.alert('Invalid link', 'Cannot open this link on your device.');
-        return;
-      }
-      await Linking.openURL(url);
-    } catch (e) {
-      Alert.alert('Failed to open', 'Please try again.');
-    }
-  };
-
-  const renderItem = ({ item }) => {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.name} numberOfLines={1}>
-          {item.name}
-        </Text>
-
-        <View style={styles.metaBlock}>
-          <Text style={styles.metaLine} numberOfLines={1}>
-            <Text style={styles.metaLabel}>Category: </Text>
-            {item.category}
-          </Text>
-          <Text style={styles.metaLine} numberOfLines={1}>
-            <Text style={styles.metaLabel}>Founder: </Text>
-            {item.founder}
-          </Text>
-        </View>
-
-        <TouchableOpacity style={styles.linkBtn} activeOpacity={0.85} onPress={() => openLink(item.link)}>
-          <Ionicons name="link-outline" size={16} color={DARK} />
-          <Text style={styles.linkText} numberOfLines={1}>
-            {item.link}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -96,14 +19,11 @@ export default function StartupsScreen({ onBack = () => {} }) {
           <View style={styles.headerSpacer} />
         </View>
 
-        <FlatList
-          data={startups}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
+        <View style={styles.emptyWrap}>
+          <StartupsIcon width={240} height={180} />
+          <Text style={styles.emptyTitle}>No startups yet</Text>
+          <Text style={styles.emptyText}>Startups will show up here once they are shared by members.</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -144,55 +64,25 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  listContent: {
+  emptyWrap: {
+    flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 8,
     paddingBottom: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  separator: {
-    height: 12,
-  },
-  card: {
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 16,
-    padding: 14,
-    backgroundColor: '#FFFFFF',
-    gap: 10,
-  },
-  name: {
+  emptyTitle: {
+    marginTop: 14,
     color: DARK,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Nunito_700Bold',
   },
-  metaBlock: {
-    gap: 4,
-  },
-  metaLine: {
+  emptyText: {
+    marginTop: 8,
     color: '#4A4A4A',
     fontSize: 13,
     lineHeight: 18,
-    fontFamily: 'Nunito_600SemiBold',
-  },
-  metaLabel: {
-    color: DARK,
-    fontFamily: 'Nunito_700Bold',
-  },
-  linkBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    backgroundColor: '#FFFFFF',
-  },
-  linkText: {
-    flex: 1,
-    color: '#4A4A4A',
-    fontSize: 13,
+    textAlign: 'center',
     fontFamily: 'Nunito_600SemiBold',
   },
 });
