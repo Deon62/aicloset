@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 
@@ -13,6 +13,9 @@ export default function CommunityScreen({
 
   const [communities, setCommunities] = useState([]);
   const [loadError, setLoadError] = useState('');
+  const skeletonPulse = useRef(new Animated.Value(0)).current;
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const skeletonLoopRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -63,10 +66,27 @@ export default function CommunityScreen({
 
     load();
 
+    skeletonLoopRef.current = Animated.loop(
+      Animated.sequence([
+        Animated.timing(skeletonPulse, { toValue: 1, duration: 640, useNativeDriver: true }),
+        Animated.timing(skeletonPulse, { toValue: 0, duration: 640, useNativeDriver: true }),
+      ])
+    );
+    skeletonLoopRef.current.start();
+
     return () => {
       mounted = false;
+      skeletonLoopRef.current?.stop?.();
     };
-  }, []);
+  }, [skeletonPulse]);
+
+  useEffect(() => {
+    if (loading) {
+      contentOpacity.setValue(0);
+      return;
+    }
+    Animated.timing(contentOpacity, { toValue: 1, duration: 220, easing: undefined, useNativeDriver: true }).start();
+  }, [loading, contentOpacity]);
 
   const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ id: `skeleton-${i}` })), []);
 
@@ -83,16 +103,16 @@ export default function CommunityScreen({
             ? skeletons.map((s) => (
                 <View key={s.id} style={styles.row}>
                   <View style={styles.rowTop}>
-                    <View style={[styles.avatar, styles.skeletonBlock]} />
+                    <Animated.View style={[styles.avatar, styles.skeletonBlock, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
 
                     <View style={styles.cardMain}>
-                      <View style={[styles.skeletonLine, styles.skeletonLineTitle]} />
-                      <View style={[styles.skeletonLine, styles.skeletonLineBody]} />
-                      <View style={[styles.skeletonLine, styles.skeletonLineBodyShort]} />
-                      <View style={[styles.skeletonLine, styles.skeletonLineMeta]} />
+                      <Animated.View style={[styles.skeletonLine, styles.skeletonLineTitle, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
+                      <Animated.View style={[styles.skeletonLine, styles.skeletonLineBody, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
+                      <Animated.View style={[styles.skeletonLine, styles.skeletonLineBodyShort, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
+                      <Animated.View style={[styles.skeletonLine, styles.skeletonLineMeta, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
                     </View>
 
-                    <View style={[styles.skeletonPill]} />
+                    <Animated.View style={[styles.skeletonPill, { opacity: skeletonPulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }]} />
                   </View>
                 </View>
               ))
@@ -103,39 +123,40 @@ export default function CommunityScreen({
             const postCount = localPostCount !== null ? localPostCount : (Number.isFinite(c.postsCount) ? c.postsCount : 0);
 
             return (
-              <TouchableOpacity
-                key={c.id}
-                style={[styles.row, isLast && styles.rowLast]}
-                activeOpacity={0.9}
-                onPress={() => onOpenCommunity(c)}
-              >
-                <View style={styles.rowTop}>
-                  <View style={styles.avatar}>
-                    <Image source={{ uri: c.imageUrl }} style={styles.avatarImage} />
-                  </View>
+              <Animated.View key={c.id} style={{ opacity: contentOpacity }}>
+                <TouchableOpacity
+                  style={[styles.row, isLast && styles.rowLast]}
+                  activeOpacity={0.9}
+                  onPress={() => onOpenCommunity(c)}
+                >
+                  <View style={styles.rowTop}>
+                    <View style={styles.avatar}>
+                      <Image source={{ uri: c.imageUrl }} style={styles.avatarImage} />
+                    </View>
 
-                  <View style={styles.cardMain}>
-                    <Text style={styles.communityTitle}>{c.title}</Text>
-                    <Text style={styles.communityDescription}>{c.description}</Text>
-                    <Text style={styles.memberText}>
-                      {c.members} members • {postCount} posts
-                    </Text>
-                  </View>
+                    <View style={styles.cardMain}>
+                      <Text style={styles.communityTitle}>{c.title}</Text>
+                      <Text style={styles.communityDescription}>{c.description}</Text>
+                      <Text style={styles.memberText}>
+                        {c.members} members • {postCount} posts
+                      </Text>
+                    </View>
 
-                  <TouchableOpacity
-                    style={[styles.joinChip, isJoined && styles.joinChipJoined]}
-                    activeOpacity={0.9}
-                    onPress={(e) => {
-                      e?.stopPropagation?.();
-                      onToggleJoin(c.id);
-                    }}
-                  >
-                    <Text style={[styles.joinChipText, isJoined && styles.joinChipTextJoined]}>
-                      {isJoined ? 'Joined' : 'Join'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.joinChip, isJoined && styles.joinChipJoined]}
+                      activeOpacity={0.9}
+                      onPress={(e) => {
+                        e?.stopPropagation?.();
+                        onToggleJoin(c.id);
+                      }}
+                    >
+                      <Text style={[styles.joinChipText, isJoined && styles.joinChipTextJoined]}>
+                        {isJoined ? 'Joined' : 'Join'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
             );
           })}
         </View>
