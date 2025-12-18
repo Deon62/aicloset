@@ -525,6 +525,13 @@ const styles = StyleSheet.create({
   eventCard: {
     padding: 0,
     overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E9EEFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 10,
   },
   eventRow: {
     flexDirection: 'row',
