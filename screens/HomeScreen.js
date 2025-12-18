@@ -330,7 +330,7 @@ export default function HomeScreen({
         </View>
 
         <View style={styles.extrasSection}>
-          <Text style={styles.sectionLabel}>Extras</Text>
+          <Text style={styles.sectionLabel}>Extra links</Text>
 
           {/* <Text style={styles.sectionTitle}>Extras</Text> */}
 
