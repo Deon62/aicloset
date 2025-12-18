@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,6 +34,7 @@ export default function HomeScreen({
   onOpenNotifications = () => {},
   onOpenProfile = () => {},
   onOpenCards = () => {},
+  onRefresh = async () => {},
   profileVersion = 0,
 }) {
   const [photoUri, setPhotoUri] = useState('');
@@ -44,6 +45,7 @@ export default function HomeScreen({
   const [showPoints, setShowPoints] = useState(true);
   const [points, setPoints] = useState(0);
   const [github, setGithub] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -106,7 +108,25 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              try {
+                setRefreshing(true);
+                await onRefresh();
+              } finally {
+                setRefreshing(false);
+              }
+            }}
+            tintColor={BRAND_BLUE}
+          />
+        }
+      >
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
             <View style={styles.logosRow}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, RefreshControl } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,7 @@ export default function CommunityScreen({
   postCounts = {},
 }) {
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [communities, setCommunities] = useState([]);
   const [loadError, setLoadError] = useState('');
@@ -18,54 +19,53 @@ export default function CommunityScreen({
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const skeletonLoopRef = useRef(null);
 
+  const load = async (mode = 'initial') => {
+    try {
+      if (mode === 'refresh') setRefreshing(true);
+      else setLoading(true);
+      setLoadError('');
+
+      const { data, error } = await supabase
+        .from('communities')
+        .select('id,label,title,description,image_url,members_count,posts_count,community_members(count),posts(count)')
+        .order('title', { ascending: true });
+
+      if (error) {
+        console.warn('Failed to load communities', error);
+        setLoadError(error.message || 'Failed to load communities');
+        setCommunities([]);
+        return;
+      }
+
+      const mapped = (Array.isArray(data) ? data : []).map((row) => ({
+        id: row.id,
+        label: row.label,
+        title: row.title,
+        description: row.description,
+        members:
+          row?.community_members?.[0]?.count ??
+          (typeof row.members_count === 'number' ? row.members_count : 0),
+        postsCount:
+          row?.posts?.[0]?.count ??
+          (typeof row.posts_count === 'number' ? row.posts_count : 0),
+        imageUrl: row.image_url,
+      }));
+
+      setCommunities(mapped);
+    } catch (e) {
+      console.warn('Failed to load communities', e);
+      setLoadError('Failed to load communities');
+      setCommunities([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
-    const load = async () => {
-      try {
-        setLoading(true);
-        setLoadError('');
-
-        const { data, error } = await supabase
-          .from('communities')
-          .select('id,label,title,description,image_url,members_count,posts_count,community_members(count),posts(count)')
-          .order('title', { ascending: true });
-
-        if (error) {
-          console.warn('Failed to load communities', error);
-          if (!mounted) return;
-          setLoadError(error.message || 'Failed to load communities');
-          setCommunities([]);
-          return;
-        }
-
-        const mapped = (Array.isArray(data) ? data : []).map((row) => ({
-          id: row.id,
-          label: row.label,
-          title: row.title,
-          description: row.description,
-          members:
-            row?.community_members?.[0]?.count ??
-            (typeof row.members_count === 'number' ? row.members_count : 0),
-          postsCount:
-            row?.posts?.[0]?.count ??
-            (typeof row.posts_count === 'number' ? row.posts_count : 0),
-          imageUrl: row.image_url,
-        }));
-
-        if (!mounted) return;
-        setCommunities(mapped);
-      } catch (e) {
-        console.warn('Failed to load communities', e);
-        if (!mounted) return;
-        setLoadError('Failed to load communities');
-        setCommunities([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    load();
+    load('initial');
 
     skeletonLoopRef.current = Animated.loop(
       Animated.sequence([
@@ -93,7 +93,12 @@ export default function CommunityScreen({
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load('refresh')} />}
+      >
         <Text style={styles.title}>Community</Text>
         <Text style={styles.subtitle}>Choose a track and join the discussion.</Text>
 

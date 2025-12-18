@@ -548,6 +548,9 @@ function AppContent() {
         loading={profileLoading}
         onOpenNotifications={() => setHomeOverlay('notifications')}
         onOpenCards={() => setHomeOverlay('cards')}
+        onRefresh={async () => {
+          await refreshProfileCache(userId);
+        }}
         profileVersion={profileVersion}
         onOpenProfile={() => {
           setCurrentTab('profile');
