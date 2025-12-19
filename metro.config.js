@@ -9,7 +9,7 @@ config.transformer = {
 
 config.resolver = {
   ...config.resolver,
-  assetExts: config.resolver.assetExts.filter((ext) => ext !== 'svg'),
+  assetExts: Array.from(new Set([...config.resolver.assetExts.filter((ext) => ext !== 'svg'), 'docx', 'pdf'])),
   sourceExts: [...config.resolver.sourceExts, 'svg'],
 };
 

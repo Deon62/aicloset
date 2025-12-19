@@ -48,7 +48,8 @@
     },
     "sdkVersion": "54.0.0",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-asset"
     ],
     "extra": {
       "eas": {

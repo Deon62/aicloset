@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
 
@@ -8,6 +8,17 @@ const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
 
 export default function AboutScreen({ onBack = () => {} }) {
+  const openDeon = async () => {
+    const url = 'https://deonhq.xyz';
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (!canOpen) return;
+      await Linking.openURL(url);
+    } catch (e) {
+      // ignore
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerBar}>
@@ -20,14 +31,19 @@ export default function AboutScreen({ onBack = () => {} }) {
 
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          <Text style={styles.lead}>EUCOSSA App</Text>
+          <Text style={styles.lead}>Eucossa App</Text>
           <Text style={styles.body}>Connecting Egerton University computer science students with communities, events, and club merch.</Text>
           <Text style={styles.body}>Version 1.0 · Built for smoother onboarding, community discussions, and event access.</Text>
         </View>
 
         <View style={styles.card}>
           <Text style={styles.lead}>Credits</Text>
-          <Text style={styles.body}>Design & Engineering by the EUCOSSA team.</Text>
+          <Text style={styles.body}>
+            Design & tested by the Eucossa 2025/2026 exec team. engineered by{' '}
+            <Text style={styles.link} onPress={openDeon}>
+              https://deonhq.xyz
+            </Text>
+          </Text>
           <Text style={styles.body}>Feedback or ideas? Reach out via the Help page.</Text>
         </View>
       </ScrollView>
@@ -68,4 +84,9 @@ const styles = StyleSheet.create({
   },
   lead: { ...TYPE.section },
   body: { ...TYPE.body },
+  link: {
+    color: COLORS.brand,
+    fontFamily: 'Nunito_700Bold',
+    textDecorationLine: 'underline',
+  },
 });

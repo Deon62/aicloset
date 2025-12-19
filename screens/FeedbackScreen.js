@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Linking, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
@@ -19,21 +19,40 @@ export default function FeedbackScreen({ onBack = () => {} }) {
       return;
     }
 
-    const url = `mailto:eucossake@gmail.com?subject=${encodeURIComponent('EUCOSSA App Feedback')}&body=${encodeURIComponent(body)}`;
-
     try {
       setSending(true);
-      const canOpen = await Linking.canOpenURL(url);
-      if (!canOpen) {
-        Alert.alert('Feedback', 'Email app not available on this device.');
+
+      const res = await fetch('https://formspree.io/f/xbdrljor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'feedback',
+          message: body,
+          submitted_at: new Date().toISOString(),
+          _subject: 'EUCOSSA App - Feedback',
+        }),
+      });
+
+      if (!res.ok) {
+        let msg = 'Failed to send feedback.';
+        try {
+          const j = await res.json();
+          if (j?.errors?.[0]?.message) msg = j.errors[0].message;
+        } catch (e) {
+          // ignore
+        }
+        Alert.alert('Feedback', msg);
         return;
       }
-      await Linking.openURL(url);
-      Alert.alert('Feedback', 'Thanks! Your email app is ready to send.');
+
+      Alert.alert('Feedback', 'Thanks! Your feedback was sent.');
       setText('');
       onBack();
     } catch (e) {
-      Alert.alert('Feedback', 'Failed to open email app.');
+      Alert.alert('Feedback', 'Network error. Please try again.');
     } finally {
       setSending(false);
     }
@@ -69,7 +88,7 @@ export default function FeedbackScreen({ onBack = () => {} }) {
 
           <View style={[styles.footer, { paddingBottom: (insets.bottom || 0) + 12 }]}>
             <TouchableOpacity style={styles.sendBtn} activeOpacity={0.9} onPress={send} disabled={sending}>
-              <Text style={styles.sendText}>{sending ? 'Opening…' : 'Send'}</Text>
+              <Text style={styles.sendText}>{sending ? 'Sending…' : 'Send'}</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
