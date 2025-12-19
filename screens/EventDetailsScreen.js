@@ -30,6 +30,19 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
   const [mapOpen, setMapOpen] = useState(false);
   const scrollRef = useRef(null);
 
+  
+
+  const descriptionNode = useMemo(() => {
+    const cleanBase = String(event?.description || '')
+      .replace(/(^|\n)\s*[-•]\s*/g, '$1')
+      .replace(/—/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!cleanBase) return null;
+    return cleanBase;
+  }, [event]);
+
   useEffect(() => {
     const run = async () => {
       if (!mapOpen) return;
@@ -166,7 +179,7 @@ export default function EventDetailsScreen({ event, onBack = () => {}, onRegiste
 
           <View style={styles.detailsSection}>
             <Text style={styles.title}>{event?.title || 'Event'}</Text>
-            {event?.description ? <Text style={styles.description}>{event.description}</Text> : null}
+            {descriptionNode ? <Text style={styles.description}>{descriptionNode}</Text> : null}
 
             <View style={styles.metaList}>
               {event?.date ? (
@@ -364,6 +377,10 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontFamily: 'Nunito_400Regular',
   },
+  descriptionStrong: {
+    fontFamily: 'Nunito_700Bold',
+    color: '#0B0B0F',
+  },
   venueHint: {
     color: '#4A4A4A',
     fontSize: 13,
@@ -379,9 +396,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   metaText: {
-    color: '#5A5A5A',
+    color: '#0B0B0F',
     fontSize: 13,
-    fontFamily: 'Nunito_600SemiBold',
+    fontFamily: 'Nunito_700Bold',
   },
   requirementsList: {
     gap: 8,

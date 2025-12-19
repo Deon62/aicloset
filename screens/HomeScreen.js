@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { RESOURCES } from './ResourcesScreen';
 import { MINI_CLUBS } from './JobsScreen';
 import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
+import { supabase } from '../lib/supabase';
+import { normalizeEventRow } from '../lib/events';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -26,14 +28,6 @@ const MOCK_YEAR = 'Year 2';
 const MOCK_BIO = 'Interested in building web apps and joining hackathons.';
 const MOCK_GITHUB = 'deon62';
 
-const EVENT_TITLE = 'Hack Egerton';
-const EVENT_DESCRIPTION =
-  'A hybrid innovation sprint focused on AI, blockchain, and hardware. Virtual phase runs Jan 1–Feb 25 (mentorship + online challenges), with an in-person finale Feb 26–28 at Arc Hotel, Egerton.';
-const EVENT_DATE = 'Jan 1st – Feb 28th';
-const EVENT_LOCATION = 'Arc Hotel, Egerton';
-const EVENT_PRICE = 'KSh 300';
-const EVENT_POSTER = 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png';
-
 export default function HomeScreen({
   loading = false,
   onOpenNotifications = () => {},
@@ -43,6 +37,7 @@ export default function HomeScreen({
   onOpenResources = () => {},
   onOpenProjects = () => {},
   onOpenStartups = () => {},
+  onOpenEvent = null,
   onOpenEvents = () => {
     Alert.alert('Event', 'Coming soon.');
   },
@@ -64,6 +59,10 @@ export default function HomeScreen({
   const [showPoints, setShowPoints] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [profileBooted, setProfileBooted] = useState(false);
+
+  const [featuredEvent, setFeaturedEvent] = useState(null);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
+  const [featuredError, setFeaturedError] = useState('');
 
   const resourcesCount = RESOURCES.length;
   const resourcesBadgeText = resourcesCount > 99 ? '99+' : String(resourcesCount);
@@ -107,6 +106,41 @@ export default function HomeScreen({
       mounted = false;
     };
   }, [profileVersion]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadFeatured = async () => {
+      try {
+        setFeaturedLoading(true);
+        setFeaturedError('');
+
+        const { data, error } = await supabase
+          .from('events')
+          .select('id, slug, title, summary, description, date_label, start_at, end_at, location, venue_hint, price_label, currency, price_amount, image, images, requirements, status, is_featured')
+          .eq('status', 'published')
+          .order('is_featured', { ascending: false })
+          .order('start_at', { ascending: true })
+          .limit(1);
+
+        if (error) throw error;
+
+        const row = Array.isArray(data) ? data[0] : null;
+        const ev = row ? normalizeEventRow(row) : null;
+        if (mounted) setFeaturedEvent(ev);
+      } catch (e) {
+        console.warn('Failed to load featured event', e);
+        if (mounted) setFeaturedError('Failed to load featured event.');
+      } finally {
+        if (mounted) setFeaturedLoading(false);
+      }
+    };
+
+    loadFeatured();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   if (loading || !profileBooted) {
     return (
@@ -284,57 +318,102 @@ export default function HomeScreen({
 
         {/* <Text style={styles.sectionTitle}>Featured event</Text> */}
 
-        <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
-          <View style={styles.eventRow}>
-            <View style={styles.eventPosterWrap}>
-              <Image source={{ uri: EVENT_POSTER }} style={styles.eventPosterBlur} resizeMode="cover" blurRadius={14} />
-              <Image source={{ uri: EVENT_POSTER }} style={styles.eventPoster} resizeMode="contain" />
-              <LinearGradient
-                pointerEvents="none"
-                colors={['rgba(246,247,251,0.28)', 'rgba(27,86,253,0.16)']}
-                locations={[0, 1]}
-                start={{ x: 0.2, y: 0.2 }}
-                end={{ x: 0.95, y: 0.95 }}
-                style={styles.eventPosterOverlay}
-              />
-            </View>
-            <View style={styles.eventMain}>
-              <View style={styles.eventTitleRow}>
-                <Text style={styles.cardHeadline} numberOfLines={1}>
-                  {EVENT_TITLE}
-                </Text>
-                <View style={styles.upcomingTag}>
-                  <Text style={styles.upcomingTagText}>Upcoming</Text>
-                </View>
-              </View>
+        {featuredError ? <Text style={styles.headerSubtitle}>{featuredError}</Text> : null}
 
-              <View style={styles.eventMetaList}>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText} numberOfLines={2}>
-                    {EVENT_DATE}
-                  </Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="location-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText} numberOfLines={1}>
-                    {EVENT_LOCATION}
-                  </Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText} numberOfLines={1}>
-                    {EVENT_PRICE}
-                  </Text>
-                </View>
+        {featuredLoading ? (
+          <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
+            <View style={styles.eventRow}>
+              <View style={[styles.skeletonBlock, { width: 120, height: '100%' }]} />
+              <View style={{ flex: 1, gap: 10, paddingVertical: 12, paddingRight: 14 }}>
+                <View style={[styles.skeletonBlock, { height: 14, width: 120 }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: 160 }]} />
+                <View style={[styles.skeletonBlock, { height: 12, width: 120 }]} />
               </View>
-
-              <TouchableOpacity style={styles.viewEventBtn} activeOpacity={0.9} onPress={onOpenEvents}>
-                <Text style={styles.viewEventBtnText}>View event</Text>
-              </TouchableOpacity>
             </View>
           </View>
-        </View>
+        ) : featuredEvent ? (
+          <View style={[styles.card, styles.cardAccent, styles.eventCard]}>
+            <View style={styles.eventRow}>
+              <View style={styles.eventPosterWrap}>
+                {featuredEvent.image ? (
+                  <>
+                    <Image source={featuredEvent.image} style={styles.eventPosterBlur} resizeMode="cover" blurRadius={14} />
+                    <Image source={featuredEvent.image} style={styles.eventPoster} resizeMode="contain" />
+                  </>
+                ) : (
+                  <View style={[styles.skeletonBlock, { width: '100%', height: '100%' }]} />
+                )}
+
+                <LinearGradient
+                  pointerEvents="none"
+                  colors={['rgba(246,247,251,0.28)', 'rgba(27,86,253,0.16)']}
+                  locations={[0, 1]}
+                  start={{ x: 0.2, y: 0.2 }}
+                  end={{ x: 0.95, y: 0.95 }}
+                  style={styles.eventPosterOverlay}
+                />
+              </View>
+              <View style={styles.eventMain}>
+                <View style={styles.eventTitleRow}>
+                  <Text style={styles.cardHeadline} numberOfLines={1}>
+                    {featuredEvent.title}
+                  </Text>
+                  <View style={styles.upcomingTag}>
+                    <Text style={styles.upcomingTagText}>Upcoming</Text>
+                  </View>
+                </View>
+
+                <View style={styles.eventMetaList}>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText} numberOfLines={2}>
+                      {featuredEvent?.startAt
+                        ? new Date(featuredEvent.startAt).toLocaleString(undefined, {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        : featuredEvent.date}
+                    </Text>
+                  </View>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText} numberOfLines={1}>
+                      {featuredEvent.location}
+                    </Text>
+                  </View>
+                  <View style={styles.eventMetaRow}>
+                    <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                    <Text style={styles.eventMetaText} numberOfLines={1}>
+                      {featuredEvent.price || 'Free'}
+                    </Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.viewEventBtn}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    if (typeof onOpenEvent === 'function') {
+                      onOpenEvent(featuredEvent);
+                      return;
+                    }
+                    onOpenEvents();
+                  }}
+                >
+                  <Text style={styles.viewEventBtnText}>View event</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <View style={[styles.card, styles.cardAccent]}>
+            <Text style={styles.cardHeadline}>No featured event yet</Text>
+            <TouchableOpacity style={styles.viewEventBtn} activeOpacity={0.9} onPress={onOpenEvents}>
+              <Text style={styles.viewEventBtnText}>View events</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={styles.extrasSection}>
           <Text style={styles.sectionLabel}>Extra links</Text>

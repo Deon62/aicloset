@@ -741,6 +741,11 @@ function AppContent() {
         onOpenResources={() => openHomeOverlay('resources')}
         onOpenProjects={() => openHomeOverlay('projects')}
         onOpenStartups={() => openHomeOverlay('startups')}
+        onOpenEvent={(event) => {
+          setShowPastEvents(false);
+          setActiveEvent(event);
+          setCurrentTab('events');
+        }}
         onOpenEvents={() => setCurrentTab('events')}
         onRedeemPoints={() => openHomeOverlay('redeemPoints')}
         onRefresh={async () => {

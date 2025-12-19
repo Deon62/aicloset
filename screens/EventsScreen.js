@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SPACING, TYPE } from '../ui/tokens';
+import { supabase } from '../lib/supabase';
+import { normalizeEventRow } from '../lib/events';
 
 const BRAND_BLUE = '#1B56FD';
 
@@ -13,32 +15,40 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
   const inputRef = useRef(null);
   const searchAnim = useRef(new Animated.Value(0)).current;
 
-  const events = useMemo(
-    () => [
-      {
-        id: 'hack-egerton',
-        title: 'Hack Egerton',
-        description:
-          'Hack Egerton is a hybrid innovation sprint where builders ship real solutions in AI, blockchain, and hardware. The virtual phase runs from Jan 1 to Feb 25 (mentorship, team formation, online challenges), followed by an in-person finale from Feb 26 to Feb 28 at Arc Hotel, Egerton. Come with ideas, leave with a demo—and a network.',
-        date: 'Jan 1 – Feb 25 (Virtual) · Feb 26 – Feb 28 (In-person)',
-        startAt: new Date('2026-01-01T09:00:00').toISOString(),
-        endAt: new Date('2026-02-28T18:00:00').toISOString(),
-        location: 'Arc Hotel, Egerton',
-        price: 'KSh 300',
-        image: {
-          uri: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png',
-        },
-        images: [
-          {
-            uri: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/eventspics/hackegerton.png',
-          },
-        ],
-        requirements: ['Laptop', 'Internet for virtual phase', 'Team spirit'],
-        venueHint: 'Hybrid: Virtual (Jan 1 – Feb 25) · In-person (Feb 26 – Feb 28) at Arc Hotel, Egerton',
-      },
-    ],
-    []
-  );
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [eventsError, setEventsError] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        setLoadingEvents(true);
+        setEventsError('');
+
+        const { data, error } = await supabase
+          .from('events')
+          .select('id, slug, title, summary, description, date_label, start_at, end_at, location, venue_hint, price_label, currency, price_amount, image, images, requirements, status')
+          .eq('status', 'published')
+          .order('start_at', { ascending: true });
+
+        if (error) throw error;
+
+        const list = Array.isArray(data) ? data.map(normalizeEventRow).filter((e) => e?.id) : [];
+        if (mounted) setEvents(list);
+      } catch (e) {
+        console.warn('Failed to load events', e);
+        if (mounted) setEventsError('Failed to load events.');
+      } finally {
+        if (mounted) setLoadingEvents(false);
+      }
+    };
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     Animated.timing(searchAnim, {
@@ -138,52 +148,66 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
           Upcoming sessions, workshops, and competitions.
         </Text>
 
-        {filteredEvents.map((event) => (
-          <TouchableOpacity
-            key={event.id}
-            style={[styles.card, styles.cardAccent, styles.eventCard]}
-            activeOpacity={0.9}
-            onPress={() => onOpenEvent(event)}
-          >
-            <View style={styles.eventHeroWrap}>
-              <Image
-                source={event.image}
-                style={styles.eventHeroBlur}
-                resizeMode="cover"
-                blurRadius={18}
-              />
-              <Image source={event.image} style={styles.eventHeroImage} resizeMode="contain" />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.cardHeadline}>{event.title}</Text>
+        {eventsError ? <Text style={styles.subtitle}>{eventsError}</Text> : null}
 
-              <View style={styles.eventMetaList}>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>
-                    {event?.startAt
-                      ? new Date(event.startAt).toLocaleString(undefined, {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })
-                      : event.date}
-                  </Text>
+        {loadingEvents ? (
+          <View style={[styles.card, styles.cardAccent]}>
+            <Text style={styles.cardHeadline}>Loading events…</Text>
+          </View>
+        ) : filteredEvents.length === 0 ? (
+          <View style={[styles.card, styles.cardAccent]}>
+            <Text style={styles.cardHeadline}>No events yet</Text>
+            <Text style={styles.subtitle}>Check back soon.</Text>
+          </View>
+        ) : (
+          filteredEvents.map((event) => {
+            const hero = event?.image || (Array.isArray(event?.images) ? event.images[0] : null);
+            return (
+              <TouchableOpacity
+                key={event.id}
+                style={[styles.card, styles.cardAccent, styles.eventCard]}
+                activeOpacity={0.9}
+                onPress={() => onOpenEvent(event)}
+              >
+                {hero ? (
+                  <View style={styles.eventHeroWrap}>
+                    <Image source={hero} style={styles.eventHeroBlur} resizeMode="cover" blurRadius={18} />
+                    <Image source={hero} style={styles.eventHeroImage} resizeMode="contain" />
+                  </View>
+                ) : null}
+
+                <View style={styles.eventInfo}>
+                  <Text style={styles.cardHeadline}>{event.title}</Text>
+
+                  <View style={styles.eventMetaList}>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="calendar-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>
+                        {event?.startAt
+                          ? new Date(event.startAt).toLocaleString(undefined, {
+                              weekday: 'short',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })
+                          : event.date}
+                      </Text>
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="location-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>{event.location}</Text>
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
+                      <Text style={styles.eventMetaText}>{event.price || 'Free'}</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="location-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.location}</Text>
-                </View>
-                <View style={styles.eventMetaRow}>
-                  <Ionicons name="pricetag-outline" size={16} color="#5A5A5A" />
-                  <Text style={styles.eventMetaText}>{event.price || 'Free'}</Text>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+              </TouchableOpacity>
+            );
+          })
+        )}
       </ScrollView>
     </SafeAreaView>
   );
