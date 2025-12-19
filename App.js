@@ -10,6 +10,7 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import NetInfo from '@react-native-community/netinfo';
 import { supabase } from './lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { normalizeProductRow } from './lib/products';
 import LandingPage from './screens/LandingPage';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -87,10 +88,42 @@ function AppContent() {
   const [postsByCommunity, setPostsByCommunity] = useState(() => ({}));
   const [likedIds, setLikedIds] = useState(() => new Set());
   const [cartIds, setCartIds] = useState(() => new Set());
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [productsError, setProductsError] = useState('');
 
   useEffect(() => {
     authScreenRef.current = authScreen;
   }, [authScreen]);
+
+  const loadProducts = useCallback(async () => {
+    try {
+      setLoadingProducts(true);
+      setProductsError('');
+
+      const { data, error } = await supabase
+        .from('products')
+        .select(
+          'id, slug, name, description, image_url, images, currency, price_amount, price_label, original_price_amount, original_price_label, stock_left, status, created_at'
+        )
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const list = Array.isArray(data) ? data.map(normalizeProductRow).filter((p) => p?.id) : [];
+      setProducts(list);
+    } catch (e) {
+      console.warn('Failed to load products', e);
+      setProductsError('Failed to load products.');
+    } finally {
+      setLoadingProducts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   useEffect(() => {
     let mounted = true;
@@ -811,6 +844,7 @@ function AppContent() {
         <CartScreen
           likedIds={likedIds}
           cartIds={cartIds}
+          products={products}
           onToggleLiked={toggleLiked}
           onToggleCart={toggleCart}
           onBack={() => setShopOverlay(null)}
@@ -856,6 +890,10 @@ function AppContent() {
       <MarketplaceScreen
         likedIds={likedIds}
         cartIds={cartIds}
+        products={products}
+        loadingProducts={loadingProducts}
+        productsError={productsError}
+        onRefreshProducts={loadProducts}
         onToggleLiked={toggleLiked}
         onToggleCart={toggleCart}
         onOpenCart={() => setShopOverlay('cart')}
@@ -1149,7 +1187,7 @@ function AppContent() {
         ) || (
           currentTab === 'profile' && profileOverlay === 'payments'
         )) ? (
-          <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} />
+          <BottomNavigation currentTab={currentTab} onTabChange={setCurrentTab} shopBadgeCount={products.length} />
         ) : null}
         <StatusBar style="dark" />
       </SafeAreaProvider>

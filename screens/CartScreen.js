@@ -9,57 +9,10 @@ const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
 const CART_BRIGHT = '#00A3FF';
 
-const ALL_PRODUCTS = [
-  {
-    id: 'ardena-1',
-    name: 'Ardena T‑Shirt',
-    description: 'Premium cotton club tee with a clean fit.',
-    price: 'KSh 900',
-    originalPrice: 'KSh 1,200',
-    left: 3,
-    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena.jpg',
-  },
-  {
-    id: 'ardena-2',
-    name: 'Ardena T‑Shirt (Alt)',
-    description: 'Soft, breathable, and perfect for meetups.',
-    price: 'KSh 900',
-    originalPrice: 'KSh 1,150',
-    left: 5,
-    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena1.jpg',
-  },
-  {
-    id: 'ardena-3',
-    name: 'Ardena T‑Shirt (Edition)',
-    description: 'Limited edition print for EUCOSSA members.',
-    price: 'KSh 1,000',
-    originalPrice: 'KSh 1,400',
-    left: 2,
-    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/edition.jpg',
-  },
-  {
-    id: 'datascience-tee-1',
-    name: 'Data Science T‑Shirt',
-    description: 'Clean Data Science print for meetups and workshops.',
-    price: 'KSh 1,000',
-    originalPrice: 'KSh 1,300',
-    left: 8,
-    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/datasciencetshirt.png',
-  },
-  {
-    id: 'eucossa-hoodie-1',
-    name: 'EUCOSSA Hoodie',
-    description: 'Warm hoodie with EUCOSSA branding. Perfect for evenings.',
-    price: 'KSh 2,500',
-    originalPrice: 'KSh 2,900',
-    left: 4,
-    imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/eucossahoodie.png',
-  },
-];
-
 export default function CartScreen({
   likedIds = new Set(),
   cartIds = new Set(),
+  products = [],
   onToggleLiked = () => {},
   onToggleCart = () => {},
   onBack = () => {},
@@ -71,15 +24,16 @@ export default function CartScreen({
 
   const data = useMemo(() => {
     const ids = cartIds instanceof Set ? cartIds : new Set();
-    return ALL_PRODUCTS.filter((p) => ids.has(p.id));
-  }, [cartIds]);
+    const list = Array.isArray(products) ? products : [];
+    return list.filter((p) => ids.has(p.id));
+  }, [cartIds, products]);
 
   useEffect(() => {
     setQuantities((prev) => {
       const next = { ...(prev || {}) };
       const ids = cartIds instanceof Set ? cartIds : new Set();
 
-      ALL_PRODUCTS.forEach((p) => {
+      (Array.isArray(products) ? products : []).forEach((p) => {
         if (ids.has(p.id) && typeof next[p.id] !== 'number') {
           next[p.id] = 1;
         }
@@ -91,7 +45,7 @@ export default function CartScreen({
 
       return next;
     });
-  }, [cartIds]);
+  }, [cartIds, products]);
 
   const parsePriceNumber = (price) => {
     const num = Number(String(price || '').replace(/[^0-9]/g, ''));
@@ -100,14 +54,14 @@ export default function CartScreen({
 
   const total = useMemo(() => {
     const ids = cartIds instanceof Set ? cartIds : new Set();
-    const sum = ALL_PRODUCTS.reduce((acc, p) => {
+    const sum = (Array.isArray(products) ? products : []).reduce((acc, p) => {
       if (!ids.has(p.id)) return acc;
       const qty = typeof quantities?.[p.id] === 'number' ? quantities[p.id] : 1;
       const num = parsePriceNumber(p.price);
       return acc + num * Math.max(1, qty);
     }, 0);
     return `KSh ${sum.toLocaleString()}`;
-  }, [cartIds, quantities]);
+  }, [cartIds, quantities, products]);
 
   const subtotal = total;
   const delivery = 'KSh 0';

@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share, RefreshControl } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, TextInput, Share, RefreshControl, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, TYPE } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
@@ -13,6 +12,10 @@ const CART_BRIGHT = '#00A3FF';
 export default function MarketplaceScreen({
   likedIds = new Set(),
   cartIds = new Set(),
+  products = [],
+  loadingProducts = false,
+  productsError = '',
+  onRefreshProducts = async () => {},
   onToggleLiked = () => {},
   onToggleCart = () => {},
   onOpenCart = () => {},
@@ -28,121 +31,18 @@ export default function MarketplaceScreen({
   const ITEM_HEIGHT = Math.max(520, Math.floor(windowHeight - headerHeight - TAB_BAR_HEIGHT));
   const IMAGE_HEIGHT = Math.floor(ITEM_HEIGHT * 0.7);
 
-  const products = useMemo(
-    () => [
-      {
-        id: 'ardena-1',
-        name: 'Ardena T‑Shirt',
-        description: 'Premium cotton club tee with a clean fit.',
-        price: 'KSh 900',
-        originalPrice: 'KSh 1,200',
-        left: 3,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena.jpg',
-      },
-      {
-        id: 'ardena-2',
-        name: 'Ardena T‑Shirt (Alt)',
-        description: 'Soft, breathable, and perfect for meetups.',
-        price: 'KSh 900',
-        originalPrice: 'KSh 1,150',
-        left: 5,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/ardena1.jpg',
-      },
-      {
-        id: 'ardena-3',
-        name: 'Ardena T‑Shirt (Edition)',
-        description: 'Limited edition print for EUCOSSA members.',
-        price: 'KSh 1,000',
-        originalPrice: 'KSh 1,400',
-        left: 2,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/edition.jpg',
-      },
-      {
-        id: 'datascience-tee-1',
-        name: 'Data Science T‑Shirt',
-        description: 'Clean Data Science print for meetups and workshops.',
-        price: 'KSh 1,000',
-        originalPrice: 'KSh 1,300',
-        left: 8,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/datasciencetshirt.png',
-      },
-      {
-        id: 'eucossa-hoodie-1',
-        name: 'EUCOSSA Hoodie',
-        description: 'Warm hoodie with EUCOSSA branding. Perfect for evenings.',
-        price: 'KSh 2,500',
-        originalPrice: 'KSh 2,900',
-        left: 4,
-        imageUrl: 'https://gfckrsileizyfyawanvh.supabase.co/storage/v1/object/public/products/eucossahoodie.png',
-      },
-      {
-        id: 'eucossa-tee-blue-1',
-        name: 'EUCOSSA Tee (Blue)',
-        description: 'Official EUCOSSA tee with a clean fit and vibrant print.',
-        price: 'KSh 1,000',
-        originalPrice: 'KSh 1,300',
-        left: 10,
-        imageUrl:
-          'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/blue%20eucossa%20tee%20with%20colors.jpg',
-      },
-      {
-        id: 'eucossa-tee-dark-1',
-        name: 'EUCOSSA Tee (Dark)',
-        description: 'Classic dark tee with official EUCOSSA branding.',
-        price: 'KSh 1,000',
-        originalPrice: 'KSh 1,300',
-        left: 10,
-        imageUrl: 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/dark%20eucossa%20tee.jpg',
-      },
-      {
-        id: 'eucossa-cap-1',
-        name: 'EUCOSSA Cap',
-        description: 'Everyday cap with EUCOSSA logo  clean and durable.',
-        price: 'KSh 700',
-        originalPrice: 'KSh 900',
-        left: 12,
-        imageUrl: 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/eucossa%20cap.jpg',
-      },
-      {
-        id: 'eucossa-bottle-1',
-        name: 'EUCOSSA Water Bottle',
-        description: 'Reusable water bottle with EUCOSSA branding.',
-        price: 'KSh 800',
-        originalPrice: 'KSh 1,000',
-        left: 12,
-        imageUrl: 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/eucossa%20waterbottle.jpg',
-      },
-      {
-        id: 'eucossa-tee-white-nocolor-1',
-        name: 'EUCOSSA Tee (White / Minimal)',
-        description: 'Minimal white EUCOSSA tee  clean and versatile.',
-        price: 'KSh 950',
-        originalPrice: 'KSh 1,200',
-        left: 10,
-        imageUrl:
-          'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/eucossa%20white%20tee%20no%20colors.jpg',
-      },
-      {
-        id: 'eucossa-tee-white-1',
-        name: 'EUCOSSA Tee (White)',
-        description: 'Official EUCOSSA white tee with a crisp print.',
-        price: 'KSh 1,000',
-        originalPrice: 'KSh 1,300',
-        left: 10,
-        imageUrl: 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/eucossa%20white%20tee.jpg',
-      },
-      {
-        id: 'eucossa-hoodie-photo-1',
-        name: 'EUCOSSA Hoodie (Classic)',
-        description: 'Warm EUCOSSA hoodie  comfy, clean, and premium.',
-        price: 'KSh 2,500',
-        originalPrice: 'KSh 2,900',
-        left: 6,
-        imageUrl: 'https://jfsyjlekhfyymunvsvcs.supabase.co/storage/v1/object/public/products/hoodie%20eucossa.jpg',
-      },
-    ],
-    []
-  );
+  const skeletonAnim = useRef(new Animated.Value(0.55)).current;
+
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(skeletonAnim, { toValue: 1, duration: 720, useNativeDriver: true }),
+        Animated.timing(skeletonAnim, { toValue: 0.55, duration: 720, useNativeDriver: true }),
+      ])
+    );
+    anim.start();
+    return () => anim.stop();
+  }, [skeletonAnim]);
 
   const visibleProducts = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -153,7 +53,55 @@ export default function MarketplaceScreen({
     });
   }, [products, query]);
 
-  const renderItem = ({ item }) => {
+  const showSkeletons = loadingProducts && (Array.isArray(products) ? products.length : 0) === 0 && !productsError;
+  const listData = showSkeletons ? [0, 1] : visibleProducts;
+
+  const renderItem = ({ item, index }) => {
+    if (showSkeletons) {
+      return (
+        <View style={[styles.postCard, { height: ITEM_HEIGHT }]}>
+          <View style={styles.mediaWrap}>
+            <Animated.View
+              style={[
+                styles.skeletonBlock,
+                {
+                  height: IMAGE_HEIGHT,
+                  width: '100%',
+                  opacity: skeletonAnim,
+                },
+              ]}
+            />
+
+            <View style={styles.mediaActions}>
+              {[0, 1, 2].map((i) => (
+                <Animated.View
+                  key={`skel-action-${index}-${i}`}
+                  style={[styles.skeletonCircle, { opacity: skeletonAnim }]}
+                />
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.postBody}>
+            <Animated.View style={[styles.skeletonLine, { width: 190, height: 16, opacity: skeletonAnim }]} />
+            <Animated.View style={[styles.skeletonLine, { width: 260, height: 12, opacity: skeletonAnim }]} />
+            <Animated.View style={[styles.skeletonLine, { width: 220, height: 12, opacity: skeletonAnim }]} />
+
+            <View style={styles.priceRow}>
+              <View style={styles.originalRow}>
+                <Animated.View style={[styles.skeletonLine, { width: 80, height: 12, opacity: skeletonAnim }]} />
+                <View style={styles.rightMeta}>
+                  <Animated.View style={[styles.skeletonLine, { width: 90, height: 12, opacity: skeletonAnim }]} />
+                  <Animated.View style={[styles.skeletonLine, { width: 130, height: 12, opacity: skeletonAnim, marginTop: 6 }]} />
+                </View>
+              </View>
+              <Animated.View style={[styles.skeletonLine, { width: 90, height: 22, opacity: skeletonAnim, marginTop: 10 }]} />
+            </View>
+          </View>
+        </View>
+      );
+    }
+
     const isLiked = likedIds.has(item.id);
     const inCart = cartIds.has(item.id);
 
@@ -256,11 +204,16 @@ export default function MarketplaceScreen({
             />
             <View style={styles.searchRightSpacer} />
           </View>
+
+          {loadingProducts && (Array.isArray(products) ? products.length : 0) > 0 && !productsError ? (
+            <Text style={styles.productDescription}>Updating products…</Text>
+          ) : null}
+          {productsError ? <Text style={styles.productDescription}>{productsError}</Text> : null}
         </View>
 
         <FlatList
-          data={visibleProducts}
-          keyExtractor={(item) => item.id}
+          data={listData}
+          keyExtractor={(item, idx) => (showSkeletons ? `skel-${idx}` : item.id)}
           renderItem={renderItem}
           pagingEnabled
           snapToInterval={ITEM_HEIGHT}
@@ -275,6 +228,7 @@ export default function MarketplaceScreen({
               onRefresh={async () => {
                 try {
                   setRefreshing(true);
+                  await onRefreshProducts();
                 } finally {
                   setTimeout(() => setRefreshing(false), 350);
                 }
@@ -417,6 +371,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 12,
+  },
+  skeletonBlock: {
+    backgroundColor: '#EFEFEF',
+  },
+  skeletonCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(239,239,239,0.55)',
+  },
+  skeletonLine: {
+    borderRadius: 10,
+    backgroundColor: 'rgba(239,239,239,0.9)',
   },
   priceRow: {
     gap: 2,

@@ -14,13 +14,15 @@ const tabs = [
   { id: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];
 
-export default function BottomNavigation({ currentTab, onTabChange }) {
+export default function BottomNavigation({ currentTab, onTabChange, shopBadgeCount = 0 }) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom || 10 }]}>
       {tabs.map((tab) => {
         const isActive = tab.id === currentTab;
+        const showShopBadge = tab.id === 'shop' && Number(shopBadgeCount) > 0;
+        const badgeText = Number(shopBadgeCount) > 99 ? '99+' : String(shopBadgeCount);
         return (
           <TouchableOpacity
             key={tab.id}
@@ -33,11 +35,14 @@ export default function BottomNavigation({ currentTab, onTabChange }) {
             }}
             activeOpacity={0.85}
           >
-            <Ionicons
-              name={isActive ? tab.iconActive : tab.icon}
-              size={22}
-              color={isActive ? BRAND_BLUE : '#5A5A5A'}
-            />
+            <View style={styles.iconWrap}>
+              <Ionicons name={isActive ? tab.iconActive : tab.icon} size={22} color={isActive ? BRAND_BLUE : '#5A5A5A'} />
+              {showShopBadge ? (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{badgeText}</Text>
+                </View>
+              ) : null}
+            </View>
             <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
           </TouchableOpacity>
         );
@@ -71,6 +76,30 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     backgroundColor: 'transparent',
+  },
+  iconWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: -6,
+    right: -12,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: BRAND_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: '#F6F7FB',
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontFamily: 'Nunito_700Bold',
   },
   label: {
     color: '#5A5A5A',
