@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,19 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState('');
+
+  const skeletonAnim = useRef(new Animated.Value(0.55)).current;
+
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(skeletonAnim, { toValue: 1, duration: 720, useNativeDriver: true }),
+        Animated.timing(skeletonAnim, { toValue: 0.55, duration: 720, useNativeDriver: true }),
+      ])
+    );
+    anim.start();
+    return () => anim.stop();
+  }, [skeletonAnim]);
 
   useEffect(() => {
     let mounted = true;
@@ -72,9 +85,33 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
         {eventsError ? <Text style={styles.subtitle}>{eventsError}</Text> : null}
 
         {loadingEvents ? (
-          <View style={[styles.card, styles.cardAccent]}>
-            <Text style={styles.cardHeadline}>Loading events…</Text>
-          </View>
+          <>
+            {[0, 1].map((idx) => (
+              <View key={`event-skel-${idx}`} style={[styles.card, styles.cardAccent, styles.eventCard]}>
+                <View style={styles.eventHeroWrap}>
+                  <Animated.View style={[styles.skeletonBlock, styles.skeletonHero, { opacity: skeletonAnim }]} />
+                </View>
+                <View style={styles.eventInfo}>
+                  <Animated.View style={[styles.skeletonBlock, { height: 16, width: 170, borderRadius: 10, opacity: skeletonAnim }]} />
+
+                  <View style={styles.eventMetaList}>
+                    <View style={styles.eventMetaRow}>
+                      <Animated.View style={[styles.skeletonBlock, { width: 16, height: 16, borderRadius: 8, opacity: skeletonAnim }]} />
+                      <Animated.View style={[styles.skeletonBlock, { height: 12, width: 170, borderRadius: 8, opacity: skeletonAnim }]} />
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Animated.View style={[styles.skeletonBlock, { width: 16, height: 16, borderRadius: 8, opacity: skeletonAnim }]} />
+                      <Animated.View style={[styles.skeletonBlock, { height: 12, width: 140, borderRadius: 8, opacity: skeletonAnim }]} />
+                    </View>
+                    <View style={styles.eventMetaRow}>
+                      <Animated.View style={[styles.skeletonBlock, { width: 16, height: 16, borderRadius: 8, opacity: skeletonAnim }]} />
+                      <Animated.View style={[styles.skeletonBlock, { height: 12, width: 90, borderRadius: 8, opacity: skeletonAnim }]} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </>
         ) : filteredEvents.length === 0 ? (
           <View style={[styles.card, styles.cardAccent]}>
             <Text style={styles.cardHeadline}>No events yet</Text>
@@ -212,6 +249,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
+  },
+  skeletonBlock: {
+    backgroundColor: '#EFEFEF',
+  },
+  skeletonHero: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   eventInfo: {
     padding: SPACING.m,
