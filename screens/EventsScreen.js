@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, Animated, Keyboard } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,11 +10,6 @@ import { normalizeEventRow } from '../lib/events';
 const BRAND_BLUE = '#1B56FD';
 
 export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent = () => {} }) {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const inputRef = useRef(null);
-  const searchAnim = useRef(new Animated.Value(0)).current;
-
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState('');
@@ -50,29 +45,7 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
     };
   }, []);
 
-  useEffect(() => {
-    Animated.timing(searchAnim, {
-      toValue: searchOpen ? 1 : 0,
-      duration: 180,
-      useNativeDriver: false,
-    }).start(({ finished }) => {
-      if (!finished) return;
-      if (searchOpen) {
-        setTimeout(() => inputRef.current?.focus?.(), 10);
-      } else {
-        Keyboard.dismiss();
-      }
-    });
-  }, [searchAnim, searchOpen]);
-
-  const filteredEvents = useMemo(() => {
-    const q = String(query || '').trim().toLowerCase();
-    if (!q) return events;
-    return events.filter((e) => {
-      const hay = `${e?.title || ''} ${e?.description || ''} ${e?.location || ''}`.toLowerCase();
-      return hay.includes(q);
-    });
-  }, [events, query]);
+  const filteredEvents = useMemo(() => events, [events]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -88,60 +61,8 @@ export default function EventsScreen({ onOpenPastEvents = () => {}, onOpenEvent 
                 onOpenPastEvents();
               }}
             >
-              <Ionicons name="albums-outline" size={20} color="#1D1D1D" />
+              <Ionicons name="albums-outline" size={28} color="#1D1D1D" />
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.searchBtn, searchOpen && styles.searchBtnHidden]}
-              activeOpacity={0.85}
-              onPress={() => {
-                setSearchOpen(true);
-              }}
-              pointerEvents={searchOpen ? 'none' : 'auto'}
-            >
-              <Ionicons name="search-outline" size={20} color="#1D1D1D" />
-            </TouchableOpacity>
-
-            <Animated.View
-              style={[
-                styles.searchInputWrap,
-                {
-                  width: searchAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 240],
-                  }),
-                  opacity: searchAnim,
-                },
-              ]}
-              pointerEvents={searchOpen ? 'auto' : 'none'}
-            >
-              <TextInput
-                ref={inputRef}
-                value={query}
-                onChangeText={setQuery}
-                placeholder="Search events"
-                placeholderTextColor="#8A8A8A"
-                style={styles.searchInput}
-                returnKeyType="search"
-              />
-
-              {query ? (
-                <TouchableOpacity style={styles.searchClearBtn} activeOpacity={0.8} onPress={() => setQuery('')}>
-                  <Ionicons name="close-circle" size={18} color="#6A6A6A" />
-                </TouchableOpacity>
-              ) : null}
-
-              <TouchableOpacity
-                style={styles.searchCloseBtn}
-                activeOpacity={0.85}
-                onPress={() => {
-                  setSearchOpen(false);
-                  setQuery('');
-                }}
-              >
-                <Ionicons name="close" size={18} color="#6A6A6A" />
-              </TouchableOpacity>
-            </Animated.View>
           </View>
         </View>
         <Text style={styles.subtitle}>
@@ -238,57 +159,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    position: 'relative',
-    width: 92,
+    width: 44,
   },
   pastEventsBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchBtn: {
-    position: 'absolute',
-    right: 46,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: 1,
-  },
-  searchBtnHidden: {
-    opacity: 0,
-  },
-  searchInputWrap: {
-    position: 'absolute',
-    right: 46,
-    height: 36,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: COLORS.borderStrong,
-    backgroundColor: COLORS.surface,
-    overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  searchInput: {
-    flex: 1,
-    paddingHorizontal: 12,
-    color: COLORS.text,
-    fontSize: 13,
-    fontFamily: 'Nunito_600SemiBold',
-  },
-  searchClearBtn: {
-    paddingHorizontal: 10,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchCloseBtn: {
-    paddingHorizontal: 10,
-    height: 36,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
