@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import JobsIllustration from '../assets/icons/jobs.svg';
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
 const JOB_FORM_URL = 'https://formspree.io/f/xbdrljor';
+const SUCCESS_CLOSE_DELAY = 2000;
 const INITIAL_FORM = {
   title: '',
   organization: '',
@@ -26,6 +27,7 @@ export default function ProjectsScreen({ onBack = () => {} }) {
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const closeTimerRef = useRef(null);
 
   const setField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -36,14 +38,31 @@ export default function ProjectsScreen({ onBack = () => {} }) {
     setStatus({ type: 'idle', message: '' });
   };
 
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => clearCloseTimer();
+  }, []);
+
   const openFormModal = () => {
+    clearCloseTimer();
     setStatus({ type: 'idle', message: '' });
     setShowForm(true);
   };
 
   const closeFormModal = () => {
     if (submitting) return;
+    clearCloseTimer();
     setShowForm(false);
+    setTimeout(() => {
+      setStatus({ type: 'idle', message: '' });
+      setForm((prev) => ({ ...prev }));
+    }, 150);
   };
 
   const submitForm = async () => {
@@ -83,6 +102,11 @@ export default function ProjectsScreen({ onBack = () => {} }) {
         type: 'success',
         message: 'Thanks! We received your submission and will review it shortly.',
       });
+      clearCloseTimer();
+      closeTimerRef.current = setTimeout(() => {
+        setShowForm(false);
+        setStatus({ type: 'idle', message: '' });
+      }, SUCCESS_CLOSE_DELAY);
     } catch (e) {
       setStatus({
         type: 'error',
@@ -118,119 +142,141 @@ export default function ProjectsScreen({ onBack = () => {} }) {
         <Modal
           visible={showForm}
           animationType="slide"
-          presentationStyle="pageSheet"
+          statusBarTranslucent
           onRequestClose={closeFormModal}
         >
           <SafeAreaView style={styles.modalContainer}>
-            <ScrollView
-              style={styles.formScroll}
-              contentContainerStyle={styles.formContent}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
+            <View style={styles.modalBody}>
               <View style={styles.modalHeader}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.formTitle}>Share an opportunity</Text>
-                  <Text style={styles.formSubtitle}>Submit jobs, internships, or gigs you think the EUCOSSA community should explore.</Text>
-                </View>
                 <TouchableOpacity style={styles.closeBtn} onPress={closeFormModal} hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}>
                   <Ionicons name="close" size={20} color={DARK} />
                 </TouchableOpacity>
+                <Text style={styles.formTitle}>Share an opportunity</Text>
+                <Text style={styles.formSubtitle}>Submit jobs, internships, or gigs you think the EUCOSSA community should explore.</Text>
               </View>
 
-              <View style={styles.field}>
-                <Text style={styles.inputLabel}>Job title *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.title}
-                  onChangeText={(text) => setField('title', text)}
-                  placeholder="e.g. Backend Developer Intern"
-                  placeholderTextColor="#9EA1AA"
-                  autoCapitalize="words"
-                />
-              </View>
+              <ScrollView
+                style={styles.formScroll}
+                contentContainerStyle={styles.formContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.tipCard}>
+                  <View style={styles.tipIconWrap}>
+                    <Ionicons name="sparkles-outline" size={20} color={BRAND_BLUE} />
+                  </View>
+                  <View style={styles.tipTextWrap}>
+                    <Text style={styles.tipTitle}>Make it standout</Text>
+                    <Text style={styles.tipText}>Add perks, deadlines, or compensation info so members know why they should care.</Text>
+                  </View>
+                </View>
 
-              <View style={styles.field}>
-                <Text style={styles.inputLabel}>Organization / Team *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.organization}
-                  onChangeText={(text) => setField('organization', text)}
-                  placeholder="Company or community"
-                  placeholderTextColor="#9EA1AA"
-                  autoCapitalize="words"
-                />
-              </View>
+                <View style={styles.field}>
+                  <Text style={styles.inputLabel}>Job title *</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={form.title}
+                    onChangeText={(text) => setField('title', text)}
+                    placeholder="e.g. Backend Developer Intern"
+                    placeholderTextColor="#9EA1AA"
+                    autoCapitalize="words"
+                  />
+                </View>
 
-              <View style={styles.field}>
-                <Text style={styles.inputLabel}>Opportunity link</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.link}
-                  onChangeText={(text) => setField('link', text)}
-                  placeholder="https://"
-                  placeholderTextColor="#9EA1AA"
-                  autoCapitalize="none"
-                  keyboardType="url"
-                />
-              </View>
+                <View style={styles.field}>
+                  <Text style={styles.inputLabel}>Organization / Team *</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={form.organization}
+                    onChangeText={(text) => setField('organization', text)}
+                    placeholder="Company or community"
+                    placeholderTextColor="#9EA1AA"
+                    autoCapitalize="words"
+                  />
+                </View>
 
-              <View style={styles.field}>
-                <Text style={styles.inputLabel}>Contact email *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.contact}
-                  onChangeText={(text) => setField('contact', text)}
-                  placeholder="someone@example.com"
-                  placeholderTextColor="#9EA1AA"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                />
-              </View>
+                <View style={styles.field}>
+                  <Text style={styles.inputLabel}>Opportunity link</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={form.link}
+                    onChangeText={(text) => setField('link', text)}
+                    placeholder="https://"
+                    placeholderTextColor="#9EA1AA"
+                    autoCapitalize="none"
+                    keyboardType="url"
+                  />
+                </View>
 
-              <View style={styles.field}>
-                <Text style={styles.inputLabel}>Details</Text>
-                <TextInput
-                  style={[styles.input, styles.inputMultiline]}
-                  value={form.description}
-                  onChangeText={(text) => setField('description', text)}
-                  placeholder="Share requirements, stipend, deadline, or any helpful context."
-                  placeholderTextColor="#9EA1AA"
-                  multiline
-                  numberOfLines={5}
-                  textAlignVertical="top"
-                />
-              </View>
+                <View style={styles.field}>
+                  <Text style={styles.inputLabel}>Contact email *</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={form.contact}
+                    onChangeText={(text) => setField('contact', text)}
+                    placeholder="someone@example.com"
+                    placeholderTextColor="#9EA1AA"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                  />
+                </View>
 
-              {status.message ? (
-                <Text
-                  style={[
-                    styles.statusText,
-                    status.type === 'success' ? styles.statusSuccess : styles.statusError,
-                  ]}
+                <View style={styles.field}>
+                  <Text style={styles.inputLabel}>Details</Text>
+                  <TextInput
+                    style={[styles.input, styles.inputMultiline]}
+                    value={form.description}
+                    onChangeText={(text) => setField('description', text)}
+                    placeholder="Share requirements, stipend, deadline, or any helpful context."
+                    placeholderTextColor="#9EA1AA"
+                    multiline
+                    numberOfLines={5}
+                    textAlignVertical="top"
+                  />
+                </View>
+
+                {status.message ? (
+                  <View
+                    style={[
+                      styles.statusCard,
+                      status.type === 'success' ? styles.statusCardSuccess : styles.statusCardError,
+                    ]}
+                  >
+                    <Ionicons
+                      name={status.type === 'success' ? 'checkmark-circle' : 'alert-circle'}
+                      size={20}
+                      color={status.type === 'success' ? '#0A7B34' : '#C01C1C'}
+                    />
+                    <Text
+                      style={[
+                        styles.statusText,
+                        status.type === 'success' ? styles.statusSuccess : styles.statusError,
+                      ]}
+                    >
+                      {status.message}
+                    </Text>
+                  </View>
+                ) : null}
+
+                <TouchableOpacity
+                  style={[styles.submitBtn, submitting && styles.submitBtnDisabled]}
+                  activeOpacity={0.9}
+                  onPress={submitForm}
+                  disabled={submitting}
                 >
-                  {status.message}
-                </Text>
-              ) : null}
+                  <Text style={styles.submitBtnText}>{submitting ? 'Sending…' : 'Submit job'}</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.submitBtn, submitting && styles.submitBtnDisabled]}
-                activeOpacity={0.9}
-                onPress={submitForm}
-                disabled={submitting}
-              >
-                <Text style={styles.submitBtnText}>{submitting ? 'Sending…' : 'Submit job'}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.cancelBtn}
-                activeOpacity={0.8}
-                onPress={closeFormModal}
-                disabled={submitting}
-              >
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-            </ScrollView>
+                <TouchableOpacity
+                  style={styles.cancelBtn}
+                  activeOpacity={0.8}
+                  onPress={closeFormModal}
+                  disabled={submitting}
+                >
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
           </SafeAreaView>
         </Modal>
       </View>
@@ -322,33 +368,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  modalBody: {
+    flex: 1,
+    backgroundColor: '#F5F7FB',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
   formScroll: {
     flex: 1,
   },
   formContent: {
-    padding: 20,
+    paddingBottom: 32,
     gap: 18,
   },
   modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
+    paddingBottom: 16,
   },
   formTitle: {
+    marginTop: 12,
     color: DARK,
-    fontSize: 20,
+    fontSize: 24,
     fontFamily: 'Nunito_700Bold',
   },
   formSubtitle: {
-    marginTop: 4,
+    marginTop: 8,
     color: '#5C5F66',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: 'Nunito_600SemiBold',
   },
   closeBtn: {
-    width: 36,
-    height: 36,
+    alignSelf: 'flex-end',
+    width: 38,
+    height: 38,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#E6E6E6',
@@ -366,19 +419,75 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E4E6EB',
+    borderColor: '#E0E4EC',
     borderRadius: 14,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
     fontSize: 13,
     fontFamily: 'Nunito_600SemiBold',
     color: DARK,
-    backgroundColor: '#FBFBFD',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#10182814',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
   },
   inputMultiline: {
     minHeight: 110,
   },
+  tipCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: '#EEF3FF',
+    borderWidth: 1,
+    borderColor: '#DCE6FF',
+    gap: 12,
+  },
+  tipIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tipTextWrap: {
+    flex: 1,
+    gap: 4,
+  },
+  tipTitle: {
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
+    color: BRAND_BLUE,
+  },
+  tipText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#4C5060',
+    fontFamily: 'Nunito_600SemiBold',
+  },
+  statusCard: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+  },
+  statusCardSuccess: {
+    borderColor: 'rgba(10,123,52,0.25)',
+    backgroundColor: 'rgba(10,123,52,0.08)',
+  },
+  statusCardError: {
+    borderColor: 'rgba(192,28,28,0.25)',
+    backgroundColor: 'rgba(192,28,28,0.08)',
+  },
   statusText: {
+    flex: 1,
     fontSize: 13,
     lineHeight: 18,
     fontFamily: 'Nunito_600SemiBold',
