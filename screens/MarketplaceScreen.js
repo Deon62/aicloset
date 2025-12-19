@@ -25,6 +25,7 @@ export default function MarketplaceScreen({
   const [headerHeight, setHeaderHeight] = useState(120);
   const [query, setQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshSkeletons, setRefreshSkeletons] = useState(false);
 
   const TAB_BAR_HEIGHT = (insets.bottom || 0) + 52;
 
@@ -53,7 +54,7 @@ export default function MarketplaceScreen({
     });
   }, [products, query]);
 
-  const showSkeletons = loadingProducts && (Array.isArray(products) ? products.length : 0) === 0 && !productsError;
+  const showSkeletons = (loadingProducts || refreshSkeletons) && !productsError;
   const listData = showSkeletons ? [0, 1] : visibleProducts;
 
   const renderItem = ({ item, index }) => {
@@ -205,9 +206,6 @@ export default function MarketplaceScreen({
             <View style={styles.searchRightSpacer} />
           </View>
 
-          {loadingProducts && (Array.isArray(products) ? products.length : 0) > 0 && !productsError ? (
-            <Text style={styles.productDescription}>Updating products…</Text>
-          ) : null}
           {productsError ? <Text style={styles.productDescription}>{productsError}</Text> : null}
         </View>
 
@@ -227,10 +225,14 @@ export default function MarketplaceScreen({
               refreshing={refreshing}
               onRefresh={async () => {
                 try {
+                  setRefreshSkeletons(true);
                   setRefreshing(true);
                   await onRefreshProducts();
                 } finally {
-                  setTimeout(() => setRefreshing(false), 350);
+                  setTimeout(() => {
+                    setRefreshing(false);
+                    setRefreshSkeletons(false);
+                  }, 350);
                 }
               }}
               tintColor={BRAND_BLUE}
