@@ -74,7 +74,6 @@ export default function SettingsScreen({
                     </View>
                     <Ionicons name="chevron-forward" size={18} color="#7A7A7A" />
                   </TouchableOpacity>
-                  {showDivider ? <View style={styles.divider} /> : null}
                 </View>
               );
             })}
