@@ -461,9 +461,9 @@ export default function HomeScreen({
             <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenProjects}
             >
               <View style={styles.extrasIconWrap}>
-                <Ionicons name="code-slash-outline" size={22} color={DARK} />
+                <Ionicons name="briefcase-outline" size={22} color={DARK} />
               </View>
-              <Text style={styles.extrasLabel}>Projects</Text>
+              <Text style={styles.extrasLabel}>Jobs</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.extrasItem} activeOpacity={0.85} onPress={onOpenStartups}

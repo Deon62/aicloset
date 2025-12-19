@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import ProjectsIcon from '../assets/icons/projects.svg';
+import JobsIllustration from '../assets/icons/jobs.svg';
 
 const DARK = '#0B0B0F';
 const BRAND_BLUE = '#1B56FD';
@@ -31,14 +31,14 @@ export default function ProjectsScreen({ onBack = () => {} }) {
           <TouchableOpacity style={styles.backBtn} activeOpacity={0.85} onPress={onBack}>
             <Ionicons name="arrow-back" size={20} color={DARK} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Projects</Text>
+          <Text style={styles.headerTitle}>Jobs</Text>
           <View style={styles.headerSpacer} />
         </View>
 
         <View style={styles.emptyWrap}>
-          <ProjectsIcon width={240} height={180} />
-          <Text style={styles.emptyTitle}>No projects yet</Text>
-          <Text style={styles.emptyText}>Projects will show up here once they are submitted by members.</Text>
+          <JobsIllustration width={240} height={200} />
+          <Text style={styles.emptyTitle}>No jobs yet</Text>
+          <Text style={styles.emptyText}>We will list opportunities from partners and alumni here as soon as they are shared.</Text>
         </View>
 
         <TouchableOpacity style={styles.fab} activeOpacity={0.9} onPress={openRequestEmail}>
