@@ -186,25 +186,21 @@ export default function ProfileScreen({
             <Text style={styles.linkLabel}>Profile info</Text>
             <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
           </TouchableOpacity>
-          <View style={styles.rowDivider} />
 
           <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenSettings}>
             <Text style={styles.linkLabel}>Settings</Text>
             <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
           </TouchableOpacity>
-          <View style={styles.rowDivider} />
 
           <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenFeedback}>
             <Text style={styles.linkLabel}>Send us feedback</Text>
             <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
           </TouchableOpacity>
-          <View style={styles.rowDivider} />
 
           <TouchableOpacity style={styles.linkRow} activeOpacity={0.85} onPress={onOpenPayments}>
             <Text style={styles.linkLabel}>Payments</Text>
             <Ionicons name="chevron-forward" size={18} color="#5A5A5A" />
           </TouchableOpacity>
-          <View style={styles.rowDivider} />
 
           <TouchableOpacity
             style={[styles.linkRow, styles.logoutRow]}
