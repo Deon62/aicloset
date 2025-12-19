@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   paidBtn: {
     marginTop: 'auto',
     height: 52,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',

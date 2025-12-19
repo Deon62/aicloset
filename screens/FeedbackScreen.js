@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   sendBtn: {
     height: 44,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',

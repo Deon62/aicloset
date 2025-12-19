@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Alert, FlatList, StatusBar, Modal, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { RADIUS } from '../ui/tokens';
 
 const BRAND_BLUE = '#1B56FD';
 const DARK = '#1D1D1D';
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderRadius: 16,
+    borderRadius: RADIUS.pill,
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
@@ -510,7 +511,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E5E5',
     paddingVertical: 14,
     paddingHorizontal: 14,
-    borderRadius: 16,
+    borderRadius: RADIUS.pill,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',

@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   primaryBtn: {
     marginTop: 4,
     height: 50,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   secondaryBtn: {
     height: 48,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.pill,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.surface,

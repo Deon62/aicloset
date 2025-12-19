@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     height: 52,
     backgroundColor: COLORS.brand,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.pill,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',

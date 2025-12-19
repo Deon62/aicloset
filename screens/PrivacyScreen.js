@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   ctaBtn: {
     marginTop: 6,
     backgroundColor: COLORS.brand,
-    borderRadius: 14,
+    borderRadius: RADIUS.pill,
     paddingVertical: 12,
     alignItems: 'center',
   },

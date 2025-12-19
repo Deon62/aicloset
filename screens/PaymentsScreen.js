@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     gap: 8,
     height: 44,
     paddingHorizontal: 14,
-    borderRadius: 14,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.brand,
   },
   noticeBtnText: {

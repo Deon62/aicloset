@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvo
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { RADIUS } from '../ui/tokens';
 
 const DARK = '#1D1D1D';
 const BRAND_BLUE = '#1B56FD';
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
   primaryBtn: {
     marginTop: 4,
     height: 50,
-    borderRadius: 16,
+    borderRadius: RADIUS.pill,
     backgroundColor: BRAND_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
